@@ -43,7 +43,9 @@ class StringTools {
 		&& !cpp
 		&& !lua
 		&& !eval ) inline #end public static function urlEncode(s : String) : String {
-		#if neko
+		#if flash
+		return untyped __global__["encodeURIComponent"](s);
+		#elseif neko
 		return untyped new String(_urlEncode(s.__s));
 		#elseif js
 		return untyped encodeURIComponent(s);
@@ -79,8 +81,7 @@ class StringTools {
 			switch(_charAt(s, i++)) {
 				case '+'.code:
 					ret.add('%20');
-				case '%'.
-					code if(i <= len - 2):
+				case '%'.code if(i <= len - 2):
 					var c1 = _charAt(s, i++), c2 = _charAt(s, i++);
 					switch [c1, c2] {
 						case ['2'.code, '1'.code]:
@@ -91,8 +92,7 @@ class StringTools {
 							ret.addChar('('.code);
 						case ['2'.code, '9'.code]:
 							ret.addChar(')'.code);
-						case ['7'.code, 'E'.code]
-							| ['7'.code, 'e'.code]:
+						case ['7'.code, 'E'.code] | ['7'.code, 'e'.code]:
 							ret.addChar('~'.code);
 						case _:
 							ret.addChar('%'.code);
@@ -114,7 +114,12 @@ class StringTools {
 		&& !cpp
 		&& !lua
 		&& !eval ) inline #end public static function urlDecode(s : String) : String {
-		#if neko
+		#if flash
+		return untyped __global__["decodeURIComponent"](s
+			.split("+")
+			.join(" ")
+		);
+		#elseif neko
 		return untyped new String(_urlDecode(s.__s));
 		#elseif js
 		return untyped decodeURIComponent(s
@@ -172,12 +177,10 @@ class StringTools {
 					buf.add("&lt;");
 				case '>'.code:
 					buf.add("&gt;");
-				case '"'.code:
-					if(quotes)
-						buf.add("&quot;");
-				case '\''.code:
-					if(quotes)
-						buf.add("&#039;");
+				case '"'.code if(quotes):
+					buf.add("&quot;");
+				case '\''.code if(quotes):
+					buf.add("&#039;");
 				case _:
 					buf.addChar(code);
 			}
@@ -465,6 +468,11 @@ class StringTools {
 		its `length` equals `digits`.
 	**/
 	public static function hex(n : Int, ?digits : Int) {
+		#if flash
+		var n : UInt = n;
+		var s : String = untyped n.toString(16);
+		s = s.toUpperCase();
+		#else
 		var s = "";
 		var hexChars = "0123456789ABCDEF";
 		do {
@@ -472,6 +480,7 @@ class StringTools {
 			n >>>= 4;
 		}
 		while(n > 0);
+		#end
 		#if python
 		if(digits != null && s.length < digits) {
 			var diff = digits - s.length;
@@ -505,6 +514,8 @@ class StringTools {
 		#if neko
 		return untyped __dollar__sget(s.__s, index);
 		#elseif cpp
+		return untyped s.cca(index);
+		#elseif flash
 		return untyped s.cca(index);
 		#elseif java
 		return (index < s.length) ? cast(_charAt(s, index), Int) : -1;
@@ -544,6 +555,8 @@ class StringTools {
 		#if neko
 		return untyped __dollar__sget(s.__s, index);
 		#elseif cpp
+		return untyped s.cca(index);
+		#elseif flash
 		return untyped s.cca(index);
 		#elseif java
 		return cast(_charAt(s, index), Int);
@@ -593,7 +606,7 @@ class StringTools {
 		Tells if `c` represents the end-of-file (EOF) character.
 	**/
 	@:noUsing public static inline function isEof(c : Int) : Bool {
-		#if( cpp || hl )
+		#if( flash || cpp || hl )
 		return c == 0;
 		#elseif js
 		return c != c; // fast NaN

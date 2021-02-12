@@ -26,81 +26,88 @@ import sys.io.Process;
 using haxe.Int64;
 
 @:coreApi class Sys {
-	private static var _args:java.NativeArray<String>;
-	private static var _env:haxe.ds.StringMap<String>;
-	private static var _sysName:String;
+	private static var _args : java.NativeArray<String>;
+	private static var _env : haxe.ds.StringMap<String>;
+	private static var _sysName : String;
 
-	public static inline function print(v:Dynamic):Void {
+	public static inline function print(v : Dynamic) : Void {
 		java.lang.System.out.print(v);
 	}
 
-	public static inline function println(v:Dynamic):Void {
+	public static inline function println(v : Dynamic) : Void {
 		java.lang.System.out.println(v);
 	}
 
-	public static function args():Array<String> {
-		if (_args == null)
+	public static function args() : Array<String> {
+		if(_args == null)
 			return [];
 		return java.Lib.array(_args);
 	}
 
-	public static function getEnv(s:String):String {
+	public static function getEnv(s : String) : String {
 		return java.lang.System.getenv(s);
 	}
 
-	public static function putEnv(s:String, v:String):Void {
+	public static function putEnv(s : String, v : String) : Void {
 		// java offers no support for it (!)
 		throw new haxe.exceptions.NotImplementedException("Not implemented in this platform");
 	}
 
-	public static function environment():Map<String, String> {
-		if (_env != null)
+	public static function environment() : Map<String, String> {
+		if(_env != null)
 			return _env;
 		var _env = _env = new haxe.ds.StringMap();
-		for (mv in java.lang.System.getenv().entrySet()) {
+		for (mv in java.lang.System
+			.getenv()
+			.entrySet()
+		) {
 			_env.set(mv.getKey(), mv.getValue());
 		}
 
 		return _env;
 	}
 
-	public static function sleep(seconds:Float):Void {
+	public static function sleep(seconds : Float) : Void {
 		try
 			java.lang.Thread.sleep(cast seconds * 1000)
-		catch (e:Dynamic)
+		catch(e:Dynamic)
 			throw e;
 	}
 
-	public static function setTimeLocale(loc:String):Bool {
+	public static function setTimeLocale(loc : String) : Bool {
 		return false;
 	}
 
-	public static function getCwd():String {
-		return new java.io.File(".").getAbsolutePath().substr(0, -1);
+	public static function getCwd() : String {
+		return new java.io.File(".")
+			.getAbsolutePath()
+			.substr(0, -1);
 	}
 
-	public static function setCwd(s:String):Void {
+	public static function setCwd(s : String) : Void {
 		// java offers no support for it (!)
 		throw new haxe.exceptions.NotImplementedException();
 	}
 
-	public static function systemName():String {
-		if (_sysName != null)
+	public static function systemName() : String {
+		if(_sysName != null)
 			return _sysName;
-		var sname = System.getProperty("os.name").toLowerCase();
-		if (sname.indexOf("win") >= 0)
+		var sname = System
+			.getProperty("os.name")
+			.toLowerCase();
+		if(sname.indexOf("win") >= 0)
 			return _sysName = "Windows";
-		if (sname.indexOf("mac") >= 0)
+		if(sname.indexOf("mac") >= 0)
 			return _sysName = "Mac";
-		if (sname.indexOf("nux") >= 0)
+		if(sname.indexOf("nux") >= 0)
 			return _sysName = "Linux";
-		if (sname.indexOf("nix") >= 0)
+		if(sname.indexOf("nix") >= 0)
 			return _sysName = "BSD";
 
 		return _sysName = System.getProperty("os.name");
 	}
 
-	public static function command(cmd:String, ?args:Array<String>):Int {
+	public static function command(cmd : String, ?args : Array<String>) : Int {
 		var pb = Process.createProcessBuilder(cmd, args);
 		#if java6
 		pb.redirectErrorStream(true);
@@ -112,11 +119,12 @@ using haxe.Int64;
 		#if java6
 		var reader = new java.io.NativeInput(proc.getInputStream());
 		try {
-			while (true) {
+			while(true) {
 				var ln = reader.readLine();
 				Sys.println(ln);
 			}
-		} catch (e:haxe.io.Eof) {}
+		}
+		catch(e:chx.lang.EofException) {}
 		#end
 		proc.waitFor();
 		var exitCode = proc.exitValue();
@@ -124,37 +132,43 @@ using haxe.Int64;
 		return exitCode;
 	}
 
-	public static function exit(code:Int):Void {
+	public static function exit(code : Int) : Void {
 		System.exit(code);
 	}
 
-	public static function time():Float {
+	public static function time() : Float {
 		return cast(System.currentTimeMillis(), Float) / 1000;
 	}
 
-	public static function cpuTime():Float {
+	public static function cpuTime() : Float {
 		return cast(System.nanoTime(), Float) / 1000000000;
 	}
 
-	public static function programPath():String {
-		return java.Lib.toNativeType(Sys).getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+	public static function programPath() : String {
+		return java.Lib
+			.toNativeType(Sys)
+			.getProtectionDomain()
+			.getCodeSource()
+			.getLocation()
+			.toURI()
+			.getPath();
 	}
 
-	public static function getChar(echo:Bool):Int {
+	public static function getChar(echo : Bool) : Int {
 		// TODO
 		return throw new haxe.exceptions.NotImplementedException();
 	}
 
-	public static function stdin():chx.io.Input {
-		var _in:java.io.InputStream = Reflect.field(System, "in");
+	public static function stdin() : chx.io.Input {
+		var _in : java.io.InputStream = Reflect.field(System, "in");
 		return new java.io.NativeInput(_in);
 	}
 
-	public static function stdout():chx.io.Output {
+	public static function stdout() : chx.io.Output {
 		return new java.io.NativeOutput(System.out);
 	}
 
-	public static function stderr():chx.io.Output {
+	public static function stderr() : chx.io.Output {
 		return new java.io.NativeOutput(System.err);
 	}
 }

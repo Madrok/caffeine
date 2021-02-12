@@ -23,12 +23,11 @@
 package python.io;
 
 import chx.io.Input;
-import haxe.io.Eof;
 import python.Bytearray;
 import python.lib.io.IOBase;
 import python.lib.io.RawIOBase;
 
-class NativeInput<T:IOBase> extends Input {
+abstract class NativeInput<T:IOBase> extends Input {
 	var stream : T;
 	var wasEof : Bool;
 
@@ -55,7 +54,7 @@ class NativeInput<T:IOBase> extends Input {
 
 	function throwEof() {
 		wasEof = true;
-		throw new Eof();
+		throw new chx.lang.EofException();
 	}
 
 	public function eof() {

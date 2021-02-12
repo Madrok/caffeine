@@ -25,7 +25,6 @@ package java.io;
 import chx.io.Output;
 import haxe.Int64;
 import haxe.io.Bytes;
-import haxe.io.Eof;
 import java.io.EOFException;
 import java.io.IOException;
 

@@ -14,7 +14,6 @@
 		"functionBody": "next",
 		"anonFunctionBody": "next"
 	},
-	
 	"whitespace": {
 		"arrowFunctionsPolicy": "around",
 		"functionTypeHaxe3Policy": "none",
@@ -27,52 +26,46 @@
 		"typeHintColonPolicy": "around",
 		"typeCheckColonPolicy": "none",
 		"ternaryPolicy": "around",
-
 		"parenConfig": {
-		  "catchParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "none"
-		  },
-		  "ifConditionParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "none"
-		  },
-		  "sharpConditionParens": {
-			"openingPolicy": "onlyAfter",
-			"closingPolicy": "before"
-		  },
-		  "switchConditionParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "none"
-		  },
-		  "whileConditionParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "none"
-		  },
-		  "funcParamParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "none",
-			"removeInnerWhenEmpty": true
-		  },
-		  "anonFuncParamParens": {
-			"openingPolicy": "none",
-			"closingPolicy": "onlyAfter",
-			"removeInnerWhenEmpty": true
-		  }
+			"catchParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "none"
+			},
+			"ifConditionParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "none"
+			},
+			"sharpConditionParens": {
+				"openingPolicy": "onlyAfter",
+				"closingPolicy": "before"
+			},
+			"switchConditionParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "none"
+			},
+			"whileConditionParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "none"
+			},
+			"funcParamParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "none",
+				"removeInnerWhenEmpty": true
+			},
+			"anonFuncParamParens": {
+				"openingPolicy": "none",
+				"closingPolicy": "onlyAfter",
+				"removeInnerWhenEmpty": true
+			}
 		}
 	},
-
 	"wrapping": {
 		"arrayMatrixWrap": "matrixWrapWithAlign",
 		"arrayWrap": {
-		  "defaultWrap": "fillLine",
-		  "defaultLocation": "afterLast"
+			"defaultWrap": "fillLine",
+			"defaultLocation": "afterLast"
 		},
 		"maxLineLength": 100,
-		"casePattern": {
-			"defaultWrap": "onePerLineAfterFirst",
-			"defaultLocation": "beforeLast"
-		},
 		"opAddSubChain": {
 			"defaultWrap": "fillLine",
 			"defaultLocation": "beforeLast",

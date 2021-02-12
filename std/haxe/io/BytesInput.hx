@@ -22,39 +22,43 @@
 
 package haxe.io;
 
-class BytesInput extends Input {
-	var b:#if js js.lib.Uint8Array #elseif hl hl.Bytes #else BytesData #end;
+import chx.lang.EofException;
+import chx.lang.OutsideBoundsException;
+
+class BytesInput extends chx.io.Input {
+	var b : #if js js.lib.Uint8Array #elseif hl hl.Bytes #else BytesData #end;
 	#if !flash
-	var pos:Int;
-	var len:Int;
-	var totlen:Int;
+	var pos : Int;
+	var len : Int;
+	var totlen : Int;
 	#end
 
 	/** The current position in the stream in bytes. */
-	public var position(get, set):Int;
+	public var position(get, set) : Int;
 
 	/** The length of the stream in bytes. */
-	public var length(get, never):Int;
+	public var length(get, never) : Int;
 
-	public function new(b:Bytes, ?pos:Int, ?len:Int) {
-		if (pos == null)
+	public function new(b : Bytes, ?pos : Int, ?len : Int) {
+		if(pos == null)
 			pos = 0;
-		if (len == null)
+		if(len == null)
 			len = b.length - pos;
-		if (pos < 0 || len < 0 || pos + len > b.length)
-			throw Error.OutsideBounds;
+		if(pos < 0 || len < 0 || pos + len > b.length)
+			throw new OutsideBoundsException();
 		#if flash
 		var ba = b.getData();
 		ba.position = pos;
-		if (len != ba.bytesAvailable) {
+		if(len != ba.bytesAvailable) {
 			// truncate
 			this.b = new flash.utils.ByteArray();
 			ba.readBytes(this.b, 0, len);
-		} else
+		}
+		else
 			this.b = ba;
 		this.b.endian = flash.utils.Endian.LITTLE_ENDIAN;
 		#else
-		this.b = #if (js || hl) @:privateAccess b.b #else b.getData() #end;
+		this.b = #if( js || hl ) @:privateAccess b.b #else b.getData() #end;
 		this.pos = pos;
 		this.len = len;
 		this.totlen = len;
@@ -64,7 +68,7 @@ class BytesInput extends Input {
 		#end
 	}
 
-	inline function get_position():Int {
+	inline function get_position() : Int {
 		#if flash
 		return b.position;
 		#else
@@ -72,7 +76,7 @@ class BytesInput extends Input {
 		#end
 	}
 
-	inline function get_length():Int {
+	inline function get_length() : Int {
 		#if flash
 		return b.length;
 		#else
@@ -80,10 +84,10 @@ class BytesInput extends Input {
 		#end
 	}
 
-	function set_position(p:Int):Int {
-		if (p < 0)
+	function set_position(p : Int) : Int {
+		if(p < 0)
 			p = 0;
-		else if (p > length)
+		else if(p > length)
 			p = length;
 		#if flash
 		return b.position = p;
@@ -93,12 +97,13 @@ class BytesInput extends Input {
 		#end
 	}
 
-	public override function readByte():Int {
+	public function readByte() : Int {
 		#if flash
-		return try b.readUnsignedByte() catch (e:Dynamic) throw new Eof();
+		return try b.readUnsignedByte()
+		catch(e:Dynamic) throw new EofException();
 		#else
-		if (this.len == 0)
-			throw new Eof();
+		if(this.len == 0)
+			throw new EofException();
 		len--;
 		#if neko
 		return untyped __dollar__sget(b, pos++);
@@ -116,47 +121,47 @@ class BytesInput extends Input {
 		#end
 	}
 
-	public override function readBytes(buf:Bytes, pos:Int, len:Int):Int {
+	public override function readBytes(buf : Bytes, pos : Int, len : Int) : Int {
 		#if !neko
-		if (pos < 0 || len < 0 || pos + len > buf.length)
-			throw Error.OutsideBounds;
+		if(pos < 0 || len < 0 || pos + len > buf.length)
+			throw new OutsideBoundsException();
 		#end
 		#if flash
-		var avail:Int = b.bytesAvailable;
-		if (len > avail && avail > 0)
+		var avail : Int = b.bytesAvailable;
+		if(len > avail && avail > 0)
 			len = avail;
 		try
 			b.readBytes(buf.getData(), pos, len)
-		catch (e:Dynamic)
-			throw new Eof();
+		catch(e:Dynamic)
+			throw new EofException();
 		#elseif java
-		var avail:Int = this.len;
-		if (len > avail)
+		var avail : Int = this.len;
+		if(len > avail)
 			len = avail;
-		if (len == 0)
-			throw new Eof();
+		if(len == 0)
+			throw new EofException();
 		java.lang.System.arraycopy(this.b, this.pos, buf.getData(), pos, len);
 		this.pos += len;
 		this.len -= len;
 		#elseif cs
-		var avail:Int = this.len;
-		if (len > avail)
+		var avail : Int = this.len;
+		if(len > avail)
 			len = avail;
-		if (len == 0)
-			throw new Eof();
+		if(len == 0)
+			throw new EofException();
 		cs.system.Array.Copy(this.b, this.pos, buf.getData(), pos, len);
 		this.pos += len;
 		this.len -= len;
 		#else
-		if (this.len == 0 && len > 0)
-			throw new Eof();
-		if (this.len < len)
+		if(this.len == 0 && len > 0)
+			throw new EofException();
+		if(this.len < len)
 			len = this.len;
 		#if neko
 		try
 			untyped __dollar__sblit(buf.getData(), pos, b, this.pos, len)
-		catch (e:Dynamic)
-			throw Error.OutsideBounds;
+		catch(e:Dynamic)
+			throw new OutsideBoundsException();
 		#elseif hl
 		@:privateAccess buf.b.blit(pos, b, this.pos, len);
 		#else
@@ -181,37 +186,44 @@ class BytesInput extends Input {
 
 	@:dox(hide)
 	override function readFloat() {
-		return try b.readFloat() catch (e:Dynamic) throw new Eof();
+		return try b.readFloat()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
 	override function readDouble() {
-		return try b.readDouble() catch (e:Dynamic) throw new Eof();
+		return try b.readDouble()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
 	override function readInt8() {
-		return try b.readByte() catch (e:Dynamic) throw new Eof();
+		return try b.readByte()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
 	override function readInt16() {
-		return try b.readShort() catch (e:Dynamic) throw new Eof();
+		return try b.readShort()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
-	override function readUInt16():Int {
-		return try b.readUnsignedShort() catch (e:Dynamic) throw new Eof();
+	override function readUInt16() : Int {
+		return try b.readUnsignedShort()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
-	override function readInt32():Int {
-		return try b.readInt() catch (e:Dynamic) throw new Eof();
+	override function readInt32() : Int {
+		return try b.readInt()
+		catch(e:Dynamic) throw new EofException();
 	}
 
 	@:dox(hide)
-	override function readString(len:Int, ?encoding:Encoding) {
-		return try encoding == RawNative ? b.readMultiByte(len, "unicode") : b.readUTFBytes(len) catch (e:Dynamic) throw new Eof();
+	override function readString(len : Int, ?encoding : Encoding) {
+		return try encoding == RawNative ? b.readMultiByte(len, "unicode") : b.readUTFBytes(len)
+		catch(e:Dynamic) throw new EofException();
 	}
 	#end
 }

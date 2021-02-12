@@ -23,9 +23,10 @@
 package java.io;
 
 import chx.io.Input;
+import chx.lang.EofException;
+import chx.lang.IOException;
 import haxe.Int64;
 import haxe.io.Bytes;
-import haxe.io.Eof;
 import java.io.EOFException;
 import java.io.IOException;
 
@@ -42,13 +43,13 @@ import java.io.IOException;
 			ret = stream.read();
 		}
 		catch(e:EOFException) {
-			throw new chx.lang.EofException();
+			throw new EofException();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 		if(ret == -1)
-			throw new Eof();
+			throw new EofException();
 		return ret;
 	}
 
@@ -58,14 +59,14 @@ import java.io.IOException;
 			ret = stream.read(s.getData(), pos, len);
 		}
 		catch(e:EOFException) {
-			throw new chx.lang.EofException();
+			throw new EofException();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 
 		if(ret == -1)
-			throw new Eof();
+			throw new EofException();
 		return ret;
 	}
 
@@ -74,7 +75,7 @@ import java.io.IOException;
 			stream.close();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 	}
 }

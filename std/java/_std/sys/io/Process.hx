@@ -22,10 +22,11 @@
 
 package sys.io;
 
+import chx.lang.EofException;
+import chx.lang.EofException;
 import haxe.SysTools;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
-import haxe.io.Eof;
 import java.NativeArray;
 import java.io.EOFException;
 import java.io.IOException;
@@ -146,10 +147,10 @@ private class ProcessInput extends java.io.NativeInput {
 			ret = stream.read();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 		if(ret == -1)
-			throw new Eof();
+			throw new EofException();
 		return ret;
 	}
 
@@ -162,14 +163,14 @@ private class ProcessInput extends java.io.NativeInput {
 			ret = stream.read(s.getData(), pos, len);
 		}
 		catch(e:EOFException) {
-			throw new Eof();
+			throw new EofException();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 
 		if(ret == -1)
-			throw new Eof();
+			throw new EofException();
 		return ret;
 	}
 
@@ -180,7 +181,7 @@ private class ProcessInput extends java.io.NativeInput {
 			stream.close();
 		}
 		catch(e:IOException) {
-			throw new chx.lang.IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 	}
 }

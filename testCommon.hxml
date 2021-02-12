@@ -18,3 +18,7 @@
 
 --next
 --java bin/java
+
+--next
+--python bin/main.py
+

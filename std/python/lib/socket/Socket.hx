@@ -29,7 +29,7 @@ import python.Tuple;
 	A TCP socket class : allow you to both connect to a given server and exchange messages or start your own server and wait for connections.
 **/
 @:pythonImport("socket", "socket")
-extern class Socket implements chx.net.Socket {
+extern class Socket {
 	function send(d : BytesData, flags : Int) : Int;
 	function recv(n : Int, flags : Int) : BytesData;
 

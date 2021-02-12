@@ -38,7 +38,7 @@ private class SocketInput extends chx.io.Input {
 		__s = s;
 	}
 
-	public override function readByte() : Int {
+	public function readByte() : Int {
 		var r : BytesData;
 		try {
 			r = __s.recv(1, 0);
@@ -82,7 +82,7 @@ private class SocketOutput extends chx.io.Output {
 		__s = s;
 	}
 
-	public override function writeByte(c : Int) {
+	public function writeByte(c : Int) {
 		try {
 			__s.send(python.Syntax.code('bytes([c])'), 0);
 		}
