@@ -7,6 +7,12 @@ I wrote Caffeine-hx and chxdoc back in 2007-09, but life took me in other direct
 and then seeing the exciting changes in 4.2 (oh wow, abstract classes? Rest paramaeters?...), I thought I'd throw it back online
 for consideration.
 
+### Old sources
+Yes, some of this is old. It probably doesn't work well anymore. But it's here. Specifically I'm talking about the
+dll extensions in dll_src. These are for supplemental libraries to support the various methods in chx.*, and were 
+only targetting neko at the time. However, with a little love and affection, they can easily be made to work with
+cpp, python, node, lua and whatever platform I just missed. There's nothing like using the speed of native openssl!
+
 ## Goals
 * Remove flash. It's over. Give up already.
 * Unify exceptions and classes across platforms. I don't want to catch new unknown things just because I switch my program to run on neko/python/node/cpp instead of hashlink/lua/java.
