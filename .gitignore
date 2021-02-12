@@ -1,0 +1,15 @@
+bin/
+.git
+node_modules
+*.orig
+.svn
+.hg
+.DS_Store
+*.orig
+.idea
+ide.hxml
+export/
+docs/**/doc.xml
+.server_cfg.json
+lime.hdll
+dump/*

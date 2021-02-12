@@ -1,0 +1,20 @@
+-cp tests
+-cp src
+--debug
+
+--each
+
+--next
+--hl bin/main.hl
+
+--next
+--neko bin/main.n
+
+# --next
+# --lua bin/main.lua
+
+--next
+--cpp bin/cpp
+
+--next
+--java bin/java
