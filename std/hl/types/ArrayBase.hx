@@ -22,93 +22,95 @@
 
 package hl.types;
 
+import chx.lang.NotImplementedException;
+
 @:keep
 class ArrayAccess {
-	public function getDyn(pos:Int):Dynamic {
-		throw new haxe.exceptions.NotImplementedException();
+	public function getDyn(pos : Int) : Dynamic {
+		throw new NotImplementedException();
 		return 0;
 	}
 
-	public function setDyn(pos:Int, v:Dynamic) {
-		throw new haxe.exceptions.NotImplementedException();
+	public function setDyn(pos : Int, v : Dynamic) {
+		throw new NotImplementedException();
 	}
 
-	public function blit(pos:Int, src:ArrayAccess, srcpos:Int, len:Int):Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function blit(pos : Int, src : ArrayAccess, srcpos : Int, len : Int) : Void {
+		throw new NotImplementedException();
 	}
 }
 
 @:keep
 class ArrayBase extends ArrayAccess {
-	public var length(default, null):Int;
+	public var length(default, null) : Int;
 
-	public function pushDyn(v:Dynamic):Int {
-		throw new haxe.exceptions.NotImplementedException();
+	public function pushDyn(v : Dynamic) : Int {
+		throw new NotImplementedException();
 		return 0;
 	}
 
-	public function popDyn():Null<Dynamic> {
-		throw new haxe.exceptions.NotImplementedException();
+	public function popDyn() : Null<Dynamic> {
+		throw new NotImplementedException();
 		return null;
 	}
 
-	public function shiftDyn():Null<Dynamic> {
-		throw new haxe.exceptions.NotImplementedException();
+	public function shiftDyn() : Null<Dynamic> {
+		throw new NotImplementedException();
 		return null;
 	}
 
-	public function unshiftDyn(v:Dynamic):Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function unshiftDyn(v : Dynamic) : Void {
+		throw new NotImplementedException();
 	}
 
-	public function insertDyn(pos:Int, v:Dynamic):Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function insertDyn(pos : Int, v : Dynamic) : Void {
+		throw new NotImplementedException();
 	}
 
-	public function containsDyn(v:Dynamic):Bool {
-		throw new haxe.exceptions.NotImplementedException();
+	public function containsDyn(v : Dynamic) : Bool {
+		throw new NotImplementedException();
 		return false;
 	}
 
-	public function removeDyn(v:Dynamic):Bool {
-		throw new haxe.exceptions.NotImplementedException();
+	public function removeDyn(v : Dynamic) : Bool {
+		throw new NotImplementedException();
 		return false;
 	}
 
-	public function sortDyn(f:Dynamic->Dynamic->Int):Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function sortDyn(f : Dynamic->Dynamic->Int) : Void {
+		throw new NotImplementedException();
 	}
 
-	public function slice(pos:Int, ?end:Int):ArrayBase {
-		throw new haxe.exceptions.NotImplementedException();
+	public function slice(pos : Int, ?end : Int) : ArrayBase {
+		throw new NotImplementedException();
 		return null;
 	}
 
-	public function splice(pos:Int, len:Int):ArrayBase {
-		throw new haxe.exceptions.NotImplementedException();
+	public function splice(pos : Int, len : Int) : ArrayBase {
+		throw new NotImplementedException();
 		return null;
 	}
 
-	public function join(sep:String):String {
-		throw new haxe.exceptions.NotImplementedException();
+	public function join(sep : String) : String {
+		throw new NotImplementedException();
 		return null;
 	}
 
 	public function reverse() {
-		throw new haxe.exceptions.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
-	public function resize(len:Int) {
-		throw new haxe.exceptions.NotImplementedException();
+	public function resize(len : Int) {
+		throw new NotImplementedException();
 	}
 
-	public function toString():String {
-		throw new haxe.exceptions.NotImplementedException();
+	public function toString() : String {
+		throw new NotImplementedException();
 		return null;
 	}
 
-	function __cast(t:Type):Dynamic {
-		if (t == Type.get((null : ArrayDyn)))
+	function __cast(t : Type) : Dynamic {
+		if(t == Type.get((null:ArrayDyn)))
 			return ArrayDyn.alloc(this, false);
 		return null;
 	}
@@ -117,32 +119,32 @@ class ArrayBase extends ArrayAccess {
 		return false;
 	}
 
-	public static function allocI32(bytes:BytesAccess<Int>, length:Int) @:privateAccess {
-		var a:ArrayBytes.ArrayI32 = untyped $new(ArrayBytes.ArrayI32);
+	public static function allocI32(bytes : BytesAccess<Int>, length : Int) @:privateAccess {
+		var a : ArrayBytes.ArrayI32 = untyped $new(ArrayBytes.ArrayI32);
 		a.length = length;
 		a.bytes = bytes;
 		a.size = length;
 		return a;
 	}
 
-	public static function allocUI16(bytes:BytesAccess<UI16>, length:Int) @:privateAccess {
-		var a:ArrayBytes.ArrayUI16 = untyped $new(ArrayBytes.ArrayUI16);
+	public static function allocUI16(bytes : BytesAccess<UI16>, length : Int) @:privateAccess {
+		var a : ArrayBytes.ArrayUI16 = untyped $new(ArrayBytes.ArrayUI16);
 		a.length = length;
 		a.bytes = bytes;
 		a.size = length;
 		return a;
 	}
 
-	public static function allocF32(bytes:BytesAccess<F32>, length:Int) @:privateAccess {
-		var a:ArrayBytes.ArrayF32 = untyped $new(ArrayBytes.ArrayF32);
+	public static function allocF32(bytes : BytesAccess<F32>, length : Int) @:privateAccess {
+		var a : ArrayBytes.ArrayF32 = untyped $new(ArrayBytes.ArrayF32);
 		a.length = length;
 		a.bytes = bytes;
 		a.size = length;
 		return a;
 	}
 
-	public static function allocF64(bytes:BytesAccess<Float>, length:Int) @:privateAccess {
-		var a:ArrayBytes.ArrayF64 = untyped $new(ArrayBytes.ArrayF64);
+	public static function allocF64(bytes : BytesAccess<Float>, length : Int) @:privateAccess {
+		var a : ArrayBytes.ArrayF64 = untyped $new(ArrayBytes.ArrayF64);
 		a.length = length;
 		a.bytes = bytes;
 		a.size = length;

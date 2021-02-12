@@ -32,6 +32,7 @@ import haxe.ds.IntMap;
 /**
  * A two dimensional IntMap; a sparse 2D array.
  */
+@:deprecated("Likely that Array2 is a replacement for chx.ds.XYMap")
 class XYMap<T> {
 	var cache : IntMap<IntMap<T>>;
 

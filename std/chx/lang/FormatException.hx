@@ -26,7 +26,6 @@
 package chx.lang;
 
 /**
-	Thrown where strings are not properly formatted
-	@author rweir
-**/
+ * Thrown where strings are not properly formatted
+ */
 class FormatException extends Exception {}

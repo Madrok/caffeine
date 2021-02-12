@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import chx.lang.NotImplementedException;
 import java.lang.System;
 import sys.io.Process;
 
@@ -50,7 +51,7 @@ using haxe.Int64;
 
 	public static function putEnv(s : String, v : String) : Void {
 		// java offers no support for it (!)
-		throw new haxe.exceptions.NotImplementedException("Not implemented in this platform");
+		throw new NotImplementedException("Not implemented in this platform");
 	}
 
 	public static function environment() : Map<String, String> {
@@ -86,7 +87,7 @@ using haxe.Int64;
 
 	public static function setCwd(s : String) : Void {
 		// java offers no support for it (!)
-		throw new haxe.exceptions.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	public static function systemName() : String {
@@ -156,7 +157,7 @@ using haxe.Int64;
 
 	public static function getChar(echo : Bool) : Int {
 		// TODO
-		return throw new haxe.exceptions.NotImplementedException();
+		return throw new NotImplementedException();
 	}
 
 	public static function stdin() : chx.io.Input {

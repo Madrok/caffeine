@@ -22,6 +22,7 @@
 
 package sys.net;
 
+import chx.lang.IOException;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import python.Exceptions;
@@ -145,7 +146,12 @@ private class SocketOutput extends chx.io.Output {
 
 	public function connect(host : Host, port : Int) : Void {
 		var host_str = host.toString();
-		__s.connect(Tuple2.make(host_str, port));
+		try {
+			__s.connect(Tuple2.make(host_str, port));
+		}
+		catch(e) {
+			throw new IOException("Failed to connect on " + host.toString() + ":" + port, null, e);
+		}
 	}
 
 	public function listen(connections : Int) : Void {

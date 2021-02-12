@@ -22,87 +22,97 @@
 
 package sys.net;
 
+import chx.lang.*;
 import java.net.InetSocketAddress;
 
 @:coreApi
 class Socket implements chx.net.Socket {
-	public var input(default, null):chx.io.Input;
-	public var output(default, null):chx.io.Output;
+	public var input(default, null) : chx.io.Input;
+	public var output(default, null) : chx.io.Output;
 
-	public var custom:Dynamic;
+	public var custom : Dynamic;
 
-	private var sock:java.net.Socket;
-	private var server:java.net.ServerSocket;
-	private var boundAddr:java.net.SocketAddress;
+	private var sock : java.net.Socket;
+	private var server : java.net.ServerSocket;
+	private var boundAddr : java.net.SocketAddress;
 
-	public function new():Void {
+	public function new() : Void {
 		create();
 	}
 
-	private function create():Void {
+	private function create() : Void {
 		this.sock = new java.net.Socket();
 		try {
 			this.server = new java.net.ServerSocket();
-		} catch (e:Dynamic)
-			throw e;
+		}
+		catch(e:Dynamic) {
+			throw new IOException("Unable to create java.net.ServerSocket", null, e);
+		}
 	}
 
-	public function close():Void {
+	public function close() : Void {
 		try {
-			if (sock != null)
+			if(sock != null)
 				this.sock.close();
-			if (server != null)
+			if(server != null)
 				this.server.close();
-		} catch (e:Dynamic)
-			throw e;
+		}
+		catch(e:Dynamic) {}
 	}
 
-	public function read():String {
-		return input.readAll().toString();
+	public function read() : String {
+		return input
+			.readAll()
+			.toString();
 	}
 
-	public function write(content:String):Void {
+	public function write(content : String) : Void {
 		output.writeString(content);
 	}
 
-	public function connect(host:Host, port:Int):Void {
+	public function connect(host : Host, port : Int) : Void {
 		try {
 			sock.connect(new InetSocketAddress(host.wrapped, port));
 			this.output = new java.io.NativeOutput(sock.getOutputStream());
 			this.input = new java.io.NativeInput(sock.getInputStream());
-		} catch (e:Dynamic)
-			throw e;
+		}
+		catch(e:Dynamic)
+			throw new IOException("Failed to connect on " + host.toString() + ":" + port);
 	}
 
-	public function listen(connections:Int):Void {
-		if (boundAddr == null)
-			throw "You must bind the Socket to an address!";
+	public function listen(connections : Int) : Void {
+		if(boundAddr == null)
+			throw new IOException("You must bind the Socket to an address!");
 		try
 			server.bind(boundAddr, connections)
-		catch (e:Dynamic)
+		catch(e:Dynamic) {
 			throw e;
+		}
 	}
 
-	public function shutdown(read:Bool, write:Bool):Void {
+	public function shutdown(read : Bool, write : Bool) : Void {
 		try {
-			if (read)
+			if(read)
 				sock.shutdownInput();
-			if (write)
+			if(write)
 				sock.shutdownOutput();
-		} catch (e:Dynamic)
-			throw e;
+		}
+		catch(e:Dynamic) {
+			throw new IOException("Error shutting down socket");
+		}
 	}
 
-	public function bind(host:Host, port:Int):Void {
-		if (boundAddr != null) {
-			if (server.isBound())
-				throw "Already bound";
+	public function bind(host : Host, port : Int) : Void {
+		if(boundAddr != null) {
+			if(server.isBound())
+				throw new IOException("Already bound");
 		}
 		this.boundAddr = new java.net.InetSocketAddress(host.wrapped, port);
 	}
 
-	public function accept():Socket {
-		var ret = try server.accept() catch (e:Dynamic) throw e;
+	public function accept() : Socket {
+		var ret = try server.accept()
+		catch(e:Dynamic) throw e;
 
 		var s = new Socket();
 		s.sock = ret;
@@ -112,53 +122,59 @@ class Socket implements chx.net.Socket {
 		return s;
 	}
 
-	public function peer():{host:Host, port:Int} {
+	public function peer() : {host : Host, port : Int} {
 		var rem = sock.getInetAddress();
-		if (rem == null)
+		if(rem == null)
 			return null;
 
 		var host = new Host(null);
 		host.wrapped = rem;
-		return {host: host, port: sock.getPort()};
+		return {host : host, port : sock.getPort()};
 	}
 
-	public function host():{host:Host, port:Int} {
+	public function host() : {host : Host, port : Int} {
 		var local = sock.getLocalAddress();
 		var host = new Host(null);
 		host.wrapped = local;
 
-		if (boundAddr != null) {
-			return {host: host, port: server.getLocalPort()};
+		if(boundAddr != null) {
+			return {host : host, port : server.getLocalPort()};
 		}
 
-		return {host: host, port: sock.getLocalPort()};
+		return {host : host, port : sock.getLocalPort()};
 	}
 
-	public function setTimeout(timeout:Float):Void {
+	public function setTimeout(timeout : Float) : Void {
 		try
 			sock.setSoTimeout(Std.int(timeout * 1000))
-		catch (e:Dynamic)
-			throw e;
+		catch(e:Dynamic) {
+			throw new IOException("Unable to set timeout on socket", null, e);
+		}
 	}
 
-	public function waitForRead():Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function waitForRead() : Void {
+		throw new NotImplementedException();
 	}
 
-	public function setBlocking(b:Bool):Void {
-		throw new haxe.exceptions.NotImplementedException();
+	public function setBlocking(b : Bool) : Void {
+		throw new NotImplementedException();
 	}
 
-	public function setFastSend(b:Bool):Void {
+	public function setFastSend(b : Bool) : Void {
 		try
 			sock.setTcpNoDelay(b)
-		catch (e:Dynamic)
-			throw e;
+		catch(e:Dynamic) {
+			throw new IOException("Unable to set no delay on socket", null, e);
+		}
 	}
 
-	public static function select(read:Array<Socket>, write:Array<Socket>, others:Array<Socket>,
-			?timeout:Float):{read:Array<Socket>, write:Array<Socket>, others:Array<Socket>} {
-		throw new haxe.exceptions.NotImplementedException();
+	public static function select(read : Array<Socket>, write : Array<Socket>,
+			others : Array<Socket>, ?timeout : Float) : {
+		read : Array<Socket>,
+		write : Array<Socket>,
+		others : Array<Socket>
+	} {
+		throw new NotImplementedException();
 		return null;
 	}
 }
