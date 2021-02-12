@@ -13,5 +13,6 @@ for consideration.
 * Reorganize. Some things, well, they need to be in better places.
 * add, add, add. There's a significant lack of good functionality in the haxe standard library
 * Interfaces. There's a keyword *implements*, why don't we try using it for a change
+* abstract. Damn near every decent language has that kind of class. Now haxe does too. Kill all the foo() { throw "not implemented" } nonsense
 
 
