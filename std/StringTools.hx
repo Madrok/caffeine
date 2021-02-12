@@ -497,6 +497,27 @@ class StringTools {
 	}
 
 	/**
+	 * Encodes `n` into an octal representation
+	 * @param n the number to 
+	 * @param digits left pad with zeros to make this length
+	 * @todo left padding is not in hex(), so either move or unify
+	 */
+	public static function octal(n : Int, ?digits : Int) : String {
+		var s = "";
+		var octChars = "01234567";
+		do {
+			s = octChars.charAt(n & 7) + s;
+			n >>>= 3;
+		}
+		while(n > 0);
+
+		if(digits != null)
+			while(s.length < digits)
+				s = "0" + s;
+		return s;
+	}
+
+	/**
 		Returns the character code at position `index` of String `s`, or an
 		end-of-file indicator at if `position` equals `s.length`.
 
