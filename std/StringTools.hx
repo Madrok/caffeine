@@ -20,7 +20,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import haxe.Exception;
 import haxe.iterators.StringIterator;
 import haxe.iterators.StringKeyValueIterator;
 
@@ -173,12 +172,12 @@ class StringTools {
 					buf.add("&lt;");
 				case '>'.code:
 					buf.add("&gt;");
-				case '"'.
-					code if(quotes):
-					buf.add("&quot;");
-				case '\''.
-					code if(quotes):
-					buf.add("&#039;");
+				case '"'.code:
+					if(quotes)
+						buf.add("&quot;");
+				case '\''.code:
+					if(quotes)
+						buf.add("&#039;");
 				case _:
 					buf.addChar(code);
 			}

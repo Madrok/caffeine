@@ -25,8 +25,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx;
-
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
@@ -58,33 +56,33 @@ class Assert {
 					}, [{
 						expr : EBinop(OpAdd,
 							{expr : EConst(CString("Assertion failed. Expected ")), pos : pos}, {
-							expr : EBinop(OpAdd, {
-								expr : ECall({
-									expr : EField({
-										// xxx used to be CType. CIdent may not be correct
-										expr : EConst(CIdent("Std")),
-										pos : pos
-									}, "string"),
-									pos : pos
-								}, [expected]),
-								pos : pos
-							}, {
-								expr : EBinop(OpAdd,
-									{expr : EConst(CString(". Got ")), pos : pos}, {
+								expr : EBinop(OpAdd, {
 									expr : ECall({
 										expr : EField({
-											// xxx here too
+											// xxx used to be CType. CIdent may not be correct
 											expr : EConst(CIdent("Std")),
 											pos : pos
 										}, "string"),
 										pos : pos
-									}, [actual]),
+									}, [expected]),
+									pos : pos
+								}, {
+									expr : EBinop(OpAdd,
+										{expr : EConst(CString(". Got ")), pos : pos}, {
+											expr : ECall({
+												expr : EField({
+													// xxx here too
+													expr : EConst(CIdent("Std")),
+													pos : pos
+												}, "string"),
+												pos : pos
+											}, [actual]),
+											pos : pos
+										}),
 									pos : pos
 								}),
 								pos : pos
 							}),
-							pos : pos
-						}),
 						pos : pos
 					}
 					]),
