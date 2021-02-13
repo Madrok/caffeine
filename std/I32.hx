@@ -22,11 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#if neko
-typedef Int32 = I32;
-#else
+
+import chx.ds.Bytes;
+import chx.ds.BytesBuffer;
+
 typedef Int32 = Int;
-#end
 
 /**
  * Static methods for cross platform use of 32 bit Int. All methods are inline,
@@ -39,20 +39,13 @@ typedef Int32 = Int;
  *
  * @author		Russell Weir
 **/
+@:deprecated("Code using this was from haxe 2.x. Oh the hoops we had to jump through")
 class I32 {
-	#if neko
-	public static var ZERO : Int32;
-	public static var ONE : Int32;
-
-	/** 0xFF **/
-	public static var BYTE_MASK : Int32;
-	#else
 	public static inline var ZERO : Int32 = 0;
 	public static inline var ONE : Int32 = 1;
 
 	/** 0xFF **/
 	public static inline var BYTE_MASK : Int32 = 0xFF;
-	#end
 
 	/**
 	 * Returns byte 4 (highest byte) from the 32 bit int.
@@ -90,21 +83,14 @@ class I32 {
 	 * Absolute value
 	**/
 	public static inline function abs(v : Int32) : Int32 {
-		#if neko
-		if(compare(ofInt(0), v) > 0)
-			return (neg(v));
-		else
-			return v;
-		#else
 		return Std.int(Math.abs(v));
-		#end
 	}
 
 	/**
 	 * Returns a + b
 	 */
 	public static inline function add(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__add(a, b) #else a + b #end;
+		return a + b;
 	}
 
 	/**
@@ -119,7 +105,7 @@ class I32 {
 	 * Returns a & b
 	 */
 	public static inline function and(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__and(a, b) #else a & b #end;
+		return a & b;
 	}
 
 	/**
@@ -151,21 +137,21 @@ class I32 {
 	 * Returns ~v
 	 */
 	public static inline function complement(v : Int32) : Int32 {
-		return #if neko untyped __i32__complement(a); #else ~v; #end
+		return ~v;
 	}
 
 	/**
 	 * Returns 0 if a == b, >0 if a > b, and <0 if a < b
 	 */
 	public static inline function compare(a : Int32, b : Int32) : Int {
-		return #if neko untyped __i32__compare(a, b); #else cast a - b; #end
+		return cast a - b;
 	}
 
 	/**
 	 * Returns integer division a / b
 	 */
 	public static inline function div(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__div(a, b) #else Std.int(a / b) #end;
+		return Std.int(a / b);
 	}
 
 	/**
@@ -235,42 +221,42 @@ class I32 {
 	 *	Returns true if a == b
 	**/
 	public static inline function eq(a : Int32, b : Int32) : Bool {
-		return #if neko (compare(a, b) == 0) ? true : false; #else (a == b); #end
+		return (a == b);
 	}
 
 	/**
 	 *	Returns true if a > b
 	**/
 	public static inline function gt(a : Int32, b : Int32) {
-		return #if neko (compare(a, b) > 0) ? true : false; #else (a > b); #end
+		return (a > b);
 	}
 
 	/**
 	 *	Returns true if a >= b
 	**/
 	public static inline function gteq(a : Int32, b : Int32) {
-		return #if neko (compare(a, b) >= 0) ? true : false; #else (a >= b); #end
+		return (a >= b);
 	}
 
 	/**
 	 *	Returns true if a < b
 	**/
 	public static inline function lt(a : Int32, b : Int32) : Bool {
-		return #if neko (compare(a, b) < 0) ? true : false; #else (a < b); #end
+		return (a < b);
 	}
 
 	/**
 	 *	Returns true if a <= b
 	**/
 	public static inline function lteq(a : Int32, b : Int32) {
-		return #if neko (compare(a, b) <= 0) ? true : false; #else (a <= b); #end
+		return (a <= b);
 	}
 
 	/**
 	 *  Create an Int32 from a high word and a low word
 	 */
 	public static inline function make(high : Int, low : Int) : Int32 {
-		return #if neko add(shl(cast high, 16), cast low); #else (high << 16) + low; #end
+		return (high << 16) + low;
 	}
 
 	#if neko
@@ -299,48 +285,42 @@ class I32 {
 	 * Makes a color from an alpha value (0-255) and a 3 byte rgb value
 	 */
 	public static function makeColor(alpha : Int, rgb : Int) : Int32 {
-		#if neko
-		var a = shl(ofInt(alpha), 24);
-		var c = and(ofInt(rgb), ofInt(0xFFFFFF));
-		return or(a, c);
-		#else
 		return alpha << 24 | (rgb & 0xFFFFFF);
-		#end
 	}
 
 	/**
 	 * Returns a % b
 	 */
 	public static inline function mod(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__mod(a, b) #else a % b #end;
+		return a % b;
 	}
 
 	/**
 	 * Returns a * b
 	 */
 	public static inline function mul(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__mul(a, b) #else a * b #end;
+		return a * b;
 	}
 
 	/**
 	 * Negates v, returns -v
 	 */
 	public static inline function neg(v : Int32) : Int32 {
-		return #if neko untyped __i32__neg(v) #else - v #end;
+		return -v;
 	}
 
 	/**
 	 * Creates an Int32 from a haxe Int type
 	 */
 	public static inline function ofInt(v : Int) : Int32 {
-		return #if neko untyped __i32__new(v) #else v #end;
+		return v;
 	}
 
 	/**
 	 * Returns a | b
 	 */
 	public static inline function or(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__or(a, b) #else a | b #end;
+		return a | b;
 	}
 
 	/**
@@ -382,28 +362,28 @@ class I32 {
 	 * to extract an RGB value from ARGB color
 	 */
 	public static inline function rgbFromArgb(v : Int32) : Int {
-		return #if neko toInt(and(v, ofInt(0xFFFFFF))); #else v & 0xFFFFFF; #end
+		return v & 0xFFFFFF;
 	}
 
 	/**
 	 * Returns a - b
 	 */
 	public static inline function sub(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__sub(a, b) #else a - b #end;
+		return a - b;
 	}
 
 	/**
 	 * Returns v << bits
 	 */
 	public static inline function shl(v : Int32, bits : Int) : Int32 {
-		return #if neko untyped __i32__shl(v, bits) #else v << bits #end;
+		return v << bits;
 	}
 
 	/**
 	 * Returns v >> bits (signed shift)
 	 */
 	public static inline function shr(v : Int32, bits : Int) : Int32 {
-		return #if neko untyped __i32__shr(v, bits) #else v >> bits #end;
+		return v >> bits;
 	}
 
 	/**
@@ -421,13 +401,7 @@ class I32 {
 	 * is no possibility of overflow
 	 */
 	public static inline function toFloat(v : Int32) : Float {
-		#if neko
-		var high : Int = toInt(ushr(v, 16));
-		var low : Int = toInt(and(v, ofInt(0xFFFF)));
-		return (high * 0x10000) + (low * 1.0);
-		#else
 		return v * 1.0;
-		#end
 	}
 
 	/**
@@ -436,16 +410,7 @@ class I32 {
 	 * @throws String Overflow in neko only if 32 bits are required.
 	**/
 	public static inline function toInt(v : Int32) : Int {
-		return #if neko
-			try
-				untyped __i32__to_int(v)
-			catch(e:Dynamic)
-				throw "Overflow " + v;
-		#elseif flash9
-			cast v;
-		#else
-			((cast v) & 0xFFFFFFFF);
-		#end
+		return ((cast v) & 0xFFFFFFFF);
 	}
 
 	/**
@@ -512,14 +477,14 @@ class I32 {
 	 * Returns v >>> bits (unsigned shift)
 	 */
 	public static inline function ushr(v : Int32, bits : Int) : Int32 {
-		return #if neko untyped __i32__ushr(v, bits) #else v >>> bits #end;
+		return v >>> bits;
 	}
 
 	/**
 	 * Returns a ^ b
 	 */
 	public static inline function xor(a : Int32, b : Int32) : Int32 {
-		return #if neko untyped __i32__xor(a, b) #else a ^ b #end;
+		return a ^ b;
 	}
 
 	public static function intToHex(j : Int) {
@@ -548,28 +513,4 @@ class I32 {
 		}
 		return sb.toString();
 	}
-
-	#if neko
-	static function __init__() untyped {
-		__i32__new = chx.Lib.load("std", "int32_new", 1);
-		__i32__to_int = chx.Lib.load("std", "int32_to_int", 1);
-		__i32__add = chx.Lib.load("std", "int32_add", 2);
-		__i32__sub = chx.Lib.load("std", "int32_sub", 2);
-		__i32__mul = chx.Lib.load("std", "int32_mul", 2);
-		__i32__div = chx.Lib.load("std", "int32_div", 2);
-		__i32__mod = chx.Lib.load("std", "int32_mod", 2);
-		__i32__shl = chx.Lib.load("std", "int32_shl", 2);
-		__i32__shr = chx.Lib.load("std", "int32_shr", 2);
-		__i32__ushr = chx.Lib.load("std", "int32_ushr", 2);
-		__i32__and = chx.Lib.load("std", "int32_and", 2);
-		__i32__or = chx.Lib.load("std", "int32_or", 2);
-		__i32__xor = chx.Lib.load("std", "int32_xor", 2);
-		__i32__neg = chx.Lib.load("std", "int32_neg", 1);
-		__i32__complement = chx.Lib.load("std", "int32_complement", 1);
-		__i32__compare = chx.Lib.load("std", "int32_compare", 2);
-		ZERO = untyped __i32__new(0);
-		ONE = untyped __i32__new(1);
-		BYTE_MASK = untyped __i32__new(0xFF);
-	}
-	#end
 }
