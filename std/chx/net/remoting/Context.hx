@@ -26,10 +26,10 @@ package chx.net.remoting;
 	Allows communication between platforms. This is a shared API that can be called on the connection at the client code.
  */
 class Context {
-	var objects : haxe.ds.StringMap<{obj : Dynamic, rec : Bool}>;
+	var objects : chx.ds.StringMap<{obj : Dynamic, rec : Bool}>;
 
 	public function new() {
-		objects = new haxe.ds.StringMap();
+		objects = new chx.ds.StringMap();
 	}
 
 	public function addObject(name : String, obj : {}, ?recursive) {

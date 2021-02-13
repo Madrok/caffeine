@@ -87,7 +87,7 @@ class Sys {
 
 	public static function environment() : Map<String, String> {
 		var env = sys_env();
-		var h = new haxe.ds.StringMap();
+		var h = new chx.ds.StringMap();
 		for (i in 0...env.length >> 1) {
 			var p = i << 1;
 			h.set(makePath(env[p]), makePath(env[p + 1]));

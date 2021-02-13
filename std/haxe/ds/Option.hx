@@ -22,13 +22,4 @@
 
 package haxe.ds;
 
-/**
-	An Option is a wrapper type which can either have a value (Some) or not a
-	value (None).
-
-	@see https://haxe.org/manual/std-Option.html
-**/
-enum Option<T> {
-	Some(v:T);
-	None;
-}
+typedef Option<T> = chx.ds.Option<T>;

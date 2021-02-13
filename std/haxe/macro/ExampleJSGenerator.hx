@@ -22,41 +22,41 @@
 
 package haxe.macro;
 
-import haxe.macro.Type;
 import haxe.macro.Expr;
+import haxe.macro.Type;
 
 using Lambda;
 
 class ExampleJSGenerator {
-	var api:JSGenApi;
-	var buf:StringBuf;
-	var inits:List<TypedExpr>;
-	var statics:List<{c:ClassType, f:ClassField}>;
-	var packages:haxe.ds.StringMap<Bool>;
-	var forbidden:haxe.ds.StringMap<Bool>;
+	var api : JSGenApi;
+	var buf : StringBuf;
+	var inits : List<TypedExpr>;
+	var statics : List<{c : ClassType, f : ClassField}>;
+	var packages : chx.ds.StringMap<Bool>;
+	var forbidden : chx.ds.StringMap<Bool>;
 
 	public function new(api) {
 		this.api = api;
 		buf = new StringBuf();
 		inits = new List();
 		statics = new List();
-		packages = new haxe.ds.StringMap();
-		forbidden = new haxe.ds.StringMap();
+		packages = new chx.ds.StringMap();
+		forbidden = new chx.ds.StringMap();
 		for (x in ["prototype", "__proto__", "constructor"])
 			forbidden.set(x, true);
 		api.setTypeAccessor(getType);
 	}
 
-	function getType(t:Type) {
-		return switch (t) {
-			case TInst(c, _): getPath(c.get());
-			case TEnum(e, _): getPath(e.get());
-			case TAbstract(a, _): getPath(a.get());
-			default: throw "assert";
+	function getType(t : Type) {
+		return switch(t) {
+			case TInst(c, _):getPath(c.get());
+			case TEnum(e, _):getPath(e.get());
+			case TAbstract(a, _):getPath(a.get());
+			default:throw "assert";
 		};
 	}
 
-	inline function print(str:String) {
+	inline function print(str : String) {
 		buf.add(str);
 	}
 
@@ -72,18 +72,18 @@ class ExampleJSGenerator {
 		return api.isKeyword(p) ? '["' + p + '"]' : "." + p;
 	}
 
-	function genPackage(p:Array<String>) {
+	function genPackage(p : Array<String>) {
 		var full = null;
 		for (x in p) {
 			var prev = full;
-			if (full == null)
+			if(full == null)
 				full = x
 			else
 				full += "." + x;
-			if (packages.exists(full))
+			if(packages.exists(full))
 				continue;
 			packages.set(full, true);
-			if (prev == null)
+			if(prev == null)
 				print('if(typeof $x==\'undefined\') $x = {}');
 			else {
 				var p = prev + field(x);
@@ -93,21 +93,21 @@ class ExampleJSGenerator {
 		}
 	}
 
-	function getPath(t:BaseType) {
+	function getPath(t : BaseType) {
 		return (t.pack.length == 0) ? t.name : t.pack.join(".") + "." + t.name;
 	}
 
-	function checkFieldName(c:ClassType, f:ClassField) {
-		if (forbidden.exists(f.name))
+	function checkFieldName(c : ClassType, f : ClassField) {
+		if(forbidden.exists(f.name))
 			Context.error("The field " + f.name + " is not allowed in JS", c.pos);
 	}
 
-	function genClassField(c:ClassType, p:String, f:ClassField) {
+	function genClassField(c : ClassType, p : String, f : ClassField) {
 		checkFieldName(c, f);
 		var field = field(f.name);
 		print('$p.prototype$field = ');
 		var e = f.expr();
-		if (e == null)
+		if(e == null)
 			print("null");
 		else {
 			genExpr(e);
@@ -115,37 +115,41 @@ class ExampleJSGenerator {
 		newline();
 	}
 
-	function genStaticField(c:ClassType, p:String, f:ClassField) {
+	function genStaticField(c : ClassType, p : String, f : ClassField) {
 		checkFieldName(c, f);
 		var field = field(f.name);
 		var e = f.expr();
-		if (e == null) {
+		if(e == null) {
 			print('$p$field = null');
 			newline();
-		} else
-			switch (f.kind) {
+		}
+		else
+			switch(f.kind) {
 				case FMethod(_):
 					print('$p$field = ');
 					genExpr(e);
 					newline();
 				default:
-					statics.add({c: c, f: f});
+					statics.add({c : c, f : f});
 			}
 	}
 
-	function genClass(c:ClassType) {
+	function genClass(c : ClassType) {
 		genPackage(c.pack);
 		api.setCurrentClass(c);
 		var p = getPath(c);
 		print('$p = $$hxClasses[\'$p\'] = ');
-		if (c.constructor != null)
-			genExpr(c.constructor.get().expr());
+		if(c.constructor != null)
+			genExpr(c.constructor
+				.get()
+				.expr()
+			);
 		else
 			print("function() { }");
 		newline();
 		print('$p.__name__ = "$p"');
 		newline();
-		if (c.superClass != null) {
+		if(c.superClass != null) {
 			var psup = getPath(c.superClass.t.get());
 			print('$p.__super__ = $psup');
 			newline();
@@ -155,9 +159,9 @@ class ExampleJSGenerator {
 		for (f in c.statics.get())
 			genStaticField(c, p, f);
 		for (f in c.fields.get()) {
-			switch (f.kind) {
+			switch(f.kind) {
 				case FVar(r, _):
-					if (r == AccResolve)
+					if(r == AccResolve)
 						continue;
 				default:
 			}
@@ -165,27 +169,35 @@ class ExampleJSGenerator {
 		}
 		print('$p.prototype.__class__ = $p');
 		newline();
-		if (c.interfaces.length > 0) {
+		if(c.interfaces.length > 0) {
 			var me = this;
-			var inter = c.interfaces.map(function(i) return me.getPath(i.t.get())).join(",");
+			var inter = c.interfaces
+				.map(function(i)
+					return me.getPath(i.t.get()))
+				.join(",");
 			print('$p.__interfaces__ = [$inter]');
 			newline();
 		}
 	}
 
-	function genEnum(e:EnumType) {
+	function genEnum(e : EnumType) {
 		genPackage(e.pack);
 		var p = getPath(e);
-		var constructs = e.names.map(api.quoteString).join(",");
+		var constructs = e.names
+			.map(api.quoteString)
+			.join(",");
 		print('$p = $$hxClasses[\'$p\'] = { __ename__ : \'$p\', __constructs__ : [$constructs] }');
 		newline();
 		for (c in e.constructs.keys()) {
 			var c = e.constructs.get(c);
 			var f = field(c.name);
 			print('$p$f = ');
-			switch (c.type) {
+			switch(c.type) {
 				case TFun(args, _):
-					var sargs = args.map(function(a) return a.name).join(",");
+					var sargs = args
+						.map(function(a)
+							return a.name)
+						.join(",");
 					print('function($sargs) { var $$x = ["${c.name}",${c.index},$sargs]; $$x.__enum__ = $p; $$x.toString = $$estr; return $$x; }');
 				default:
 					print("[" + api.quoteString(c.name) + "," + c.index + "]");
@@ -197,14 +209,14 @@ class ExampleJSGenerator {
 			newline();
 		}
 		var meta = api.buildMetaData(e);
-		if (meta != null) {
+		if(meta != null) {
 			print('$p.__meta__ = ');
 			genExpr(meta);
 			newline();
 		}
 	}
 
-	function genStaticValue(c:ClassType, cf:ClassField) {
+	function genStaticValue(c : ClassType, cf : ClassField) {
 		var p = getPath(c);
 		var f = field(cf.name);
 		print('$p$f = ');
@@ -212,17 +224,17 @@ class ExampleJSGenerator {
 		newline();
 	}
 
-	function genType(t:Type) {
-		switch (t) {
+	function genType(t : Type) {
+		switch(t) {
 			case TInst(c, _):
 				var c = c.get();
-				if (c.init != null)
+				if(c.init != null)
 					inits.add(c.init);
-				if (!c.isExtern)
+				if(!c.isExtern)
 					genClass(c);
 			case TEnum(r, _):
 				var e = r.get();
-				if (!e.isExtern)
+				if(!e.isExtern)
 					genEnum(e);
 			default:
 		}
@@ -243,16 +255,19 @@ class ExampleJSGenerator {
 			genStaticValue(s.c, s.f);
 			newline();
 		}
-		if (api.main != null) {
+		if(api.main != null) {
 			genExpr(api.main);
 			newline();
 		}
 		sys.io.File.saveContent(api.outputFile, buf.toString());
 	}
 
-	#if (macro || display)
+	#if( macro || display )
 	public static function use() {
-		Compiler.setCustomJSGenerator(function(api) new ExampleJSGenerator(api).generate());
+		Compiler.setCustomJSGenerator(function(api)
+			new ExampleJSGenerator(api)
+			.generate()
+		);
 	}
 	#end
 }

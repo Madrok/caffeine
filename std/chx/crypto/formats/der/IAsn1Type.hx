@@ -28,17 +28,17 @@
 /*
  * Derived from AS3 implementation Copyright (c) 2007 Henri Torgemane
  */
+package chx.crypto.formats.der;
 
-package chx.formats.der;
+import chx.io.Bytes;
 
 /**
  * IAsn1Type
  */
-interface IAsn1Type
-{
-	//var length(default,null) : Int;
-	function getType():Int;
-	//function getLength():Int;
+interface IAsn1Type {
+	// var length(default,null) : Int;
+	function getType() : Int;
+	// function getLength():Int;
 	function toDER() : Bytes;
 	function toString() : String;
 }

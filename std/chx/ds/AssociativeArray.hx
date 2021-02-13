@@ -27,7 +27,7 @@
 
 package chx.collections;
 
-import haxe.ds.StringMap;
+import chx.ds.StringMap;
 #if debug
 import chx.io.Bytes;
 import chx.lang.FatalException;

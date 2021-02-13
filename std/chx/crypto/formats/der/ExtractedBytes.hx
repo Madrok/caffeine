@@ -35,23 +35,23 @@
  */
 package chx.formats.der;
 
-class ExtractedBytes implements IAsn1Type
-{
-	private var buf:Bytes;
+import chx.io.Bytes;
 
-	public function new(bytes:Bytes) {
+class ExtractedBytes implements IAsn1Type {
+	private var buf : Bytes;
+
+	public function new(bytes : Bytes) {
 		setBytes(bytes);
 	}
 
-	public function getType():Int
-	{
+	public function getType() : Int {
 		return -1;
 	}
 
 	/**
 	 * Copies the supplied bytes
-	 **/
-	public function setBytes(b:Bytes):Void {
+	**/
+	public function setBytes(b : Bytes) : Void {
 		if(b == null) {
 			buf = Bytes.alloc(2);
 			buf.set(0, 5); // BER NULL type
@@ -61,11 +61,11 @@ class ExtractedBytes implements IAsn1Type
 			buf = b.sub(0, b.length);
 	}
 
-	public function toString():String {
+	public function toString() : String {
 		return buf.toHex(" ");
 	}
 
-	public function toDER():Bytes {
+	public function toDER() : Bytes {
 		return buf;
 	}
 }

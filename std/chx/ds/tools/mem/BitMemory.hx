@@ -21,8 +21,8 @@ package chx.ds.tools.mem;
 
 import ds.tools.Assert.assert;
 #if !alchemy
+import chx.ds.Vector;
 import ds.tools.MathTools;
-import haxe.ds.Vector;
 #end
 
 #if( alchemy && !flash )

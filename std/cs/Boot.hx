@@ -22,27 +22,27 @@
 
 package cs;
 
+import Reflect;
+import chx.ds.StringMap;
+import cs.StdTypes;
 import cs.internal.FieldLookup;
 import cs.internal.Function;
 import cs.internal.HxObject;
 import cs.internal.Runtime;
+import cs.internal.StringExt;
 #if !erase_generics
 import cs.internal.Null;
 #end
-import cs.internal.StringExt;
 #if unsafe
 import cs.internal.BoxedPointer;
 #end
-import cs.StdTypes;
-import haxe.ds.StringMap;
-import Reflect;
 
 @:dox(hide)
 class Boot {
-	@:keep public static function init():Void {
+	@:keep public static function init() : Void {
 		#if std_encoding_utf8
-			cs.system.Console.InputEncoding = new cs.system.text.UTF8Encoding();
-			cs.system.Console.OutputEncoding = new cs.system.text.UTF8Encoding();
+		cs.system.Console.InputEncoding = new cs.system.text.UTF8Encoding();
+		cs.system.Console.OutputEncoding = new cs.system.text.UTF8Encoding();
 		#end
 		cs.Lib.applyCultureChanges();
 	}

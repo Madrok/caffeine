@@ -23,33 +23,33 @@
 package sys.thread;
 
 abstract Thread(HxThread) from HxThread {
-	public var events(get,never):EventLoop;
+	public var events(get, never) : EventLoop;
 
-	public static inline function current():Thread {
+	public static inline function current() : Thread {
 		return HxThread.current();
 	}
 
-	public static inline function create(callb:Void->Void):Thread {
+	public static inline function create(callb : Void->Void) : Thread {
 		return HxThread.create(callb, false);
 	}
 
-	public static inline function runWithEventLoop(job:()->Void):Void {
+	public static inline function runWithEventLoop(job : ()->Void) : Void {
 		HxThread.runWithEventLoop(job);
 	}
 
-	public static inline function createWithEventLoop(job:()->Void):Thread {
+	public static inline function createWithEventLoop(job : ()->Void) : Thread {
 		return HxThread.create(job, true);
 	}
 
-	public static inline function readMessage(block:Bool):Dynamic {
+	public static inline function readMessage(block : Bool) : Dynamic {
 		return HxThread.readMessage(block);
 	}
 
-	public inline function sendMessage(msg:Dynamic):Void {
+	public inline function sendMessage(msg : Dynamic) : Void {
 		this.sendMessage(msg);
 	}
 
-	function get_events():EventLoop {
+	function get_events() : EventLoop {
 		if(this.events == null)
 			throw new NoEventLoopException();
 		return this.events;
@@ -57,43 +57,48 @@ abstract Thread(HxThread) from HxThread {
 
 	@:keep
 	static function initEventLoop() {
-		@:privateAccess HxThread.current().events = new EventLoop();
+		@:privateAccess HxThread
+		.current()
+		.events = new EventLoop();
 	}
 
 	@:keep
 	static public function processEvents() {
-		HxThread.current().events.loop();
+		HxThread
+			.current()
+			.events.loop();
 	}
 }
 
 private class HxThread {
-	public var events(default,null):Null<EventLoop>;
+	public var events(default, null) : Null<EventLoop>;
 
-	final nativeThread:NativeThread;
+	final nativeThread : NativeThread;
 	final messages = new Deque<Dynamic>();
 
-	static var threads = new haxe.ds.ObjectMap<NativeThread, HxThread>();
-	static var threadsMutex: Mutex = new Mutex();
-	static var mainThread: HxThread;
+	static var threads = new chx.ds.ObjectMap<NativeThread, HxThread>();
+	static var threadsMutex : Mutex = new Mutex();
+	static var mainThread : HxThread;
 
-	private function new(t:NativeThread) {
+	private function new(t : NativeThread) {
 		nativeThread = t;
 	}
 
-	public function sendMessage(msg:Dynamic):Void {
+	public function sendMessage(msg : Dynamic) : Void {
 		messages.add(msg);
 	}
 
-	public static function current():HxThread {
+	public static function current() : HxThread {
 		threadsMutex.acquire();
 		var ct = PyThreadingAPI.current_thread();
-		if (ct == PyThreadingAPI.main_thread()) {
-			if (mainThread == null) mainThread = new HxThread(ct);
+		if(ct == PyThreadingAPI.main_thread()) {
+			if(mainThread == null)
+				mainThread = new HxThread(ct);
 			threadsMutex.release();
 			return mainThread;
 		}
 		// If the current thread was not created via the haxe API, it can still be wrapped
-		if (!threads.exists(ct)) {
+		if(!threads.exists(ct)) {
 			threads.set(ct, new HxThread(ct));
 		}
 		var t = threads.get(ct);
@@ -101,16 +106,17 @@ private class HxThread {
 		return t;
 	}
 
-	public static function create(callb:Void->Void, withEventLoop:Bool):HxThread {
-		var nt:NativeThread = null;
-		var t:HxThread = null;
+	public static function create(callb : Void->Void, withEventLoop : Bool) : HxThread {
+		var nt : NativeThread = null;
+		var t : HxThread = null;
 		// Wrap the callback so it will clear the thread reference once the thread is finished
 		var wrappedCallB = () -> {
 			try {
 				callb();
 				if(withEventLoop)
 					t.events.loop();
-			} catch(e) {
+			}
+			catch(e) {
 				dropThread(nt);
 				throw e;
 			}
@@ -127,7 +133,7 @@ private class HxThread {
 		return t;
 	}
 
-	public static function runWithEventLoop(job:()->Void):Void {
+	public static function runWithEventLoop(job : ()->Void) : Void {
 		var thread = current();
 		if(thread.events == null) {
 			thread.events = new EventLoop();
@@ -135,36 +141,39 @@ private class HxThread {
 				job();
 				thread.events.loop();
 				thread.events = null;
-			} catch(e) {
+			}
+			catch(e) {
 				thread.events = null;
 				throw e;
 			}
-		} else {
+		}
+		else {
 			job();
 		}
 	}
 
-	static inline function dropThread(nt:NativeThread) {
+	static inline function dropThread(nt : NativeThread) {
 		threadsMutex.acquire();
 		threads.remove(nt);
 		threadsMutex.release();
 	}
 
-	public static function readMessage(block:Bool):Dynamic {
-		return current().messages.pop(block);
+	public static function readMessage(block : Bool) : Dynamic {
+		return current()
+			.messages.pop(block);
 	}
 }
 
 @:pythonImport("threading", "Thread")
 @:native("Thread")
 private extern class NativeThread {
-	function new(group:Dynamic, target:Void->Void);
-	function start():Void;
+	function new(group : Dynamic, target : Void->Void);
+	function start() : Void;
 }
 
 @:pythonImport("threading")
 @:native("threading")
 private extern class PyThreadingAPI {
-	static function current_thread():NativeThread;
-	static function main_thread():NativeThread;
+	static function current_thread() : NativeThread;
+	static function main_thread() : NativeThread;
 }

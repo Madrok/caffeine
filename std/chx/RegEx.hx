@@ -26,10 +26,10 @@
 
 package chx;
 
+import chx.ds.IntMap;
 import chx.lang.Exception;
 import chx.lang.FatalException;
 import chx.lang.FormatException;
-import haxe.ds.IntMap;
 
 private typedef MatchResult = {
 	var ok : Bool;
@@ -326,8 +326,7 @@ class RegEx {
 		}
 		switch(type) {
 			// look behinds are passed the substring to current position.
-			case LookBehind
-				, NegLookBehind:
+			case LookBehind, NegLookBehind:
 				instanceRules.push(EndLine);
 			default:
 		}
@@ -405,8 +404,7 @@ class RegEx {
 			pos : es.index,
 			len : es.matches
 				.get(0)
-				.length
-			,
+				.length,
 		};
 	}
 
@@ -739,7 +737,7 @@ class RegEx {
 		var sm = new IntMap<String>();
 		for (i in es.matches.keys())
 			sm.set(i, new String(es.matches.get(i)));
-		var pms = parent != this ?parent.saveMatchState():null;
+		var pms = parent != this ? parent.saveMatchState() : null;
 
 		return {
 			matches : sm,
@@ -863,12 +861,9 @@ class RegEx {
 				if(multiline) {
 					if(pos != 0) {
 						switch(input.charCodeAt(pos - 1)) {
-							case LF
-								, CR
-								, NEL:
+							case LF, CR, NEL:
 							#if SUPPORT_UTF8
-							case UTF_LS
-								, UTF_PS:
+							case UTF_LS, UTF_PS:
 							#end
 							default:
 								return NOMATCH();
@@ -913,13 +908,9 @@ class RegEx {
 				else {
 					switch(input.charCodeAt(pos)) {
 						// 				case LF,CR,NEL: // PCRE version
-						case LF
-							, VT
-							, FF
-							, NEL: // Perl version
+						case LF, VT, FF, NEL: // Perl version
 						#if SUPPORT_UTF8
-						case UTF_LS
-							, UTF_PS:
+						case UTF_LS, UTF_PS:
 						#end
 						default:
 							return NOMATCH();
@@ -1095,8 +1086,7 @@ class RegEx {
 				var econd = false;
 				var eextra = 0;
 				switch(er.type) {
-					case Normal
-						, NoBackref:
+					case Normal, NoBackref:
 						var res = er.exec(input, null, pos);
 						ok = res != null;
 						if(ok) {
@@ -1117,16 +1107,14 @@ class RegEx {
 						throw new FatalException("internal error");
 					case Comment:
 						ok = true;
-					case LookAhead
-						, NegLookAhead:
+					case LookAhead, NegLookAhead:
 						var res = er.exec(input, null, pos);
 						ok = res != null;
 						if(er.type == NegLookAhead)
 							ok = !ok;
 						econd = er.es.conditional;
 						len = 0;
-					case LookBehind
-						, NegLookBehind:
+					case LookBehind, NegLookBehind:
 						er.lastIndex = 0;
 						#if DEBUG_MATCH_V
 						trace("Running " + er.type + " with " + input.substr(0, pos));
@@ -1188,8 +1176,7 @@ class RegEx {
 				multiline = false;
 			case ModDotAllOff:
 				dotall = false;
-			case ModAllowWhite
-				, ModAllowWhiteOff: // no effect in matching
+			case ModAllowWhite, ModAllowWhiteOff: // no effect in matching
 		}
 		return MATCH(1);
 	}
@@ -1312,13 +1299,9 @@ class RegEx {
 					throw unexpected("quantifier");
 				else {
 					switch(parsedRules[parsedRules.length - 1]) {
-						case MatchExact(_)
-							, MatchCharCode(_)
-							, MatchAny:
-						case MatchAnyOf(_)
-							, MatchNoneOf(_):
-						case MatchLineBreak
-							, MatchWordBoundary:
+						case MatchExact(_), MatchCharCode(_), MatchAny:
+						case MatchAnyOf(_), MatchNoneOf(_):
+						case MatchLineBreak, MatchWordBoundary:
 						case Repeat(_, _, _, _, _):
 						case Capture(_):
 						case BackRef(_):
@@ -1669,12 +1652,8 @@ class RegEx {
 
 							var rewind = true;
 							switch(er.type) {
-								case Normal
-									, NoBackref
-									, LookAhead
-									, NegLookAhead
-									, LookBehind
-									, NegLookBehind:
+								case Normal, NoBackref, LookAhead, NegLookAhead, LookBehind,
+									NegLookBehind:
 									parsedRules.push(Capture(er));
 									if(er.type == Normal)
 										rewind = false;
@@ -1751,8 +1730,7 @@ class RegEx {
 							var extras = new Array<Int>();
 							while(true) {
 								switch(peek()) {
-									case "-".code
-										, "]".code:
+									case "-".code, "]".code:
 										var n = tok();
 										var have = false;
 										for (n2 in extras) {
@@ -1837,8 +1815,7 @@ class RegEx {
 										expectRangeEnd = true;
 										parsedRules.push(RangeMarker);
 										continue;
-									case MatchAnyOf(_)
-										, MatchNoneOf(_):
+									case MatchAnyOf(_), MatchNoneOf(_):
 										parsedRules.push(MatchCharCode(0x2D));
 									default:
 										throw new FatalException("internal error");
@@ -1867,8 +1844,7 @@ class RegEx {
 											catch(e:Dynamic) {
 												throw error(Std.string(e));
 											}
-										case "<".code
-											, "'".code:
+										case "<".code, "'".code:
 											var endMarker : Null<Int> = c == "<".code ? ">".code : "'".code;
 											var name = consumeAlNum(true, true);
 											c = tok();
@@ -1889,11 +1865,8 @@ class RegEx {
 									type = NoBackref;
 								case ">".code: // no backtracking. Will not rewind on repeats
 									noBacktrack = true;
-								case "-".code
-									, "i".code
-									, "m".code
-									, "s".code
-									, "x".code: // PatMatchModifier or normal with different options
+								case "-".code, "i".code, "m".code, "s".code,
+									"x".code: // PatMatchModifier or normal with different options
 									var off = false;
 									var expectType : Bool = c == "-".code;
 									while(true) {
@@ -2070,7 +2043,8 @@ class RegEx {
 	}
 
 	static function createRepeat(rule : ERegMatch, min : Null<Int>, max : Null<Int>,
-			qualifier : Null<Int>) : {validQualifier : Bool, rule : ERegMatch} {
+			qualifier : Null<Int>) : {validQualifier : Bool, rule : ERegMatch
+	} {
 		var notGreedy = false;
 		var possessive = false;
 		var isValid = false;
@@ -2263,32 +2237,19 @@ class RegEx {
 						break;
 					}
 				#if debug
-				case BeginString
-					, BeginLine
-					, OrMarker
-					, RangeMarker:
+				case BeginString, BeginLine, OrMarker, RangeMarker:
 					throw new FatalException("internal error " + rules[x]);
-				case EndLine
-					, EndString
-					, EndData:
+				case EndLine, EndString, EndData:
 					throw new FatalException("internal error " + rules[x]);
-				case Repeat(_, _, _, _, _)
-					, Capture(_):
+				case Repeat(_, _, _, _, _), Capture(_):
 					throw new FatalException("internal error " + rules[x]);
-				case ModCaseInsensitive
-					, ModMultiline
-					, ModDotAll:
+				case ModCaseInsensitive, ModMultiline, ModDotAll:
 					throw new FatalException("internal error " + rules[x]);
-				case ModCaseInsensitiveOff
-					, ModMultilineOff
-					, ModDotAllOff:
+				case ModCaseInsensitiveOff, ModMultilineOff, ModDotAllOff:
 					throw new FatalException("internal error " + rules[x]);
-				case ModAllowWhite
-					, ModAllowWhiteOff:
+				case ModAllowWhite, ModAllowWhiteOff:
 					throw new FatalException("internal error " + rules[x]);
-				case MatchWordBoundary
-					, NotMatchWordBoundary
-					, BackRef(_):
+				case MatchWordBoundary, NotMatchWordBoundary, BackRef(_):
 					throw new FatalException("internal error");
 				case MatchLineBreak:
 					throw new FatalException("internal error");
@@ -2368,9 +2329,7 @@ class RegEx {
 		if(!isRoot()) {
 			var id : Int = 0;
 			switch(rv) {
-				case RepeatFrame(iid, _, _, _)
-					, ChildFrame(iid, _, _, _)
-					, OrFrame(iid, _):
+				case RepeatFrame(iid, _, _, _), ChildFrame(iid, _, _, _), OrFrame(iid, _):
 					id = iid;
 			}
 			parent.removeFrame(id);
@@ -2386,9 +2345,7 @@ class RegEx {
 		while(i >= 0) {
 			var found = false;
 			switch(stack[i]) {
-				case RepeatFrame(iid, _, _, _)
-					, ChildFrame(iid, _, _, _)
-					, OrFrame(iid, _):
+				case RepeatFrame(iid, _, _, _), ChildFrame(iid, _, _, _), OrFrame(iid, _):
 					if(iid == id)
 						found = true;
 			}

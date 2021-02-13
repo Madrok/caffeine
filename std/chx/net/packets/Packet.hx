@@ -27,11 +27,11 @@
 
 package chx.net.packets;
 
+import chx.ds.IntMap;
 import chx.io.Bytes;
 import chx.io.BytesInput;
 import chx.io.BytesOutput;
 import chx.lang.FatalException;
-import haxe.ds.IntMap;
 
 typedef PacketReadResult = {
 	/**

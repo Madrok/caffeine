@@ -19,7 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-typedef Map<K, V> = haxe.ds.Map<K, V>;
+typedef Map<K, V> = chx.ds.Map<K, V>;
 
 @:dox(hide)
 @:deprecated

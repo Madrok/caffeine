@@ -19,8 +19,8 @@
 
 package chx.ds.tools.mem;
 
+import chx.ds.Vector;
 import ds.tools.Assert.assert;
-import haxe.ds.Vector;
 #if !alchemy
 import ds.tools.MathTools;
 #end

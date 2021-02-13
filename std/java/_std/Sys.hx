@@ -28,7 +28,7 @@ using haxe.Int64;
 
 @:coreApi class Sys {
 	private static var _args : java.NativeArray<String>;
-	private static var _env : haxe.ds.StringMap<String>;
+	private static var _env : chx.ds.StringMap<String>;
 	private static var _sysName : String;
 
 	public static inline function print(v : Dynamic) : Void {
@@ -57,7 +57,7 @@ using haxe.Int64;
 	public static function environment() : Map<String, String> {
 		if(_env != null)
 			return _env;
-		var _env = _env = new haxe.ds.StringMap();
+		var _env = _env = new chx.ds.StringMap();
 		for (mv in java.lang.System
 			.getenv()
 			.entrySet()

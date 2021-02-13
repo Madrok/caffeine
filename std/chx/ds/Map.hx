@@ -1,82 +1,198 @@
 /*
-	Copyright (c) 2008-2019 Michael Baczynski, http://www.polygonal.de
-
-	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-	associated documentation files (the "Software"), to deal in the Software without restriction,
-	including without limitation the rights to use, copy, modify, merge, publish, distribute,
-	sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in all copies or
-	substantial portions of the Software.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-	NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
-	OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C)2005-2019 Haxe Foundation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 
 package chx.ds;
 
+import chx.ds.EnumValueMap;
+import chx.ds.HashMap;
+import chx.ds.IntMap;
+import chx.ds.ObjectMap;
+import chx.ds.StringMap;
+import chx.ds.WeakMap;
+import haxe.Constraints.IMap;
+
 /**
-	An object that maps keys to values
+	Map allows key to value mapping for arbitrary value types, and many key
+	types.
 
-	__This map allows duplicate keys.__
+	This is a multi-type abstract, it is instantiated as one of its
+	specialization types depending on its type parameters.
+
+	A Map can be instantiated without explicit type parameters. Type inference
+	will then determine the type parameters from the usage.
+
+	Maps can also be created with `[key1 => value1, key2 => value2]` syntax.
+
+	Map is an abstract type, it is not available at runtime.
+
+	@see https://haxe.org/manual/std-Map.html
 **/
-interface Map<K, T> extends Collection<T> {
+@:transitive
+@:multiType(@:followWithAbstracts K)
+abstract Map<K, V>(IMap<K, V>) {
 	/**
-		Returns true if this map contains a mapping for `val`.
-	**/
-	function has(val : T) : Bool;
+		Creates a new Map.
 
-	/**
-		Returns true if this map contains `key`.
-	**/
-	function hasKey(key : K) : Bool;
+		This becomes a constructor call to one of the specialization types in
+		the output. The rules for that are as follows:
 
-	/**
-		Returns the element that is mapped to `key` or a special value (see implementation) indicating that `key` does not exist.
-	**/
-	function get(key : K) : T;
+		1. if `K` is a `String`, `chx.ds.StringMap` is used
+		2. if `K` is an `Int`, `chx.ds.IntMap` is used
+		3. if `K` is an `EnumValue`, `chx.ds.EnumValueMap` is used
+		4. if `K` is any other class or structure, `chx.ds.ObjectMap` is used
+		5. if `K` is any other type, it causes a compile-time error
 
-	/**
-		Maps `val` to `key`.
-
-		Multiple keys are stored in a First-In-First-Out (FIFO) order - there is no way to access keys which were added after the first `key`,
-		other than removing the first `key` which unveils the second `key`.
-		@return true if `key` was added for the first time, false if this `key` is not unique.
+		(Cpp) Map does not use weak keys on `ObjectMap` by default.
 	**/
-	function set(key : K, val : T) : Bool;
+	public function new();
 
 	/**
-		Removes a {`key`,value} pair.
-		@return true if `key` was successfully removed, false if `key` does not exist.
+		Maps `key` to `value`.
+
+		If `key` already has a mapping, the previous value disappears.
+
+		If `key` is `null`, the result is unspecified.
 	**/
-	function unset(key : K) : Bool;
+	public inline function set(key : K, value : V)
+		this.set(key, value);
 
 	/**
-		Remaps the first occurrence of `key` to `val`.
+		Returns the current mapping of `key`.
 
-		This is faster than `this.unset(key)` followed by `this.set(key, val)`.
-		@return true if the remapping was successful, false if `key` does not exist.
+		If no such mapping exists, `null` is returned.
+
+		Note that a check like `map.get(key) == null` can hold for two reasons:
+
+		1. the map has no mapping for `key`
+		2. the map has a mapping with a value of `null`
+
+		If it is important to distinguish these cases, `exists()` should be
+		used.
+
+		If `key` is `null`, the result is unspecified.
 	**/
-	function remap(key : K, val : T) : Bool;
+	@:arrayAccess public inline function get(key : K)
+		return this.get(key);
 
 	/**
-		Returns a set view of the elements contained in this map.
+		Returns true if `key` has a mapping, false otherwise.
+
+		If `key` is `null`, the result is unspecified.
 	**/
-	function toValSet() : Set<T>;
+	public inline function exists(key : K)
+		return this.exists(key);
 
 	/**
-		Returns a set view of the keys contained in this map.
+		Removes the mapping of `key` and returns true if such a mapping existed,
+		false otherwise.
+
+		If `key` is `null`, the result is unspecified.
 	**/
-	function toKeySet() : Set<K>;
+	public inline function remove(key : K)
+		return this.remove(key);
 
 	/**
-		Creates and returns an iterator over all keys in this map.
+		Returns an Iterator over the keys of `this` Map.
 
-		@see http://haxe.org/ref/iterators
+		The order of keys is undefined.
 	**/
-	function keys() : Itr<K>;
+	public inline function keys() : Iterator<K> {
+		return this.keys();
+	}
+
+	/**
+		Returns an Iterator over the values of `this` Map.
+
+		The order of values is undefined.
+	**/
+	public inline function iterator() : Iterator<V> {
+		return this.iterator();
+	}
+
+	/**
+		Returns an Iterator over the keys and values of `this` Map.
+
+		The order of values is undefined.
+	**/
+	public inline function keyValueIterator() : KeyValueIterator<K, V> {
+		return this.keyValueIterator();
+	}
+
+	/**
+		Returns a shallow copy of `this` map.
+
+		The order of values is undefined.
+	**/
+	public inline function copy() : Map<K, V> {
+		return cast this.copy();
+	}
+
+	/**
+		Returns a String representation of `this` Map.
+
+		The exact representation depends on the platform and key-type.
+	**/
+	public inline function toString() : String {
+		return this.toString();
+	}
+
+	/**
+		Removes all keys from `this` Map.
+	**/
+	public inline function clear() : Void {
+		this.clear();
+	}
+
+	@:arrayAccess @:noCompletion public inline function arrayWrite(k : K, v : V) : V {
+		this.set(k, v);
+		return v;
+	}
+
+	@:to static inline function toStringMap<K : String, V>(t : IMap<K, V>) : StringMap<V> {
+		return new StringMap<V>();
+	}
+
+	@:to static inline function toIntMap<K : Int, V>(t : IMap<K, V>) : IntMap<V> {
+		return new IntMap<V>();
+	}
+
+	@:to static inline function toEnumValueMapMap<K : EnumValue, V>(t : IMap<K,
+		V>) : EnumValueMap<K, V> {
+		return new EnumValueMap<K, V>();
+	}
+
+	@:to static inline function toObjectMap<K : {}, V>(t : IMap<K, V>) : ObjectMap<K, V> {
+		return new ObjectMap<K, V>();
+	}
+
+	@:from static inline function fromStringMap<V>(map : StringMap<V>) : Map<String, V> {
+		return cast map;
+	}
+
+	@:from static inline function fromIntMap<V>(map : IntMap<V>) : Map<Int, V> {
+		return cast map;
+	}
+
+	@:from static inline function fromObjectMap<K : {}, V>(map : ObjectMap<K, V>) : Map<K, V> {
+		return cast map;
+	}
 }

@@ -19,4 +19,4 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-typedef List<T> = haxe.ds.List<T>;
+typedef List<T> = chx.ds.List<T>;

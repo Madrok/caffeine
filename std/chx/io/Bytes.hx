@@ -1,3 +1,3 @@
 package chx.io;
 
-typedef Bytes = haxe.io.Bytes;
+typedef Bytes = chx.ds.Bytes;

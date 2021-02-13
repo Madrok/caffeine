@@ -23,18 +23,18 @@
 package haxe.zip;
 
 enum Huffman {
-	Found(i:Int);
-	NeedBit(left:Huffman, right:Huffman);
-	NeedBits(n:Int, table:Array<Huffman>);
+	Found(i : Int);
+	NeedBit(left : Huffman, right : Huffman);
+	NeedBits(n : Int, table : Array<Huffman>);
 }
 
 class HuffTools {
 	public function new() {}
 
 	function treeDepth(t) {
-		return switch (t) {
-			case Found(_): 0;
-			case NeedBits(_, _): throw "assert";
+		return switch(t) {
+			case Found(_):0;
+			case NeedBits(_, _):throw "assert";
 			case NeedBit(a, b):
 				var da = treeDepth(a);
 				var db = treeDepth(b);
@@ -44,12 +44,12 @@ class HuffTools {
 
 	function treeCompress(t) {
 		var d = treeDepth(t);
-		if (d == 0)
+		if(d == 0)
 			return t;
-		if (d == 1)
-			return switch (t) {
-				case NeedBit(a, b): NeedBit(treeCompress(a), treeCompress(b));
-				default: throw "assert";
+		if(d == 1)
+			return switch(t) {
+				case NeedBit(a, b):NeedBit(treeCompress(a), treeCompress(b));
+				default:throw "assert";
 			}
 		var size = 1 << d;
 		var table = new Array();
@@ -60,23 +60,24 @@ class HuffTools {
 	}
 
 	function treeWalk(table, p, cd, d, t) {
-		switch (t) {
+		switch(t) {
 			case NeedBit(a, b):
-				if (d > 0) {
+				if(d > 0) {
 					treeWalk(table, p, cd + 1, d - 1, a);
 					treeWalk(table, p | (1 << cd), cd + 1, d - 1, b);
-				} else
+				}
+				else
 					table[p] = treeCompress(t);
 			default:
 				table[p] = treeCompress(t);
 		}
 	}
 
-	function treeMake(bits:haxe.ds.IntMap<Int>, maxbits:Int, v:Int, len:Int) {
-		if (len > maxbits)
+	function treeMake(bits : chx.ds.IntMap<Int>, maxbits : Int, v : Int, len : Int) {
+		if(len > maxbits)
 			throw "Invalid huffman";
 		var idx = (v << 5) | len;
-		if (bits.exists(idx))
+		if(bits.exists(idx))
 			return Found(bits.get(idx));
 		v <<= 1;
 		len += 1;
@@ -84,12 +85,12 @@ class HuffTools {
 	}
 
 	public function make(lengths, pos, nlengths, maxbits) {
-		if (nlengths == 1) {
+		if(nlengths == 1) {
 			return NeedBit(Found(0), Found(0));
 		}
 		var counts = new Array();
 		var tmp = new Array();
-		if (maxbits > 32)
+		if(maxbits > 32)
 			throw "Invalid huffman";
 		for (i in 0...maxbits) {
 			counts.push(0);
@@ -97,7 +98,7 @@ class HuffTools {
 		}
 		for (i in 0...nlengths) {
 			var p = lengths[i + pos];
-			if (p >= maxbits)
+			if(p >= maxbits)
 				throw "Invalid huffman";
 			counts[p]++;
 		}
@@ -106,10 +107,10 @@ class HuffTools {
 			code = (code + counts[i]) << 1;
 			tmp[i] = code;
 		}
-		var bits = new haxe.ds.IntMap();
+		var bits = new chx.ds.IntMap();
 		for (i in 0...nlengths) {
 			var l = lengths[i + pos];
-			if (l != 0) {
+			if(l != 0) {
 				var n = tmp[l - 1];
 				tmp[l - 1] = n + 1;
 				bits.set((n << 5) | l, i);

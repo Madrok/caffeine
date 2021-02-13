@@ -33,37 +33,37 @@ extern class Set<T> {
 	/**
 		The number of values in the `js.Set` object.
 	**/
-	var size(default, null):Int;
+	var size(default, null) : Int;
 
 	/**
 		If an iterable object is passed, all of its elements will be added to
 		the new `js.Set`.
 	**/
-	@:pure function new(?iterable:Any);
+	@:pure function new(?iterable : Any);
 
 	/**
 		Returns a boolean asserting whether an element is present with the given
 		value in the `js.Set` object or not.
 	**/
-	@:pure function has(value:T):Bool;
+	@:pure function has(value : T) : Bool;
 
 	/**
 		Appends a new element with the given value to the `js.Set` object.
 		Returns the `js.Set` object.
 	**/
-	function add(value:T):Set<T>;
+	function add(value : T) : Set<T>;
 
 	/**
 		Removes the element associated to the value and returns the value that
 		`has(value)` would have previously returned.
 		`has(value)` will return `false` afterwards.
 	**/
-	function delete(value:T):Bool;
+	function delete(value : T) : Bool;
 
 	/**
 		Removes all elements from the `js.Set` object.
 	**/
-	function clear():Void;
+	function clear() : Void;
 
 	/**
 		Calls `callback` once for each key-value pair present in the `js.Set`
@@ -72,19 +72,19 @@ extern class Set<T> {
 		If a `thisArg` parameter is provided to forEach, it will be used as the
 		`this` value for each callback.
 	**/
-	function forEach(callback:(value:T, key:T, set:Set<T>) -> Void, ?thisArg:Any):Void;
+	function forEach(callback : (value : T, key : T, set : Set<T>)->Void, ?thisArg : Any) : Void;
 
 	/**
 		Returns a new `js.lib.Iterator` object that contains the keys for each element
 		in the `js.Set` object in insertion order.
 	**/
-	function keys():js.lib.Iterator<T>;
+	function keys() : js.lib.Iterator<T>;
 
 	/**
 		Returns a new `js.lib.Iterator` object that contains the values for each
 		element in the `js.Set` object in insertion order.
 	**/
-	function values():js.lib.Iterator<T>;
+	function values() : js.lib.Iterator<T>;
 
 	/**
 		Returns a new `js.lib.Iterator` object that contains an array of
@@ -93,38 +93,38 @@ extern class Set<T> {
 		This is kept similar to the `js.Map` object, so that each entry has the
 		same value for its key and value here.
 	**/
-	function entries():js.lib.Iterator<KeyValue<T, T>>;
+	function entries() : js.lib.Iterator<KeyValue<T, T>>;
 
-	inline function iterator():HaxeIterator<T> {
+	inline function iterator() : HaxeIterator<T> {
 		return new HaxeIterator(this.values());
 	}
 
-	inline function keyValueIterator():SetKeyValueIterator<T> {
+	inline function keyValueIterator() : SetKeyValueIterator<T> {
 		return new SetKeyValueIterator(this);
 	}
 }
 
 /**
-	key => value iterator for js.lib.Set, tracking the entry index for the key to match the behavior of haxe.ds.List
+	key => value iterator for js.lib.Set, tracking the entry index for the key to match the behavior of chx.ds.List
 **/
 class SetKeyValueIterator<T> {
-	final set:js.lib.Set<T>;
-	final values:HaxeIterator<T>;
+	final set : js.lib.Set<T>;
+	final values : HaxeIterator<T>;
 	var index = 0;
 
-	public inline function new(set:js.lib.Set<T>) {
+	public inline function new(set : js.lib.Set<T>) {
 		this.set = set;
 		this.values = new HaxeIterator(set.values());
 	}
 
-	public inline function hasNext():Bool {
+	public inline function hasNext() : Bool {
 		return values.hasNext();
 	}
 
-	public inline function next():{key:Int, value:T} {
+	public inline function next() : {key : Int, value : T} {
 		return {
-			key: index++,
-			value: values.next(),
+			key : index++,
+			value : values.next(),
 		};
 	}
 }

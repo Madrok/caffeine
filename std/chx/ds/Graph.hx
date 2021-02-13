@@ -1031,7 +1031,7 @@ class Graph<T> implements Collection<T> {
 		var arcs = [];
 		var node = getNodeList(), arc;
 
-		var indexLut = new haxe.ds.IntMap<Int>();
+		var indexLut = new chx.ds.IntMap<Int>();
 
 		var i = 0;
 		while(node != null) {

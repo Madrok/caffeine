@@ -152,7 +152,7 @@ class ArrayObj<T> extends ArrayBase {
 
 	public function sort(f : T->T->Int) : Void {
 		// TODO : use native call ?
-		haxe.ds.ArraySort.sort(cast this, f);
+		chx.ds.ArraySort.sort(cast this, f);
 	}
 
 	override function splice(pos : Int, len : Int) : ArrayObj<T> {

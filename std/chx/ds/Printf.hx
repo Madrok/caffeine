@@ -19,8 +19,8 @@
 
 package chx.ds;
 
+import chx.ds.Vector;
 import haxe.EnumFlags;
-import haxe.ds.Vector;
 
 /**
 	C printf implementation

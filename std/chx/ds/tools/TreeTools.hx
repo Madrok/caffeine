@@ -19,8 +19,8 @@
 
 package chx.ds.tools;
 
+import chx.ds.StringMap;
 import ds.tools.Assert.assert;
-import haxe.ds.StringMap;
 
 /**
 	A helper class for working with trees.

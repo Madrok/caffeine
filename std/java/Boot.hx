@@ -22,29 +22,29 @@
 
 package java;
 
+import Map;
+import Reflect;
+import chx.ds.StringMap;
+import java.Init;
+import java.Lib;
+import java.StdTypes;
+import java.internal.FieldLookup;
 import java.internal.Function;
 import java.internal.HxObject;
 import java.internal.Runtime;
-import java.Lib;
-import java.Init;
-// import java.internal.StringExt;
-import java.StdTypes;
-import Reflect;
-import Map;
-import haxe.ds.StringMap;
+import java.internal.StringExt;
 import java.lang.Boolean;
+import java.lang.Byte;
 import java.lang.Character;
 import java.lang.Class;
-import java.lang.Number;
-import java.lang.Byte;
 import java.lang.Double;
 import java.lang.Float;
 import java.lang.Integer;
 import java.lang.Long;
+import java.lang.Number;
 import java.lang.Short;
 import java.lang.Throwable;
-import java.internal.StringExt;
-import java.internal.FieldLookup;
 
+// import java.internal.StringExt;
 @:dox(hide)
 extern class Boot {}

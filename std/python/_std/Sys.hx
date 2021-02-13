@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import haxe.ds.StringMap;
+import chx.ds.StringMap;
 import python.lib.Os;
 import python.lib.Time;
 import sys.io.FileInput;
@@ -28,9 +28,9 @@ import sys.io.FileOutput;
 
 @:coreApi
 class Sys {
-	static var environ(get, default):StringMap<String>;
+	static var environ(get, default) : StringMap<String>;
 
-	static function get_environ():StringMap<String> {
+	static function get_environ() : StringMap<String> {
 		return switch environ {
 			case null:
 				var environ = new StringMap();
@@ -39,125 +39,130 @@ class Sys {
 					environ.set(key, env.get(key, null));
 				}
 				Sys.environ = environ;
-			case env: env;
+			case env:env;
 		}
 	}
 
-	public static inline function time():Float {
+	public static inline function time() : Float {
 		return Time.time();
 	}
 
-	public static function exit(code:Int):Void {
+	public static function exit(code : Int) : Void {
 		python.lib.Sys.exit(code);
 	}
 
-	public static inline function print(v:Dynamic):Void {
+	public static inline function print(v : Dynamic) : Void {
 		python.Lib.print(v);
 	}
 
-	public static inline function println(v:Dynamic):Void {
+	public static inline function println(v : Dynamic) : Void {
 		python.Lib.println(v);
 	}
 
-	public static function args():Array<String> {
+	public static function args() : Array<String> {
 		var argv = python.lib.Sys.argv;
 		return argv.slice(1);
 	}
 
-	public static function getEnv(s:String):String {
+	public static function getEnv(s : String) : String {
 		return environ.get(s);
 	}
 
-	public static function putEnv(s:String, v:String):Void {
+	public static function putEnv(s : String, v : String) : Void {
 		python.lib.Os.putenv(s, v);
 		environ.set(s, v);
 	}
 
-	public static function environment():Map<String, String> {
+	public static function environment() : Map<String, String> {
 		return environ;
 	}
 
-	public static function sleep(seconds:Float):Void {
+	public static function sleep(seconds : Float) : Void {
 		python.lib.Time.sleep(seconds);
 	}
 
-	public static function setTimeLocale(loc:String):Bool {
+	public static function setTimeLocale(loc : String) : Bool {
 		return false;
 	}
 
-	public static function getCwd():String {
+	public static function getCwd() : String {
 		return python.lib.Os.getcwd();
 	}
 
-	public static function setCwd(s:String):Void {
+	public static function setCwd(s : String) : Void {
 		python.lib.Os.chdir(s);
 	}
 
-	public static function systemName():String {
-		return switch (python.lib.Sys.platform) {
-			case var x if (StringTools.startsWith(x, "linux")):
+	public static function systemName() : String {
+		return switch(python.lib.Sys.platform) {
+			case var x if(StringTools.startsWith(x, "linux")):
 				"Linux";
-			case "darwin": "Mac";
-			case "win32" | "cygwin": "Windows";
+			case "darwin":"Mac";
+			case "win32" | "cygwin":"Windows";
 			case _:
 				throw "not supported platform";
 		}
 	}
 
-	public static function command(cmd:String, ?args:Array<String>):Int {
-		return if (args == null) python.lib.Subprocess.call(cmd, {shell: true}); else python.lib.Subprocess.call([cmd].concat(args));
+	public static function command(cmd : String, ?args : Array<String>) : Int {
+		return if(args == null)python.lib.Subprocess.call(cmd,
+			{shell : true}); else python.lib.Subprocess.call([cmd].concat(args));
 	}
 
-	public static inline function cpuTime():Float {
+	public static inline function cpuTime() : Float {
 		return python.lib.Timeit.default_timer();
 	}
 
 	// It has to be initialized before any call to Sys.setCwd()...
 	static var _programPath = sys.FileSystem.fullPath(python.lib.Inspect.getsourcefile(Sys));
 
-	public static function programPath():String {
+	public static function programPath() : String {
 		return _programPath;
 	}
 
-	public static function getChar(echo:Bool):Int {
-		var ch = switch (systemName()) {
+	public static function getChar(echo : Bool) : Int {
+		var ch = switch(systemName()) {
 			case "Linux" | "Mac":
 				var fd = python.lib.Sys.stdin.fileno();
 				var old = python.lib.Termios.tcgetattr(fd);
 
-				var restore = python.lib.Termios.tcsetattr.bind(fd, python.lib.Termios.TCSADRAIN, old);
+				var restore = python.lib.Termios.tcsetattr.bind(fd, python.lib.Termios.TCSADRAIN,
+					old);
 
 				try {
 					python.lib.Tty.setraw(fd);
 					var x = python.lib.Sys.stdin.read(1);
 					restore();
 					x.charCodeAt(0);
-				} catch (e:Dynamic) {
+				}
+				catch(e:Dynamic) {
 					restore();
 					throw e;
 				}
 
 			case "Windows":
 				// python.lib.Msvcrt.getch().decode("utf-8").charCodeAt(0);
-				python.lib.Msvcrt.getwch().charCodeAt(0);
+				python.lib.Msvcrt
+					.getwch()
+					.charCodeAt(0);
 			case var x:
 				throw "platform " + x + " not supported";
 		}
-		if (echo) {
+		if(echo) {
 			python.Lib.print(String.fromCharCode(ch));
 		}
 		return ch;
 	}
 
-	public static function stdin():chx.io.Input {
+	public static function stdin() : chx.io.Input {
 		return python.io.IoTools.createFileInputFromText(python.lib.Sys.stdin);
 	}
 
-	public static function stdout():chx.io.Output {
+	public static function stdout() : chx.io.Output {
 		return python.io.IoTools.createFileOutputFromText(python.lib.Sys.stdout);
 	}
 
-	public static function stderr():chx.io.Output {
+	public static function stderr() : chx.io.Output {
 		return python.io.IoTools.createFileOutputFromText(python.lib.Sys.stderr);
 	}
 }

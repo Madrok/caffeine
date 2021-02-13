@@ -37,54 +37,56 @@ using Lambda;
 @:hlNative("macro")
 #end
 class TypeTools {
-	static function nullable(complexType:ComplexType):ComplexType
+	static function nullable(complexType : ComplexType) : ComplexType
 		return macro:Null<$complexType>;
 
-	static function toField(cf:ClassField):Field
+	static function toField(cf : ClassField) : Field
 		return {
-			function varAccessToString(va:VarAccess, getOrSet:String):String
+			function varAccessToString(va : VarAccess, getOrSet : String) : String
 				return {
-					switch (va) {
-						case AccNormal | AccCtor: "default";
-						case AccNo: "null";
-						case AccNever: "never";
-						case AccResolve: throw "Invalid TAnonymous";
-						case AccCall: getOrSet;
-						case AccInline: "default";
-						case AccRequire(_, _): "default";
+					switch(va) {
+						case AccNormal | AccCtor:"default";
+						case AccNo:"null";
+						case AccNever:"never";
+						case AccResolve:throw "Invalid TAnonymous";
+						case AccCall:getOrSet;
+						case AccInline:"default";
+						case AccRequire(_, _):"default";
 					}
 				}
 			var access = cf.isPublic ? [APublic] : [APrivate];
-			if (cf.meta.has(":final")) {
+			if(cf.meta.has(":final")) {
 				access.push(AFinal);
 			}
-			if (cf.params.length == 0)
+			if(cf.params.length == 0)
 				{
-					name: cf.name,
-					doc: cf.doc,
-					access: access,
-					kind: switch ([cf.kind, cf.type]) {
+					name : cf.name,
+					doc : cf.doc,
+					access : access,
+					kind : switch([cf.kind,
+						cf.type]) {
 						case [FVar(read, write), ret]:
-							FProp(varAccessToString(read, "get"), varAccessToString(write, "set"), toComplexType(ret), null);
+							FProp(varAccessToString(read, "get"), varAccessToString(write, "set"),
+								toComplexType(ret), null);
 						case [FMethod(_), TFun(args, ret)]:
 							FFun({
-								args: [
-									for (a in args)
-										{
-											name: a.name,
-											opt: a.opt,
-											type: toComplexType(a.t),
-										}
+								args : [for (a in args)
+									{
+										name : a.name,
+										opt : a.opt,
+										type : toComplexType(a.t),
+									}
 								],
-								ret: toComplexType(ret),
-								expr: null,
+								ret : toComplexType(ret),
+								expr : null,
 							});
 						default:
 							throw "Invalid TAnonymous";
 					},
-					pos: cf.pos,
-					meta: cf.meta.get(),
-				} else {
+					pos : cf.pos,
+					meta : cf.meta.get(),
+				}
+			else {
 				throw "Invalid TAnonymous";
 			}
 		}
@@ -98,12 +100,12 @@ class TypeTools {
 
 		If `t` is null, an internal exception is thrown.
 	**/
-	public static function toComplexType(type:Null<Type>):Null<ComplexType>
+	public static function toComplexType(type : Null<Type>) : Null<ComplexType>
 		return {
 			#if macro
 			Context.toComplexType(type);
 			#else
-			switch (type) {
+			switch(type) {
 				case null:
 					null;
 				case TMono(_.get() => t):
@@ -111,11 +113,11 @@ class TypeTools {
 				case TEnum(_.get() => baseType, params):
 					TPath(toTypePath(baseType, params));
 				case TInst(_.get() => classType, params):
-					switch (classType.kind) {
+					switch(classType.kind) {
 						case KTypeParameter(_):
 							TPath({
-								name: classType.name,
-								pack: [],
+								name : classType.name,
+								pack : [],
 							});
 						default:
 							TPath(toTypePath(classType, params));
@@ -123,13 +125,16 @@ class TypeTools {
 				case TType(_.get() => baseType, params):
 					TPath(toTypePath(baseType, params));
 				case TFun(args, ret):
-					TFunction([for (a in args) a.opt ? nullable(toComplexType(a.t)) : toComplexType(a.t)], toComplexType(ret));
-				case TAnonymous(_.get() => {fields: fields}):
+					TFunction([for (a in args)
+						a.opt ? nullable(toComplexType(a.t)) : toComplexType(a.t)],
+						toComplexType(ret));
+				case TAnonymous(_.get() => {fields : fields}):
 					TAnonymous([for (cf in fields) toField(cf)]);
 				case TDynamic(t):
-					if (t == null) {
+					if(t == null) {
 						macro:Dynamic;
-					} else {
+					}
+					else {
 						var ct = toComplexType(t);
 						macro:Dynamic<$ct>;
 					}
@@ -143,26 +148,26 @@ class TypeTools {
 			#end
 		}
 
-	static function toTypeParam(type:Type):TypeParam
+	static function toTypeParam(type : Type) : TypeParam
 		return {
-			switch (type) {
-				case TInst(_.get() => {kind: KExpr(e)}, _): TPExpr(e);
-				case _: TPType(toComplexType(type));
+			switch(type) {
+				case TInst(_.get() => {kind : KExpr(e)}, _):TPExpr(e);
+				case _:TPType(toComplexType(type));
 			}
 		}
 
-	static function toTypePath(baseType:BaseType, params:Array<Type>):TypePath
+	static function toTypePath(baseType : BaseType, params : Array<Type>) : TypePath
 		return {
 			var module = baseType.module;
 			{
-				pack: baseType.pack,
-				name: module.substring(module.lastIndexOf(".") + 1),
-				sub: baseType.name,
-				params: [for (t in params) toTypeParam(t)],
+				pack : baseType.pack,
+				name : module.substring(module.lastIndexOf(".") + 1),
+				sub : baseType.name,
+				params : [for (t in params) toTypeParam(t)],
 			}
 		}
 
-	#if (macro || display)
+	#if( macro || display )
 	/**
 		Follows all typedefs of `t` to reach the actual type.
 
@@ -181,7 +186,7 @@ class TypeTools {
 			trace(t); // TMono(<mono>)
 			trace(t.follow()); //TInst(String,[])
 	**/
-	static public inline function follow(t:Type, ?once:Bool):Type
+	static public inline function follow(t : Type, ?once : Bool) : Type
 		return Context.follow(t, once);
 
 	/**
@@ -195,15 +200,15 @@ class TypeTools {
 		Usage example:
 			var t = Context.typeof(macro new Map<String, String>());
 			trace(t); // TAbstract(Map,[TInst(String,[]),TInst(String,[])])
-			trace(t.followWithAbstracts()); // TInst(haxe.ds.StringMap, [TInst(String,[])])
+			trace(t.followWithAbstracts()); // TInst(chx.ds.StringMap, [TInst(String,[])])
 	**/
-	static public inline function followWithAbstracts(t:Type, once:Bool = false):Type
+	static public inline function followWithAbstracts(t : Type, once : Bool = false) : Type
 		return Context.followWithAbstracts(t, once);
 
 	/**
 		Returns true if `t1` and `t2` unify, false otherwise.
 	**/
-	static public inline function unify(t1:Type, t2:Type):Bool
+	static public inline function unify(t1 : Type, t2 : Type) : Bool
 		return Context.unify(t1, t2);
 
 	/**
@@ -215,10 +220,10 @@ class TypeTools {
 
 		If `t` is null, the result is null.
 	**/
-	static public function getClass(t:Type)
-		return t == null ? null : switch (follow(t)) {
-			case TInst(c, _): c.get();
-			case _: throw "Class instance expected";
+	static public function getClass(t : Type)
+		return t == null ? null : switch(follow(t)) {
+			case TInst(c, _):c.get();
+			case _:throw "Class instance expected";
 		}
 
 	/**
@@ -230,10 +235,10 @@ class TypeTools {
 
 		If `t` is null, the result is null.
 	**/
-	static public function getEnum(t:Type)
-		return t == null ? null : switch (follow(t)) {
-			case TEnum(e, _): e.get();
-			case _: throw "Enum instance expected";
+	static public function getEnum(t : Type)
+		return t == null ? null : switch(follow(t)) {
+			case TEnum(e, _):e.get();
+			case _:throw "Enum instance expected";
 		}
 
 	/**
@@ -251,12 +256,13 @@ class TypeTools {
 
 		If either argument is `null`, the result is unspecified.
 	**/
-	static public function applyTypeParameters(t:Type, typeParameters:Array<TypeParameter>, concreteTypes:Array<Type>):Type {
-		if (typeParameters.length != concreteTypes.length)
+	static public function applyTypeParameters(t : Type, typeParameters : Array<TypeParameter>,
+			concreteTypes : Array<Type>) : Type {
+		if(typeParameters.length != concreteTypes.length)
 			throw 'Incompatible arguments: ${typeParameters.length} type parameters and ${concreteTypes.length} concrete types';
-		else if (typeParameters.length == 0)
+		else if(typeParameters.length == 0)
 			return t;
-		#if (neko || eval)
+		#if( neko || eval )
 		return Context.load("apply_params", 3)(typeParameters, concreteTypes, t);
 		#else
 		return applyParams(typeParameters, concreteTypes, t);
@@ -264,7 +270,8 @@ class TypeTools {
 	}
 
 	#if !neko
-	private static function applyParams(typeParameters:Array<TypeParameter>, concreteTypes:Array<Type>, t:Type):Type {
+	private static function applyParams(typeParameters : Array<TypeParameter>,
+			concreteTypes : Array<Type>, t : Type) : Type {
 		return null;
 	}
 	#end
@@ -283,12 +290,12 @@ class TypeTools {
 
 		If `t` or `f` are null, the result is unspecified.
 	**/
-	static public function map(t:Type, f:Type->Type):Type {
-		return switch (t) {
+	static public function map(t : Type, f : Type->Type) : Type {
+		return switch(t) {
 			case TMono(tm):
-				switch (tm.get()) {
-					case null: t;
-					case var t: f(t);
+				switch(tm.get()) {
+					case null:t;
+					case var t:f(t);
 				}
 			case TEnum(_, []) | TInst(_, []) | TType(_, []):
 				t;
@@ -301,11 +308,12 @@ class TypeTools {
 			case TAbstract(a, tl):
 				TAbstract(a, tl.map(f));
 			case TFun(args, ret):
-				TFun(args.map(function(arg) return {
-					name: arg.name,
-					opt: arg.opt,
-					t: f(arg.t)
-				}), f(ret));
+				TFun(args.map(function(arg)
+					return {
+						name : arg.name,
+						opt : arg.opt,
+						t : f(arg.t)
+					}), f(ret));
 			case TAnonymous(an):
 				TAnonymous(Context.load("map_anon_ref", 2)(an, f));
 			case TDynamic(t2):
@@ -329,22 +337,25 @@ class TypeTools {
 
 		If `t` or `f` are null, the result is unspecified.
 	**/
-	static public function iter(t:Type, f:Type->Void):Void {
-		switch (t) {
+	static public function iter(t : Type, f : Type->Void) : Void {
+		switch(t) {
 			case TMono(tm):
 				var t = tm.get();
-				if (t != null)
+				if(t != null)
 					f(t);
 			case TEnum(_, tl) | TInst(_, tl) | TType(_, tl) | TAbstract(_, tl):
 				for (t in tl)
 					f(t);
 			case TDynamic(t2):
-				if (t != t2)
+				if(t != t2)
 					f(t2);
 			case TLazy(ft):
 				f(ft());
 			case TAnonymous(an):
-				for (field in an.get().fields)
+				for (field in an
+					.get()
+					.fields
+				)
 					f(field.type);
 			case TFun(args, ret):
 				for (arg in args)
@@ -356,8 +367,8 @@ class TypeTools {
 	/**
 		Converts type `t` to a human-readable String representation.
 	**/
-	static public function toString(t:Type):String {
-		#if (neko || eval)
+	static public function toString(t : Type) : String {
+		#if( neko || eval )
 		return Context.load("s_type", 1)(t);
 		#else
 		return null;
@@ -377,8 +388,13 @@ class TypeTools {
 
 		If any argument is null, the result is unspecified.
 	**/
-	static public function findField(c:ClassType, name:String, isStatic:Bool = false):Null<ClassField> {
-		var field = (isStatic ? c.statics : c.fields).get().find(function(field) return field.name == name);
-		return if (field != null) field; else if (c.superClass != null) findField(c.superClass.t.get(), name, isStatic); else null;
+	static public function findField(c : ClassType, name : String,
+			isStatic : Bool = false) : Null<ClassField> {
+		var field = (isStatic ? c.statics : c.fields)
+			.get()
+			.find(function(field)
+				return field.name == name);
+		return if(field != null)field; else if(c.superClass != null)findField(c.superClass.t.get(),
+			name, isStatic); else null;
 	}
 }

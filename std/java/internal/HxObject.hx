@@ -22,7 +22,7 @@
 
 package java.internal;
 
-import haxe.ds.Vector;
+import chx.ds.Vector;
 import java.internal.IEquatable;
 
 private typedef StdType = Type;

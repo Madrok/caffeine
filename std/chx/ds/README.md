@@ -6,3 +6,4 @@ Most of these files are from Michael Baczynski's excellent [datastructure librar
 * AssociativeArray may duplicate functionality in another class here
 * check all exceptions
 * unify chx.ds.tools/Assert.hx (Michael) with /Assert.hx (Russell). /Assert.hx is as old as I am now, but still functions, and was coded before all the new macro.* functions were available
+* List and Map are the original Haxe List and Map. List2/Map2 are from polygonal

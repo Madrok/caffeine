@@ -5,20 +5,26 @@
 --each
 
 --next
+--cpp bin/cpp
+--cmd echo "*** CPP BUILD COMPLETE ***"
+
+--next
 --hl bin/main.hl
+--cmd echo "*** HASHLINK BUILD COMPLETE ***"
 
 --next
 --neko bin/main.n
+--cmd echo "*** NEKO BUILD COMPLETE ***"
 
 # --next
 # --lua bin/main.lua
-
---next
---cpp bin/cpp
+# --cmd echo "*** LUA BUILD COMPLETE ***"
 
 --next
 --java bin/java
+--cmd echo "*** JAVA BUILD COMPLETE ***"
 
 --next
 --python bin/main.py
+--cmd echo "*** PYTHON BUILD COMPLETE ***"
 

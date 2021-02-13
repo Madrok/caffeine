@@ -193,16 +193,8 @@ class Sprintf {
 									fieldOutcome = '** sprintf: must have only one of h,l,L **';
 								}
 						 */
-						case '0'.code
-							, '1'.code
-							, '2'.code
-							, '3'.code
-							, '4'.code
-							, '5'.code
-							, '6'.code
-							, '7'.code
-							, '8'.code
-							, '9'.code:
+						case '0'.code, '1'.code, '2'.code, '3'.code, '4'.code, '5'.code, '6'.code,
+							'7'.code, '8'.code, '9'.code:
 							if(ch == '0'.code && fieldCount == 0) {
 								properties |= kPAD_ZEROES;
 							}
@@ -221,35 +213,28 @@ class Sprintf {
 						// -=-=-=-=-=-=-=-=-=-=-=-=-=-
 						// conversion specifiers
 						// -=-=-=-=-=-=-=-=-=-=-=-=-=-
-						case 'd'.code
-							, 'i'.code:
+						case 'd'.code, 'i'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatD(value, properties, length, precision);
 						case 'o'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatO(value, properties, length, precision);
-						case 'x'.code
-							, 'X'.code:
+						case 'x'.code, 'X'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatX(value, properties, length, precision,
 								(ch == 'X'.code));
-						case 'e'.code
-							, 'E'.code:
+						case 'e'.code, 'E'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatE(value, properties, length, precision,
 								(ch == 'E'.code));
 						case 'f'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatF(value, properties, length, precision);
-						case 'g'.code
-							, 'G'.code:
+						case 'g'.code, 'G'.code:
 							fieldOutcome = true;
 							destString += Sprintf.formatG(value, properties, length, precision,
 								(ch == 'G'.code));
-						case 'c'.code
-							, 'C'.code
-							, 's'.code
-							, 'S'.code:
+						case 'c'.code, 'C'.code, 's'.code, 'S'.code:
 							if(ch == "c".code || ch == "C".code)
 								precision = 1;
 							fieldOutcome = true;
@@ -361,7 +346,7 @@ class Sprintf {
 		var intVal = Std.int(value);
 
 		if((precision != 0) && (value != 0)) {
-			output = Tools.octal(intVal);
+			output = StringTools.octal(intVal);
 		}
 
 		if(properties & kALT_FORM != 0) {

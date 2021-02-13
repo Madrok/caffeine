@@ -33,35 +33,34 @@
  *
  * An ASN1 type for a PrintableString, held within a String
  */
-package chx.formats.der;
+package chx.crypto.formats.der;
 
-class PrintableString implements IAsn1Type
-{
-	public static inline var TYPE:Int = 0x13;
-	private var str:String;
+class PrintableString implements IAsn1Type {
+	public static inline var TYPE : Int = 0x13;
 
-	public function new(value:String = "") {
+	private var str : String;
+
+	public function new(value : String = "") {
 		setString(value);
 	}
 
-	public function getType():Int
-	{
+	public function getType() : Int {
 		return TYPE;
 	}
 
-	public function setString(s:String):Void {
+	public function setString(s : String) : Void {
 		str = s;
 	}
 
-	public function getString():String {
+	public function getString() : String {
 		return str;
 	}
 
-	public function toString():String {
+	public function toString() : String {
 		return str;
 	}
 
-	public function toDER():Bytes {
+	public function toDER() : Bytes {
 		return DER.wrapDER(TYPE, Bytes.ofString(str));
 	}
 }

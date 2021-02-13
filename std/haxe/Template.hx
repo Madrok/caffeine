@@ -22,29 +22,29 @@
 
 package haxe;
 
-import haxe.ds.List;
+import chx.ds.List;
 
 using StringTools;
 
 private enum TemplateExpr {
-	OpVar(v:String);
-	OpExpr(expr:Void->Dynamic);
-	OpIf(expr:Void->Dynamic, eif:TemplateExpr, eelse:TemplateExpr);
-	OpStr(str:String);
-	OpBlock(l:List<TemplateExpr>);
-	OpForeach(expr:Void->Dynamic, loop:TemplateExpr);
-	OpMacro(name:String, params:List<TemplateExpr>);
+	OpVar(v : String);
+	OpExpr(expr : Void->Dynamic);
+	OpIf(expr : Void->Dynamic, eif : TemplateExpr, eelse : TemplateExpr);
+	OpStr(str : String);
+	OpBlock(l : List<TemplateExpr>);
+	OpForeach(expr : Void->Dynamic, loop : TemplateExpr);
+	OpMacro(name : String, params : List<TemplateExpr>);
 }
 
 private typedef Token = {
-	var s:Bool;
-	var p:String;
-	var l:Array<String>;
+	var s : Bool;
+	var p : String;
+	var l : Array<String>;
 }
 
 private typedef ExprToken = {
-	var s:Bool;
-	var p:String;
+	var s : Bool;
+	var p : String;
 }
 
 /**
@@ -65,16 +65,16 @@ class Template {
 		Global replacements which are used across all `Template` instances. This
 		has lower priority than the context argument of `execute()`.
 	**/
-	public static var globals:Dynamic = {};
+	public static var globals : Dynamic = {};
 
 	// To avoid issues with DCE, keep the array iterator.
 	@:ifFeature("haxe.Template.run") static var hxKeepArrayIterator = [].iterator();
 
-	var expr:TemplateExpr;
-	var context:Dynamic;
-	var macros:Dynamic;
-	var stack:List<Dynamic>;
-	var buf:StringBuf;
+	var expr : TemplateExpr;
+	var context : Dynamic;
+	var macros : Dynamic;
+	var stack : List<Dynamic>;
+	var buf : StringBuf;
 
 	/**
 		Creates a new `Template` instance from `str`.
@@ -86,11 +86,14 @@ class Template {
 
 		If `str` is `null`, the result is unspecified.
 	**/
-	public function new(str:String) {
+	public function new(str : String) {
 		var tokens = parseTokens(str);
 		expr = parseBlock(tokens);
-		if (!tokens.isEmpty())
-			throw "Unexpected '" + tokens.first().s + "'";
+		if(!tokens.isEmpty())
+			throw "Unexpected '" + tokens
+				.first()
+				.s
+				+ "'";
 	}
 
 	/**
@@ -109,8 +112,9 @@ class Template {
 		If `context` is `null`, the result is unspecified. If `macros` is `null`,
 		no macros are used.
 	**/
-	public function execute(context:Dynamic, ?macros:Dynamic):String {
-		this.macros = if (macros == null) {} else macros;
+	public function execute(context : Dynamic, ?macros : Dynamic) : String {
+		this.macros = if(macros == null) {}
+		else macros;
 		this.context = context;
 		stack = new List();
 		buf = new StringBuf();
@@ -118,32 +122,32 @@ class Template {
 		return buf.toString();
 	}
 
-	function resolve(v:String):Dynamic {
-		if (v == "__current__")
+	function resolve(v : String) : Dynamic {
+		if(v == "__current__")
 			return context;
-		if (Reflect.isObject(context)) {
+		if(Reflect.isObject(context)) {
 			var value = Reflect.getProperty(context, v);
-			if (value != null || Reflect.hasField(context, v))
+			if(value != null || Reflect.hasField(context, v))
 				return value;
 		}
 		for (ctx in stack) {
 			var value = Reflect.getProperty(ctx, v);
-			if (value != null || Reflect.hasField(ctx, v))
+			if(value != null || Reflect.hasField(ctx, v))
 				return value;
 		}
 		return Reflect.field(globals, v);
 	}
 
-	function parseTokens(data:String) {
+	function parseTokens(data : String) {
 		var tokens = new List<Token>();
-		while (splitter.match(data)) {
+		while(splitter.match(data)) {
 			var p = splitter.matchedPos();
-			if (p.pos > 0)
-				tokens.add({p: data.substr(0, p.pos), s: true, l: null});
+			if(p.pos > 0)
+				tokens.add({p : data.substr(0, p.pos), s : true, l : null});
 
 			// : ?
-			if (data.charCodeAt(p.pos) == 58) {
-				tokens.add({p: data.substr(p.pos + 2, p.len - 4), s: false, l: null});
+			if(data.charCodeAt(p.pos) == 58) {
+				tokens.add({p : data.substr(p.pos + 2, p.len - 4), s : false, l : null});
 				data = splitter.matchedRight();
 				continue;
 			}
@@ -153,70 +157,75 @@ class Template {
 			var npar = 1;
 			var params = [];
 			var part = "";
-			while (true) {
+			while(true) {
 				var c = data.charCodeAt(parp);
 				parp++;
-				if (c == 40) {
+				if(c == 40) {
 					npar++;
-				} else if (c == 41) {
+				}
+				else if(c == 41) {
 					npar--;
-					if (npar <= 0)
+					if(npar <= 0)
 						break;
-				} else if (c == null) {
+				}
+				else if(c == null) {
 					throw "Unclosed macro parenthesis";
 				}
-				if (c == 44 && npar == 1) {
+				if(c == 44 && npar == 1) {
 					params.push(part);
 					part = "";
-				} else {
+				}
+				else {
 					part += String.fromCharCode(c);
 				}
 			}
 			params.push(part);
-			tokens.add({p: splitter.matched(2), s: false, l: params});
+			tokens.add({p : splitter.matched(2), s : false, l : params});
 			data = data.substr(parp, data.length - parp);
 		}
-		if (data.length > 0)
-			tokens.add({p: data, s: true, l: null});
+		if(data.length > 0)
+			tokens.add({p : data, s : true, l : null});
 		return tokens;
 	}
 
-	function parseBlock(tokens:List<Token>) {
+	function parseBlock(tokens : List<Token>) {
 		var l = new List();
-		while (true) {
+		while(true) {
 			var t = tokens.first();
-			if (t == null)
+			if(t == null)
 				break;
-			if (!t.s && (t.p == "end" || t.p == "else" || t.p.substr(0, 7) == "elseif "))
+			if(!t.s && (t.p == "end" || t.p == "else" || t.p.substr(0, 7) == "elseif "))
 				break;
 			l.add(parse(tokens));
 		}
-		if (l.length == 1)
+		if(l.length == 1)
 			return l.first();
 		return OpBlock(l);
 	}
 
-	function parse(tokens:List<Token>) {
+	function parse(tokens : List<Token>) {
 		var t = tokens.pop();
 		var p = t.p;
-		if (t.s)
+		if(t.s)
 			return OpStr(p);
 		// macro
-		if (t.l != null) {
+		if(t.l != null) {
 			var pe = new List();
 			for (p in t.l)
 				pe.add(parseBlock(parseTokens(p)));
 			return OpMacro(p, pe);
 		}
-		function kwdEnd(kwd:String):Int {
+		function kwdEnd(kwd : String) : Int {
 			var pos = -1;
 			var length = kwd.length;
-			if (p.substr(0, length) == kwd) {
+			if(p.substr(0, length) == kwd) {
 				pos = length;
 				for (c in p.substr(length)) {
 					switch c {
-						case ' '.code: pos++;
-						case _: break;
+						case ' '.code:
+							pos++;
+						case _:
+							break;
 					}
 				}
 			}
@@ -224,97 +233,104 @@ class Template {
 		}
 		// 'end' , 'else', 'elseif' can't be found here
 		var pos = kwdEnd("if");
-		if (pos > 0) {
+		if(pos > 0) {
 			p = p.substr(pos, p.length - pos);
 			var e = parseExpr(p);
 			var eif = parseBlock(tokens);
 			var t = tokens.first();
 			var eelse;
-			if (t == null)
+			if(t == null)
 				throw "Unclosed 'if'";
-			if (t.p == "end") {
+			if(t.p == "end") {
 				tokens.pop();
 				eelse = null;
-			} else if (t.p == "else") {
+			}
+			else if(t.p == "else") {
 				tokens.pop();
 				eelse = parseBlock(tokens);
 				t = tokens.pop();
-				if (t == null || t.p != "end")
+				if(t == null || t.p != "end")
 					throw "Unclosed 'else'";
-			} else { // elseif
+			}
+			else { // elseif
 				t.p = t.p.substr(4, t.p.length - 4);
 				eelse = parse(tokens);
 			}
 			return OpIf(e, eif, eelse);
 		}
 		var pos = kwdEnd("foreach");
-		if (pos >= 0) {
+		if(pos >= 0) {
 			p = p.substr(pos, p.length - pos);
 			var e = parseExpr(p);
 			var efor = parseBlock(tokens);
 			var t = tokens.pop();
-			if (t == null || t.p != "end")
+			if(t == null || t.p != "end")
 				throw "Unclosed 'foreach'";
 			return OpForeach(e, efor);
 		}
-		if (expr_splitter.match(p))
+		if(expr_splitter.match(p))
 			return OpExpr(parseExpr(p));
 		return OpVar(p);
 	}
 
-	function parseExpr(data:String) {
+	function parseExpr(data : String) {
 		var l = new List<ExprToken>();
 		var expr = data;
-		while (expr_splitter.match(data)) {
+		while(expr_splitter.match(data)) {
 			var p = expr_splitter.matchedPos();
 			var k = p.pos + p.len;
-			if (p.pos != 0)
-				l.add({p: data.substr(0, p.pos), s: true});
+			if(p.pos != 0)
+				l.add({p : data.substr(0, p.pos), s : true});
 			var p = expr_splitter.matched(0);
-			l.add({p: p, s: p.indexOf('"') >= 0});
+			l.add({p : p, s : p.indexOf('"') >= 0});
 			data = expr_splitter.matchedRight();
 		}
-		if (data.length != 0) {
+		if(data.length != 0) {
 			for (i => c in data) {
 				switch c {
 					case ' '.code:
 					case _:
-						l.add({p: data.substr(i), s: true});
+						l.add({p : data.substr(i), s : true});
 						break;
 				}
 			}
 		}
-		var e:Void->Dynamic;
+		var e : Void->Dynamic;
 		try {
 			e = makeExpr(l);
-			if (!l.isEmpty())
-				throw l.first().p;
-		} catch (s:String) {
+			if(!l.isEmpty())
+				throw l
+					.first()
+					.p;
+		}
+		catch(s:String) {
 			throw "Unexpected '" + s + "' in " + expr;
 		}
 		return function() {
 			try {
 				return e();
-			} catch (exc:Dynamic) {
+			}
+			catch(exc:Dynamic) {
 				throw "Error : " + Std.string(exc) + " in " + expr;
 			}
 		}
 	}
 
-	function makeConst(v:String):Void->Dynamic {
+	function makeConst(v : String) : Void->Dynamic {
 		expr_trim.match(v);
 		v = expr_trim.matched(1);
-		if (v.charCodeAt(0) == 34) {
+		if(v.charCodeAt(0) == 34) {
 			var str = v.substr(1, v.length - 2);
-			return function() return str;
+			return function()
+				return str;
 		}
-		if (expr_int.match(v)) {
+		if(expr_int.match(v)) {
 			var i = Std.parseInt(v);
 			return function() {
 				return i;
 			};
 		}
-		if (expr_float.match(v)) {
+		if(expr_float.match(v)) {
 			var f = Std.parseFloat(v);
 			return function() {
 				return f;
@@ -326,13 +342,13 @@ class Template {
 		};
 	}
 
-	function makePath(e:Void->Dynamic, l:List<ExprToken>) {
+	function makePath(e : Void->Dynamic, l : List<ExprToken>) {
 		var p = l.first();
-		if (p == null || p.p != ".")
+		if(p == null || p.p != ".")
 			return e;
 		l.pop();
 		var field = l.pop();
-		if (field == null || !field.s)
+		if(field == null || !field.s)
 			throw field.p;
 		var f = field.p;
 		expr_trim.match(f);
@@ -346,11 +362,11 @@ class Template {
 		return makePath(makeExpr2(l), l);
 	}
 
-	function skipSpaces(l:List<ExprToken>) {
+	function skipSpaces(l : List<ExprToken>) {
 		var p = l.first();
-		while (p != null) {
+		while(p != null) {
 			for (c in p.p) {
-				if (c != " ".code) {
+				if(c != " ".code) {
 					return;
 				}
 			}
@@ -359,74 +375,74 @@ class Template {
 		}
 	}
 
-	function makeExpr2(l:List<ExprToken>):Void->Dynamic {
+	function makeExpr2(l : List<ExprToken>) : Void->Dynamic {
 		skipSpaces(l);
 		var p = l.pop();
 		skipSpaces(l);
-		if (p == null)
+		if(p == null)
 			throw "<eof>";
-		if (p.s)
+		if(p.s)
 			return makeConst(p.p);
-		switch (p.p) {
+		switch(p.p) {
 			case "(":
 				skipSpaces(l);
-				var e1:Dynamic = makeExpr(l);
+				var e1 : Dynamic = makeExpr(l);
 				skipSpaces(l);
 				var p = l.pop();
-				if (p == null || p.s)
+				if(p == null || p.s)
 					throw p;
-				if (p.p == ")")
+				if(p.p == ")")
 					return e1;
 				skipSpaces(l);
-				var e2:Dynamic = makeExpr(l);
+				var e2 : Dynamic = makeExpr(l);
 				skipSpaces(l);
 				var p2 = l.pop();
 				skipSpaces(l);
-				if (p2 == null || p2.p != ")")
+				if(p2 == null || p2.p != ")")
 					throw p2;
-				return switch (p.p) {
-					case "+": function() {
+				return switch(p.p) {
+					case "+":function() {
 							return cast e1() + e2();
 						};
-					case "-": function() {
+					case "-":function() {
 							return cast e1() - e2();
 						};
-					case "*": function() {
+					case "*":function() {
 							return cast e1() * e2();
 						};
-					case "/": function() {
+					case "/":function() {
 							return cast e1() / e2();
 						};
-					case ">": function() {
+					case ">":function() {
 							return cast e1() > e2();
 						};
-					case "<": function() {
+					case "<":function() {
 							return cast e1() < e2();
 						};
-					case ">=": function() {
+					case ">=":function() {
 							return cast e1() >= e2();
 						};
-					case "<=": function() {
+					case "<=":function() {
 							return cast e1() <= e2();
 						};
-					case "==": function() {
+					case "==":function() {
 							return cast e1() == e2();
 						};
-					case "!=": function() {
+					case "!=":function() {
 							return cast e1() != e2();
 						};
-					case "&&": function() {
+					case "&&":function() {
 							return cast e1() && e2();
 						};
-					case "||": function() {
+					case "||":function() {
 							return cast e1() || e2();
 						};
-					default: throw "Unknown operation " + p.p;
+					default:throw "Unknown operation " + p.p;
 				}
 			case "!":
-				var e:Void->Dynamic = makeExpr(l);
+				var e : Void->Dynamic = makeExpr(l);
 				return function() {
-					var v:Dynamic = e();
+					var v : Dynamic = e();
 					return (v == null || v == false);
 				};
 			case "-":
@@ -438,18 +454,19 @@ class Template {
 		throw p.p;
 	}
 
-	function run(e:TemplateExpr) {
-		switch (e) {
+	function run(e : TemplateExpr) {
+		switch(e) {
 			case OpVar(v):
 				buf.add(Std.string(resolve(v)));
 			case OpExpr(e):
 				buf.add(Std.string(e()));
 			case OpIf(e, eif, eelse):
-				var v:Dynamic = e();
-				if (v == null || v == false) {
-					if (eelse != null)
+				var v : Dynamic = e();
+				if(v == null || v == false) {
+					if(eelse != null)
 						run(eelse);
-				} else
+				}
+				else
 					run(eif);
 			case OpStr(str):
 				buf.add(str);
@@ -457,34 +474,36 @@ class Template {
 				for (e in l)
 					run(e);
 			case OpForeach(e, loop):
-				var v:Dynamic = e();
+				var v : Dynamic = e();
 				try {
-					var x:Dynamic = v.iterator();
-					if (x.hasNext == null)
+					var x : Dynamic = v.iterator();
+					if(x.hasNext == null)
 						throw null;
 					v = x;
-				} catch (e:Dynamic)
+				}
+				catch(e:Dynamic)
 					try {
-						if (v.hasNext == null)
+						if(v.hasNext == null)
 							throw null;
-					} catch (e:Dynamic) {
+					}
+					catch(e:Dynamic) {
 						throw "Cannot iter on " + v;
 					}
 				stack.push(context);
-				var v:Iterator<Dynamic> = v;
+				var v : Iterator<Dynamic> = v;
 				for (ctx in v) {
 					context = ctx;
 					run(loop);
 				}
 				context = stack.pop();
 			case OpMacro(m, params):
-				var v:Dynamic = Reflect.field(macros, m);
+				var v : Dynamic = Reflect.field(macros, m);
 				var pl = new Array<Dynamic>();
 				var old = buf;
 				pl.push(resolve);
 				for (p in params) {
-					switch (p) {
-						case OpVar(v): pl.push(resolve(v));
+					switch(p) {
+						case OpVar(v):pl.push(resolve(v));
 						default:
 							buf = new StringBuf();
 							run(p);
@@ -494,8 +513,10 @@ class Template {
 				buf = old;
 				try {
 					buf.add(Std.string(Reflect.callMethod(macros, v, pl)));
-				} catch (e:Dynamic) {
-					var plstr = try pl.join(",") catch (e:Dynamic) "???";
+				}
+				catch(e:Dynamic) {
+					var plstr = try pl.join(",")
+					catch(e:Dynamic)"???";
 					var msg = "Macro call " + m + "(" + plstr + ") failed (" + Std.string(e) + ")";
 					#if neko
 					neko.Lib.rethrow(msg);

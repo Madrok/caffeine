@@ -22,7 +22,7 @@
 
 package haxe;
 
-import haxe.ds.List;
+import chx.ds.List;
 
 /**
 	The Serializer class can be used to encode values and objects into a `String`,
@@ -71,24 +71,24 @@ class Serializer {
 	static var BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 	static var BASE64_CODES = null;
 
-	var buf:StringBuf;
-	var cache:Array<Dynamic>;
-	var shash:haxe.ds.StringMap<Int>;
-	var scount:Int;
+	var buf : StringBuf;
+	var cache : Array<Dynamic>;
+	var shash : chx.ds.StringMap<Int>;
+	var scount : Int;
 
 	/**
 		The individual cache setting for `this` Serializer instance.
 
 		See `USE_CACHE` for a complete description.
 	**/
-	public var useCache:Bool;
+	public var useCache : Bool;
 
 	/**
 		The individual enum index setting for `this` Serializer instance.
 
 		See `USE_ENUM_INDEX` for a complete description.
 	**/
-	public var useEnumIndex:Bool;
+	public var useEnumIndex : Bool;
 
 	/**
 		Creates a new Serializer instance.
@@ -105,7 +105,7 @@ class Serializer {
 		cache = new Array();
 		useCache = USE_CACHE;
 		useEnumIndex = USE_ENUM_INDEX;
-		shash = new haxe.ds.StringMap();
+		shash = new chx.ds.StringMap();
 		scount = 0;
 	}
 
@@ -136,7 +136,7 @@ class Serializer {
 		n : null
 		o : object
 		p : +Inf
-		q : haxe.ds.IntMap
+		q : chx.ds.IntMap
 		r : reference
 		s : bytes (base64)
 		t : true
@@ -148,12 +148,12 @@ class Serializer {
 		z : zero
 		A : Class<Dynamic>
 		B : Enum<Dynamic>
-		M : haxe.ds.ObjectMap
+		M : chx.ds.ObjectMap
 		C : custom
 	 */
-	function serializeString(s:String) {
+	function serializeString(s : String) {
 		var x = shash.get(s);
-		if (x != null) {
+		if(x != null) {
 			buf.add("R");
 			buf.add(x);
 			return;
@@ -171,16 +171,16 @@ class Serializer {
 		buf.add(s);
 	}
 
-	function serializeRef(v:Dynamic) {
+	function serializeRef(v : Dynamic) {
 		#if js
 		var vt = js.Syntax.typeof(v);
 		#end
 		for (i in 0...cache.length) {
 			#if js
 			var ci = cache[i];
-			if (js.Syntax.typeof(ci) == vt && ci == v) {
+			if(js.Syntax.typeof(ci) == vt && ci == v) {
 			#else
-			if (cache[i] == v) {
+			if(cache[i] == v) {
 			#end
 				buf.add("r");
 				buf.add(i);
@@ -194,12 +194,14 @@ class Serializer {
 	#if flash
 	// only the instance variables
 
-	function serializeClassFields(v:Dynamic, c:Dynamic) {
-		var xml:flash.xml.XML = untyped __global__["flash.utils.describeType"](c);
+	function serializeClassFields(v : Dynamic, c : Dynamic) {
+		var xml : flash.xml.XML = untyped __global__["flash.utils.describeType"](c);
 		var vars = xml.factory[0].child("variable");
 		for (i in 0...vars.length()) {
-			var f = vars[i].attribute("name").toString();
-			if (!v.hasOwnProperty(f))
+			var f = vars[i]
+				.attribute("name")
+				.toString();
+			if(!v.hasOwnProperty(f))
 				continue;
 			serializeString(f);
 			serialize(Reflect.field(v, f));
@@ -208,7 +210,7 @@ class Serializer {
 	}
 	#end
 
-	function serializeFields(v:{}) {
+	function serializeFields(v : {}) {
 		for (f in Reflect.fields(v)) {
 			serializeString(f);
 			serialize(Reflect.field(v, f));
@@ -226,52 +228,52 @@ class Serializer {
 	The values of `this.useCache` and `this.useEnumIndex` may affect
 	serialization output.
 **/
-	public function serialize(v:Dynamic) {
-		switch (Type.typeof(v)) {
+	public function serialize(v : Dynamic) {
+		switch(Type.typeof(v)) {
 			case TNull:
 				buf.add("n");
 			case TInt:
-				var v:Int = v;
-				if (v == 0) {
+				var v : Int = v;
+				if(v == 0) {
 					buf.add("z");
 					return;
 				}
 				buf.add("i");
 				buf.add(v);
 			case TFloat:
-				var v:Float = v;
-				if (Math.isNaN(v))
+				var v : Float = v;
+				if(Math.isNaN(v))
 					buf.add("k");
-				else if (!Math.isFinite(v))
-					buf.add(if (v < 0) "m" else "p");
+				else if(!Math.isFinite(v))
+					buf.add(if(v < 0)"m" else "p");
 				else {
 					buf.add("d");
 					buf.add(v);
 				}
 			case TBool:
-				buf.add(if (v) "t" else "f");
+				buf.add(if(v)"t" else "f");
 			case TClass(c):
-				if (#if neko untyped c.__is_String #else c == String #end) {
+				if(#if neko untyped c.__is_String #else c == String #end) {
 					serializeString(v);
 					return;
 				}
-				if (useCache && serializeRef(v))
+				if(useCache && serializeRef(v))
 					return;
-				switch (#if (neko || cs || python) Type.getClassName(c) #else c #end) {
-					case #if (neko || cs || python) "Array" #else cast Array #end:
+				switch(#if( neko || cs || python ) Type.getClassName(c) #else c #end) {
+					case #if( neko || cs || python ) "Array" #else cast Array #end:
 						var ucount = 0;
 						buf.add("a");
-						#if (flash || python || hl)
-						var v:Array<Dynamic> = v;
+						#if( flash || python || hl )
+						var v : Array<Dynamic> = v;
 						#end
-						var l = #if (neko || flash || php || cs || java || python || hl || lua || eval) v.length #elseif cpp v.__length() #else __getField(v,
+						var l = #if( neko || flash || php || cs || java || python || hl || lua || eval ) v.length #elseif cpp v.__length() #else __getField(v,
 							"length") #end;
 						for (i in 0...l) {
-							if (v[i] == null)
+							if(v[i] == null)
 								ucount++;
 							else {
-								if (ucount > 0) {
-									if (ucount == 1)
+								if(ucount > 0) {
+									if(ucount == 1)
 										buf.add("n");
 									else {
 										buf.add("u");
@@ -282,8 +284,8 @@ class Serializer {
 								serialize(v[i]);
 							}
 						}
-						if (ucount > 0) {
-							if (ucount == 1)
+						if(ucount > 0) {
+							if(ucount == 1)
 								buf.add("n");
 							else {
 								buf.add("u");
@@ -291,38 +293,38 @@ class Serializer {
 							}
 						}
 						buf.add("h");
-					case #if (neko || cs || python) "haxe.ds.List" #else cast List #end:
+					case #if( neko || cs || python ) "chx.ds.List" #else cast List #end:
 						buf.add("l");
-						var v:List<Dynamic> = v;
+						var v : List<Dynamic> = v;
 						for (i in v)
 							serialize(i);
 						buf.add("h");
-					case #if (neko || cs || python) "Date" #else cast Date #end:
-						var d:Date = v;
+					case #if( neko || cs || python ) "Date" #else cast Date #end:
+						var d : Date = v;
 						buf.add("v");
 						buf.add(d.getTime());
-					case #if (neko || cs || python) "haxe.ds.StringMap" #else cast haxe.ds.StringMap #end:
+					case #if( neko || cs || python ) "chx.ds.StringMap" #else cast chx.ds.StringMap #end:
 						buf.add("b");
-						var v:haxe.ds.StringMap<Dynamic> = v;
+						var v : chx.ds.StringMap<Dynamic> = v;
 						for (k in v.keys()) {
 							serializeString(k);
 							serialize(v.get(k));
 						}
 						buf.add("h");
-					case #if (neko || cs || python) "haxe.ds.IntMap" #else cast haxe.ds.IntMap #end:
+					case #if( neko || cs || python ) "chx.ds.IntMap" #else cast chx.ds.IntMap #end:
 						buf.add("q");
-						var v:haxe.ds.IntMap<Dynamic> = v;
+						var v : chx.ds.IntMap<Dynamic> = v;
 						for (k in v.keys()) {
 							buf.add(":");
 							buf.add(k);
 							serialize(v.get(k));
 						}
 						buf.add("h");
-					case #if (neko || cs || python) "haxe.ds.ObjectMap" #else cast haxe.ds.ObjectMap #end:
+					case #if( neko || cs || python ) "chx.ds.ObjectMap" #else cast chx.ds.ObjectMap #end:
 						buf.add("M");
-						var v:haxe.ds.ObjectMap<Dynamic, Dynamic> = v;
+						var v : chx.ds.ObjectMap<Dynamic, Dynamic> = v;
 						for (k in v.keys()) {
-							#if (js || neko)
+							#if( js || neko )
 							var id = Reflect.field(k, "__id__");
 							Reflect.deleteField(k, "__id__");
 							serialize(k);
@@ -333,8 +335,8 @@ class Serializer {
 							serialize(v.get(k));
 						}
 						buf.add("h");
-					case #if (neko || cs || python) "haxe.io.Bytes" #else cast haxe.io.Bytes #end:
-						var v:haxe.io.Bytes = v;
+					case #if( neko || cs || python ) "haxe.io.Bytes" #else cast haxe.io.Bytes #end:
+						var v : haxe.io.Bytes = v;
 						#if neko
 						var chars = new String(base_encode(v.getData(), untyped BASE64.__s));
 						buf.add("s");
@@ -356,13 +358,13 @@ class Serializer {
 						var i = 0;
 						var max = v.length - 2;
 						var b64 = BASE64_CODES;
-						if (b64 == null) {
-							b64 = new haxe.ds.Vector(BASE64.length);
+						if(b64 == null) {
+							b64 = new chx.ds.Vector(BASE64.length);
 							for (i in 0...BASE64.length)
 								b64[i] = BASE64.charCodeAt(i);
 							BASE64_CODES = b64;
 						}
-						while (i < max) {
+						while(i < max) {
 							var b1 = v.get(i++);
 							var b2 = v.get(i++);
 							var b3 = v.get(i++);
@@ -372,35 +374,39 @@ class Serializer {
 							buf.addChar(b64[((b2 << 2) | (b3 >> 6)) & 63]);
 							buf.addChar(b64[b3 & 63]);
 						}
-						if (i == max) {
+						if(i == max) {
 							var b1 = v.get(i++);
 							var b2 = v.get(i++);
 							buf.addChar(b64[b1 >> 2]);
 							buf.addChar(b64[((b1 << 4) | (b2 >> 4)) & 63]);
 							buf.addChar(b64[(b2 << 2) & 63]);
-						} else if (i == max + 1) {
+						}
+						else if(i == max + 1) {
 							var b1 = v.get(i++);
 							buf.addChar(b64[b1 >> 2]);
 							buf.addChar(b64[(b1 << 4) & 63]);
 						}
 						#end
 					default:
-						if (useCache) cache.pop();
-						if (#if flash try
+						if(useCache)
+							cache.pop();
+						if(#if flash try
 							v.hxSerialize != null
-						catch (e:Dynamic)
-							false #elseif (cs || java || python) Reflect.hasField(v,
-								"hxSerialize") #elseif php php.Global.method_exists(v, 'hxSerialize') #else v.hxSerialize != null #end) {
+						catch(e:Dynamic)
+							false #elseif( cs || java || python )Reflect.hasField(v,
+								"hxSerialize") #elseif php php.Global.method_exists(v,
+								'hxSerialize') #else v.hxSerialize != null #end) {
 							buf.add("C");
 							serializeString(Type.getClassName(c));
-							if (useCache)
+							if(useCache)
 								cache.push(v);
 							v.hxSerialize(this);
 							buf.add("g");
-						} else {
+						}
+						else {
 							buf.add("c");
 							serializeString(Type.getClassName(c));
-							if (useCache)
+							if(useCache)
 								cache.push(v);
 							#if flash
 							serializeClassFields(v, c);
@@ -410,59 +416,63 @@ class Serializer {
 						}
 				}
 			case TObject:
-				if (Std.isOfType(v, Class)) {
+				if(Std.isOfType(v, Class)) {
 					var className = Type.getClassName(v);
-					#if (flash || cpp)
+					#if( flash || cpp )
 					// Currently, Enum and Class are the same for flash and cpp.
 					//  use resolveEnum to test if it is actually an enum
-					if (Type.resolveEnum(className) != null)
+					if(Type.resolveEnum(className) != null)
 						buf.add("B")
 					else
 					#end
 					buf.add("A");
 					serializeString(className);
-				} else if (Std.isOfType(v, Enum)) {
+				}
+				else if(Std.isOfType(v, Enum)) {
 					buf.add("B");
 					serializeString(Type.getEnumName(v));
-				} else {
-					if (useCache && serializeRef(v))
+				}
+				else {
+					if(useCache && serializeRef(v))
 						return;
 					buf.add("o");
 					serializeFields(v);
 				}
 			case TEnum(e):
-				if (useCache) {
-					if (serializeRef(v))
+				if(useCache) {
+					if(serializeRef(v))
 						return;
 					cache.pop();
 				}
 				buf.add(useEnumIndex ? "j" : "w");
 				serializeString(Type.getEnumName(e));
 				#if neko
-				if (useEnumIndex) {
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(v.index);
-				} else
+				}
+				else
 					serializeString(new String(v.tag));
 				buf.add(":");
-				if (v.args == null)
+				if(v.args == null)
 					buf.add(0);
 				else {
-					var l:Int = untyped __dollar__asize(v.args);
+					var l : Int = untyped __dollar__asize(v.args);
 					buf.add(l);
 					for (i in 0...l)
 						serialize(v.args[i]);
 				}
 				#elseif flash
-				if (useEnumIndex) {
+				if(useEnumIndex) {
 					buf.add(":");
-					var i:Int = v.index;
+					var i : Int = v.index;
 					buf.add(i);
-				} else
+				}
+				else
 					serializeString(v.tag);
 				buf.add(":");
-				var pl:Array<Dynamic> = v.params;
-				if (pl == null)
+				var pl : Array<Dynamic> = v.params;
+				if(pl == null)
 					buf.add(0);
 				else {
 					buf.add(pl.length);
@@ -470,11 +480,12 @@ class Serializer {
 						serialize(p);
 				}
 				#elseif cpp
-				var enumBase:cpp.EnumBase = v;
-				if (useEnumIndex) {
+				var enumBase : cpp.EnumBase = v;
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(enumBase.getIndex());
-				} else
+				}
+				else
 					serializeString(enumBase.getTag());
 				buf.add(":");
 				var len = enumBase.getParamCount();
@@ -482,14 +493,15 @@ class Serializer {
 				for (p in 0...len)
 					serialize(enumBase.getParamI(p));
 				#elseif php
-				if (useEnumIndex) {
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(v.index);
-				} else
+				}
+				else
 					serializeString(v.tag);
 				buf.add(":");
-				var l:Int = php.Syntax.code("count({0})", v.params);
-				if (l == 0 || v.params == null)
+				var l : Int = php.Syntax.code("count({0})", v.params);
+				if(l == 0 || v.params == null)
 					buf.add(0);
 				else {
 					buf.add(l);
@@ -499,26 +511,29 @@ class Serializer {
 						#end
 					}
 				}
-				#elseif (java || cs || python || hl || eval)
-				if (useEnumIndex) {
+				#elseif( java || cs || python || hl || eval )
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(Type.enumIndex(v));
-				} else
+				}
+				else
 					serializeString(Type.enumConstructor(v));
 				buf.add(":");
-				var arr:Array<Dynamic> = Type.enumParameters(v);
-				if (arr != null) {
+				var arr : Array<Dynamic> = Type.enumParameters(v);
+				if(arr != null) {
 					buf.add(arr.length);
 					for (v in arr)
 						serialize(v);
-				} else {
+				}
+				else {
 					buf.add("0");
 				}
-				#elseif (js && !js_enums_as_arrays)
-				if (useEnumIndex) {
+				#elseif( js && !js_enums_as_arrays )
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(v._hx_index);
-				} else
+				}
+				else
 					serializeString(Type.enumConstructor(v));
 				buf.add(":");
 				var params = Type.enumParameters(v);
@@ -526,10 +541,11 @@ class Serializer {
 				for (p in params)
 					serialize(p);
 				#else
-				if (useEnumIndex) {
+				if(useEnumIndex) {
 					buf.add(":");
 					buf.add(v[1]);
-				} else
+				}
+				else
 					serializeString(v[0]);
 				buf.add(":");
 				var l = __getField(v, "length");
@@ -537,13 +553,13 @@ class Serializer {
 				for (i in 2...l)
 					serialize(v[i]);
 				#end
-				if (useCache)
+				if(useCache)
 					cache.push(v);
 			case TFunction:
 				throw "Cannot serialize function";
 			default:
 				#if neko
-				if (untyped (__i32__kind != null && __dollar__iskind(v, __i32__kind))) {
+				if(untyped (__i32__kind != null && __dollar__iskind(v, __i32__kind))) {
 					buf.add("i");
 					buf.add(v);
 					return;
@@ -553,16 +569,16 @@ class Serializer {
 		}
 	}
 
-	extern inline function __getField(o:Dynamic, f:String):Dynamic
+	extern inline function __getField(o : Dynamic, f : String) : Dynamic
 		return o[cast f];
 
-	public function serializeException(e:Dynamic) {
+	public function serializeException(e : Dynamic) {
 		buf.add("x");
 		#if flash
-		if (untyped __is__(e, __global__["Error"])) {
-			var e:flash.errors.Error = e;
+		if(untyped __is__(e, __global__["Error"])) {
+			var e : flash.errors.Error = e;
 			var s = e.getStackTrace();
-			if (s == null)
+			if(s == null)
 				serialize(e.message);
 			else
 				serialize(s);
@@ -579,7 +595,7 @@ class Serializer {
 	Serializer, serialize `v` into it and obtain the result through a call
 	to `toString()`.
 **/
-	public static function run(v:Dynamic) {
+	public static function run(v : Dynamic) {
 		var s = new Serializer();
 		s.serialize(v);
 		return s.toString();

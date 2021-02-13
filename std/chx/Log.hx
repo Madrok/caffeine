@@ -148,9 +148,9 @@ class Log {
 						case cast List:
 							if(v.length > 0)buf.add(iterFmtLinear("{", "}", indent,
 								v.iterator())); else buf.add("{}");
-						case cast haxe.ds.StringMap:
+						case cast chx.ds.StringMap:
 							buf.add(iterFmtAssoc("{", "}", " => ", indent, v.keys(), v.get));
-						case cast haxe.ds.IntMap:
+						case cast chx.ds.IntMap:
 							buf.add(iterFmtAssoc("{", "}", " => ", indent, v.keys(), v.get));
 						default:
 							buf.add(Std.string(v));
@@ -158,8 +158,7 @@ class Log {
 			case TObject:
 				buf.add(iterFmtAssoc("{", "}", " : ", indent, Reflect
 					.fields(v)
-					.iterator()
-					,
+					.iterator(),
 					Reflect.field.bind(v)));
 			case TEnum(e):
 				buf.add(Std.string(v));

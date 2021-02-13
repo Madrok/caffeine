@@ -36,136 +36,50 @@ import haxe.Constraints;
 
 @:noPackageRestrict
 class HostClasses {
-	static var classes = [
-		"cpp.Lib",
-		"cpp.NativeArray",
-		"cpp.NativeString",
-		"cpp.vm.Debugger",
-		"sys.thread.Deque",
-		"sys.thread.Lock",
-		"sys.thread.Mutex",
-		"sys.thread.Thread",
-		"sys.thread.Tls",
-		"cpp.vm.ExecutionTrace",
-		"cpp.vm.Gc",
-		"cpp.vm.Profiler",
-		"cpp.vm.Unsafe",
-		"cpp.vm.WeakRef",
-		"cpp.Object",
-		"cpp.Int64",
-		"cpp.Finalizable",
-		"Std",
-		"StringBuf",
-		"sys.db.Mysql",
-		"sys.db.Sqlite",
-		"sys.FileSystem",
-		"sys.io.File",
-		"sys.io.FileInput",
-		"sys.io.Process",
-		"sys.net.UdpSocket",
-		"sys.net.Socket",
-		"sys.ssl.Certificate",
-		"sys.ssl.Digest",
-		"sys.ssl.Key",
-		"sys.ssl.Socket",
-		"Enum",
-		"EnumValue",
-		// "Sys",
-		"Type",
-		"Xml",
-		"Date",
-		"Lambda",
-		"DateTools",
-		"List",
-		"Math",
-		"Reflect",
-		"StringBuf",
-		"StringTools",
-		"haxe.ds.IntMap",
-		"haxe.ds.ObjectMap",
-		"haxe.ds.StringMap",
-		"haxe.ds.BalancedTree",
-		"haxe.NativeStackTrace",
-		"haxe.Serializer",
-		"haxe.Unserializer",
-		"haxe.Resource",
-		"haxe.Template",
-		"haxe.Utf8",
-		"haxe.Log",
-		"haxe.zip.Compress",
-		"haxe.zip.Uncompress",
-		"haxe.crypto.BaseCode",
-		"haxe.crypto.Sha256",
-		"haxe.crypto.Hmac",
-		"haxe.crypto.Crc32",
-		"haxe.crypto.Base64",
-		"haxe.crypto.Adler32",
-		"haxe.crypto.Md5",
-		"haxe.crypto.Sha1",
-		"haxe.io.BufferInput",
-		"haxe.io.Bytes",
-		"haxe.io.BytesBuffer",
-		"haxe.io.BytesData",
-		"haxe.io.BytesInput",
-		"haxe.io.BytesOutput",
-		"haxe.io.Eof",
-		"haxe.io.Error",
-		"haxe.io.FPHelper",
-		"chx.io.Input",
-		"chx.io.Output",
-		"haxe.io.Path",
-		"haxe.io.StringInput",
-		"haxe.xml.Parser",
-		"haxe.Json",
-		"haxe.NativeStackTrace",
-		"haxe.Resource",
-		"haxe.Utf8",
-		"haxe.Int64",
-		"haxe.Int32",
-		"haxe.Serializer",
-		"haxe.Unserializer",
-		"haxe.ds.ArraySort",
-		"haxe.ds.GenericStack",
-		"haxe.ds.ObjectMap",
-		"haxe.ds.Vector",
-		"haxe.ds.BalancedTree",
-		"haxe.ds.HashMap",
-		"haxe.ds.Option",
-		"haxe.ds.WeakMap",
-		"haxe.ds.EnumValueMap",
-		"haxe.ds.IntMap",
-		"haxe.ds.StringMap",
-		"haxe.iterators.MapKeyValueIterator",
-		"StdTypes",
-		"Array",
-		"Class",
-		"Date",
-		"EReg",
-		"Enum",
-		"EnumValue",
-		// "IntIterator",
-		"List",
-		"Map",
-		"String",
-	];
+	static var classes = ["cpp.Lib", "cpp.NativeArray", "cpp.NativeString", "cpp.vm.Debugger",
+		"sys.thread.Deque", "sys.thread.Lock", "sys.thread.Mutex", "sys.thread.Thread",
+		"sys.thread.Tls", "cpp.vm.ExecutionTrace", "cpp.vm.Gc", "cpp.vm.Profiler",
+		"cpp.vm.Unsafe", "cpp.vm.WeakRef", "cpp.Object", "cpp.Int64", "cpp.Finalizable", "Std",
+		"StringBuf", "sys.db.Mysql", "sys.db.Sqlite", "sys.FileSystem", "sys.io.File",
+		"sys.io.FileInput", "sys.io.Process", "sys.net.UdpSocket", "sys.net.Socket",
+		"sys.ssl.Certificate", "sys.ssl.Digest", "sys.ssl.Key", "sys.ssl.Socket", "Enum",
+		"EnumValue", // "Sys",
+		"Type", "Xml", "Date", "Lambda", "DateTools", "List", "Math",
+		"Reflect", "StringBuf", "StringTools", "chx.ds.IntMap", "chx.ds.ObjectMap",
+		"chx.ds.StringMap", "haxe.ds.BalancedTree", "haxe.NativeStackTrace", "haxe.Serializer",
+		"haxe.Unserializer", "haxe.Resource", "haxe.Template", "haxe.Utf8", "haxe.Log",
+		"haxe.zip.Compress", "haxe.zip.Uncompress", "haxe.crypto.BaseCode", "haxe.crypto.Sha256",
+		"haxe.crypto.Hmac", "haxe.crypto.Crc32", "haxe.crypto.Base64", "haxe.crypto.Adler32",
+		"haxe.crypto.Md5", "haxe.crypto.Sha1", "haxe.io.BufferInput", "haxe.io.Bytes",
+		"haxe.io.BytesBuffer", "haxe.io.BytesData", "haxe.io.BytesInput", "haxe.io.BytesOutput",
+		"haxe.io.Eof", "haxe.io.Error", "haxe.io.FPHelper", "chx.io.Input", "chx.io.Output",
+		"haxe.io.Path", "haxe.io.StringInput", "haxe.xml.Parser", "haxe.Json",
+		"haxe.NativeStackTrace", "haxe.Resource", "haxe.Utf8", "haxe.Int64", "haxe.Int32",
+		"haxe.Serializer", "haxe.Unserializer", "chx.ds.ArraySort", "chx.ds.GenericStack",
+		"chx.ds.ObjectMap", "chx.ds.Vector", "haxe.ds.BalancedTree", "chx.ds.HashMap",
+		"chx.ds.Option", "chx.ds.WeakMap", "chx.ds.EnumValueMap", "chx.ds.IntMap",
+		"chx.ds.StringMap", "haxe.iterators.MapKeyValueIterator", "StdTypes", "Array", "Class",
+		"Date", "EReg", "Enum", "EnumValue", // "IntIterator",
+		"List", "Map", "String",];
 
-	static function parseClassInfo(externs:Map<String, Bool>, filename:String) {
-		if (sys.FileSystem.exists(filename)) {
+	static function parseClassInfo(externs : Map<String, Bool>, filename : String) {
+		if(sys.FileSystem.exists(filename)) {
 			var file = sys.io.File.read(filename);
 			try {
-				while (true) {
+				while(true) {
 					var line = file.readLine();
 					var parts = line.split(" ");
-					if (parts[0] == "class" || parts[0] == "interface" || parts[0] == "enum")
+					if(parts[0] == "class" || parts[0] == "interface" || parts[0] == "enum")
 						externs.set(parts[1], true);
 				}
-			} catch (e:Dynamic) {}
-			if (file != null)
+			}
+			catch(e:Dynamic) {}
+			if(file != null)
 				file.close();
 		}
 	}
 
-	static function onGenerateCppia(types:Array<Type>):Void {
+	static function onGenerateCppia(types : Array<Type>) : Void {
 		var externs = new Map<String, Bool>();
 		externs.set("Sys", true);
 		externs.set("haxe.IMap", true);
@@ -191,25 +105,29 @@ class HostClasses {
 			externs.set(e, true);
 
 		var define = Context.defined("dll_import") ? Context.definedValue("dll_import") : "1";
-		if (define != "1")
+		if(define != "1")
 			parseClassInfo(externs, define);
 		else {
 			var tried = new Map<String, Bool>();
 			for (path in Context.getClassPath())
-				if (!tried.exists(path)) {
+				if(!tried.exists(path)) {
 					tried.set(path, true);
 					parseClassInfo(externs, path + "/export_classes.info");
 				}
 		}
 
 		for (type in types) {
-			switch (type) {
+			switch(type) {
 				case TInst(classRef, params):
-					if (externs.exists(classRef.toString()))
-						classRef.get().exclude();
+					if(externs.exists(classRef.toString()))
+						classRef
+							.get()
+							.exclude();
 				case TEnum(enumRef, params):
-					if (externs.exists(enumRef.toString()))
-						enumRef.get().exclude();
+					if(externs.exists(enumRef.toString()))
+						enumRef
+							.get()
+							.exclude();
 				default:
 			}
 		}
@@ -217,10 +135,11 @@ class HostClasses {
 
 	// Exclude the standard classes, and any described in 'export_classes.info' files found in the classpath
 	public static function exclude() {
-		if (Context.defined("cppia"))
+		if(Context.defined("cppia"))
 			Context.onGenerate(onGenerateCppia);
 		else
-			Context.error("cpp.cppia.excludeHostFiles is only for cppia code", Context.currentPos());
+			Context.error("cpp.cppia.excludeHostFiles is only for cppia code",
+				Context.currentPos());
 		return Context.getBuildFields();
 	}
 

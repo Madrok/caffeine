@@ -19,12 +19,12 @@
 
 package chx.ds;
 
-import ds.tools.ArrayTools;
-import ds.tools.Assert.assert;
-import ds.tools.GrowthRate;
-import ds.tools.MathTools;
+import chx.ds.tools.ArrayTools;
+import chx.ds.tools.Assert.assert;
+import chx.ds.tools.GrowthRate;
+import chx.ds.tools.MathTools;
 
-using ds.tools.NativeArrayTools;
+using chx.ds.tools.NativeArrayTools;
 
 /**
 	A priority queue is heap but with a simplified API for managing prioritized data
@@ -99,7 +99,7 @@ class PriorityQueue<T:(Prioritizable)> implements Queue<T> {
 	var mIterator : PriorityQueueIterator<T> = null;
 
 	#if debug
-	var mMap : haxe.ds.ObjectMap<T, Bool>;
+	var mMap : chx.ds.ObjectMap<T, Bool>;
 	#end
 
 	/**
@@ -124,7 +124,7 @@ class PriorityQueue<T:(Prioritizable)> implements Queue<T> {
 		mData.set(0, cast null); // reserved
 
 		#if debug
-		mMap = new haxe.ds.ObjectMap<T, Bool>();
+		mMap = new chx.ds.ObjectMap<T, Bool>();
 		#end
 
 		if(source != null) {
@@ -474,7 +474,7 @@ class PriorityQueue<T:(Prioritizable)> implements Queue<T> {
 	**/
 	public function clear(gc : Bool = false) {
 		#if debug
-		mMap = new haxe.ds.ObjectMap<T, Bool>();
+		mMap = new chx.ds.ObjectMap<T, Bool>();
 		#end
 
 		if(gc)
@@ -753,7 +753,7 @@ class PriorityQueue<T:(Prioritizable)> implements Queue<T> {
 #end
 @:access(ds.PriorityQueue)
 @:dox(hide)
-class PriorityQueueIterator<T:(Prioritizable)> implements ds.Itr<T> {
+class PriorityQueueIterator<T:(Prioritizable)> implements chx.ds.Itr<T> {
 	var mObject : PriorityQueue<T>;
 	var mData : NativeArray<T>;
 	var mI : Int;

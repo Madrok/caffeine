@@ -27,7 +27,7 @@
 
 package chx.collections;
 
-import haxe.ds.IntMap;
+import chx.ds.IntMap;
 
 /**
  * A two dimensional IntMap; a sparse 2D array.

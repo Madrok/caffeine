@@ -22,14 +22,14 @@
 
 package haxe;
 
-using haxe.Unserializer;
+import chx.ds.List;
 
-import haxe.ds.List;
+using haxe.Unserializer;
 
 @:noDoc
 typedef TypeResolver = {
-	function resolveClass(name:String):Class<Dynamic>;
-	function resolveEnum(name:String):Enum<Dynamic>;
+	function resolveClass(name : String) : Class<Dynamic>;
+	function resolveEnum(name : String) : Enum<Dynamic>;
 }
 
 /**
@@ -64,7 +64,7 @@ class Unserializer {
 		This value is applied when a new `Unserializer` instance is created.
 		Changing it afterwards has no effect on previously created instances.
 	**/
-	public static var DEFAULT_RESOLVER:TypeResolver = new DefaultResolver();
+	public static var DEFAULT_RESOLVER : TypeResolver = new DefaultResolver();
 
 	static var BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 
@@ -79,14 +79,14 @@ class Unserializer {
 	}
 	#end
 
-	var buf:String;
-	var pos:Int;
-	var length:Int;
-	var cache:Array<Dynamic>;
-	var scache:Array<String>;
-	var resolver:TypeResolver;
+	var buf : String;
+	var pos : Int;
+	var length : Int;
+	var cache : Array<Dynamic>;
+	var scache : Array<String>;
+	var resolver : TypeResolver;
 	#if neko
-	var upos:Int;
+	var upos : Int;
 	#end
 
 	/**
@@ -98,7 +98,7 @@ class Unserializer {
 
 		Each Unserializer instance maintains its own cache.
 	**/
-	public function new(buf:String) {
+	public function new(buf : String) {
 		this.buf = buf;
 		length = this.buf.fastLength();
 		pos = 0;
@@ -108,7 +108,7 @@ class Unserializer {
 		scache = new Array();
 		cache = new Array();
 		var r = DEFAULT_RESOLVER;
-		if (r == null) {
+		if(r == null) {
 			r = new DefaultResolver();
 			DEFAULT_RESOLVER = r;
 		}
@@ -124,7 +124,7 @@ class Unserializer {
 		See `DEFAULT_RESOLVER` for more information on type resolvers.
 	**/
 	public function setResolver(r) {
-		if (r == null)
+		if(r == null)
 			resolver = NullResolver.instance;
 		else
 			resolver = r;
@@ -139,7 +139,7 @@ class Unserializer {
 		return resolver;
 	}
 
-	inline function get(p:Int):Int {
+	inline function get(p : Int) : Int {
 		#if php
 		return p >= length ? 0 : buf.fastCharCodeAt(p);
 		#else
@@ -151,35 +151,35 @@ class Unserializer {
 		var k = 0;
 		var s = false;
 		var fpos = pos;
-		while (true) {
+		while(true) {
 			var c = get(pos);
-			if (StringTools.isEof(c))
+			if(StringTools.isEof(c))
 				break;
-			if (c == "-".code) {
-				if (pos != fpos)
+			if(c == "-".code) {
+				if(pos != fpos)
 					break;
 				s = true;
 				pos++;
 				continue;
 			}
-			if (c < "0".code || c > "9".code)
+			if(c < "0".code || c > "9".code)
 				break;
 			k = k * 10 + (c - "0".code);
 			pos++;
 		}
-		if (s)
+		if(s)
 			k *= -1;
 		return k;
 	}
 
 	function readFloat() {
 		var p1 = pos;
-		while (true) {
+		while(true) {
 			var c = get(pos);
-			if (StringTools.isEof(c))
+			if(StringTools.isEof(c))
 				break;
 			// + - . , 0-9
-			if ((c >= 43 && c < 58) || c == "e".code || c == "E".code)
+			if((c >= 43 && c < 58) || c == "e".code || c == "E".code)
 				pos++;
 			else
 				break;
@@ -187,14 +187,14 @@ class Unserializer {
 		return Std.parseFloat(buf.fastSubstr(p1, pos - p1));
 	}
 
-	function unserializeObject(o:{}) {
-		while (true) {
-			if (pos >= length)
+	function unserializeObject(o : {}) {
+		while(true) {
+			if(pos >= length)
 				throw "Invalid object";
-			if (get(pos) == "g".code)
+			if(get(pos) == "g".code)
 				break;
-			var k:Dynamic = unserialize();
-			if (!Std.isOfType(k, String))
+			var k : Dynamic = unserialize();
+			if(!Std.isOfType(k, String))
 				throw "Invalid object key";
 			var v = unserialize();
 			Reflect.setField(o, k, v);
@@ -202,14 +202,14 @@ class Unserializer {
 		pos++;
 	}
 
-	function unserializeEnum<T>(edecl:Enum<T>, tag:String) {
-		if (get(pos++) != ":".code)
+	function unserializeEnum<T>(edecl : Enum<T>, tag : String) {
+		if(get(pos++) != ":".code)
 			throw "Invalid enum format";
 		var nargs = readDigits();
-		if (nargs == 0)
+		if(nargs == 0)
 			return Type.createEnum(edecl, tag);
 		var args = new Array();
-		while (nargs-- > 0)
+		while(nargs-- > 0)
 			args.push(unserialize());
 		return Type.createEnum(edecl, tag, args);
 	}
@@ -234,8 +234,8 @@ class Unserializer {
 		Classes are created from `Type.createEmptyInstance`, which means their
 		constructors are not called.
 	**/
-	public function unserialize():Dynamic {
-		switch (get(pos++)) {
+	public function unserialize() : Dynamic {
+		switch(get(pos++)) {
 			case "n".code:
 				return null;
 			case "t".code:
@@ -250,7 +250,7 @@ class Unserializer {
 				return readFloat();
 			case "y".code:
 				var len = readDigits();
-				if (get(pos++) != ":".code || length - pos < len)
+				if(get(pos++) != ":".code || length - pos < len)
 					throw "Invalid string length";
 				var s = buf.fastSubstr(pos, len);
 				pos += len;
@@ -270,17 +270,18 @@ class Unserializer {
 				var cachePos = cache.length;
 				#end
 				cache.push(a);
-				while (true) {
+				while(true) {
 					var c = get(pos);
-					if (c == "h".code) {
+					if(c == "h".code) {
 						pos++;
 						break;
 					}
-					if (c == "u".code) {
+					if(c == "u".code) {
 						pos++;
 						var n = readDigits();
 						a[a.length + n - 1] = null;
-					} else
+					}
+					else
 						a.push(unserialize());
 				}
 				#if cpp
@@ -295,12 +296,12 @@ class Unserializer {
 				return o;
 			case "r".code:
 				var n = readDigits();
-				if (n < 0 || n >= cache.length)
+				if(n < 0 || n >= cache.length)
 					throw "Invalid reference";
 				return cache[n];
 			case "R".code:
 				var n = readDigits();
-				if (n < 0 || n >= scache.length)
+				if(n < 0 || n >= scache.length)
 					throw "Invalid string reference";
 				return scache[n];
 			case "x".code:
@@ -308,7 +309,7 @@ class Unserializer {
 			case "c".code:
 				var name = unserialize();
 				var cl = resolver.resolveClass(name);
-				if (cl == null)
+				if(cl == null)
 					throw "Class not found " + name;
 				var o = Type.createEmptyInstance(cl);
 				cache.push(o);
@@ -317,7 +318,7 @@ class Unserializer {
 			case "w".code:
 				var name = unserialize();
 				var edecl = resolver.resolveEnum(name);
-				if (edecl == null)
+				if(edecl == null)
 					throw "Enum not found " + name;
 				var e = unserializeEnum(edecl, unserialize());
 				cache.push(e);
@@ -325,12 +326,12 @@ class Unserializer {
 			case "j".code:
 				var name = unserialize();
 				var edecl = resolver.resolveEnum(name);
-				if (edecl == null)
+				if(edecl == null)
 					throw "Enum not found " + name;
 				pos++; /* skip ':' */
 				var index = readDigits();
 				var tag = Type.getEnumConstructs(edecl)[index];
-				if (tag == null)
+				if(tag == null)
 					throw "Unknown enum index " + name + "@" + index;
 				var e = unserializeEnum(edecl, tag);
 				cache.push(e);
@@ -339,38 +340,38 @@ class Unserializer {
 				var l = new List();
 				cache.push(l);
 				var buf = buf;
-				while (get(pos) != "h".code)
+				while(get(pos) != "h".code)
 					l.add(unserialize());
 				pos++;
 				return l;
 			case "b".code:
-				var h = new haxe.ds.StringMap();
+				var h = new chx.ds.StringMap();
 				cache.push(h);
 				var buf = buf;
-				while (get(pos) != "h".code) {
+				while(get(pos) != "h".code) {
 					var s = unserialize();
 					h.set(s, unserialize());
 				}
 				pos++;
 				return h;
 			case "q".code:
-				var h = new haxe.ds.IntMap();
+				var h = new chx.ds.IntMap();
 				cache.push(h);
 				var buf = buf;
 				var c = get(pos++);
-				while (c == ":".code) {
+				while(c == ":".code) {
 					var i = readDigits();
 					h.set(i, unserialize());
 					c = get(pos++);
 				}
-				if (c != "h".code)
+				if(c != "h".code)
 					throw "Invalid IntMap format";
 				return h;
 			case "M".code:
-				var h = new haxe.ds.ObjectMap();
+				var h = new chx.ds.ObjectMap();
 				cache.push(h);
 				var buf = buf;
-				while (get(pos) != "h".code) {
+				while(get(pos) != "h".code) {
 					var s = unserialize();
 					h.set(s, unserialize());
 				}
@@ -378,28 +379,34 @@ class Unserializer {
 				return h;
 			case "v".code:
 				var d;
-				if (get(pos) >= '0'.code && get(pos) <= '9'.code && get(pos + 1) >= '0'.code && get(pos + 1) <= '9'.code && get(pos + 2) >= '0'.code
-					&& get(pos + 2) <= '9'.code && get(pos + 3) >= '0'.code && get(pos + 3) <= '9'.code && get(pos + 4) == '-'.code) {
+				if(get(pos) >= '0'.code && get(pos) <= '9'.code && get(pos + 1) >= '0'.code
+					&& get(pos + 1) <= '9'.code && get(pos + 2) >= '0'.code
+					&& get(pos + 2) <= '9'.code && get(pos + 3) >= '0'.code
+					&& get(pos + 3) <= '9'.code && get(pos + 4) == '-'.code) {
 					// Included for backwards compatibility
 					d = Date.fromString(buf.fastSubstr(pos, 19));
 					pos += 19;
-				} else
+				}
+				else
 					d = Date.fromTime(readFloat());
 				cache.push(d);
 				return d;
 			case "s".code:
 				var len = readDigits();
 				var buf = buf;
-				if (get(pos++) != ":".code || length - pos < len)
+				if(get(pos++) != ":".code || length - pos < len)
 					throw "Invalid bytes length";
 				#if neko
-				var bytes = haxe.io.Bytes.ofData(base_decode(untyped buf.fastSubstr(pos, len).__s, untyped BASE64.__s));
+				var bytes = haxe.io.Bytes.ofData(base_decode(untyped buf
+					.fastSubstr(pos, len)
+					.__s,
+					untyped BASE64.__s));
 				#elseif php
 				var phpEncoded = php.Global.strtr(buf.fastSubstr(pos, len), '%:', '+/');
 				var bytes = haxe.io.Bytes.ofData(php.Global.base64_decode(phpEncoded));
 				#else
 				var codes = CODES;
-				if (codes == null) {
+				if(codes == null) {
 					codes = initCodes();
 					CODES = codes;
 				}
@@ -409,7 +416,7 @@ class Unserializer {
 				var max = i + (len - rest);
 				var bytes = haxe.io.Bytes.alloc(size);
 				var bpos = 0;
-				while (i < max) {
+				while(i < max) {
 					var c1 = codes[StringTools.fastCodeAt(buf, i++)];
 					var c2 = codes[StringTools.fastCodeAt(buf, i++)];
 					bytes.set(bpos++, (c1 << 2) | (c2 >> 4));
@@ -418,11 +425,11 @@ class Unserializer {
 					var c4 = codes[StringTools.fastCodeAt(buf, i++)];
 					bytes.set(bpos++, (c3 << 6) | c4);
 				}
-				if (rest >= 2) {
+				if(rest >= 2) {
 					var c1 = codes[StringTools.fastCodeAt(buf, i++)];
 					var c2 = codes[StringTools.fastCodeAt(buf, i++)];
 					bytes.set(bpos++, (c1 << 2) | (c2 >> 4));
-					if (rest == 3) {
+					if(rest == 3) {
 						var c3 = codes[StringTools.fastCodeAt(buf, i++)];
 						bytes.set(bpos++, (c2 << 4) | (c3 >> 2));
 					}
@@ -434,24 +441,24 @@ class Unserializer {
 			case "C".code:
 				var name = unserialize();
 				var cl = resolver.resolveClass(name);
-				if (cl == null)
+				if(cl == null)
 					throw "Class not found " + name;
-				var o:Dynamic = Type.createEmptyInstance(cl);
+				var o : Dynamic = Type.createEmptyInstance(cl);
 				cache.push(o);
 				o.hxUnserialize(this);
-				if (get(pos++) != "g".code)
+				if(get(pos++) != "g".code)
 					throw "Invalid custom data";
 				return o;
 			case "A".code:
 				var name = unserialize();
 				var cl = resolver.resolveClass(name);
-				if (cl == null)
+				if(cl == null)
 					throw "Class not found " + name;
 				return cl;
 			case "B".code:
 				var name = unserialize();
 				var e = resolver.resolveEnum(name);
-				if (e == null)
+				if(e == null)
 					throw "Enum not found " + name;
 				return e;
 			default:
@@ -467,15 +474,16 @@ class Unserializer {
 		Unserializer with `v` as buffer and calling its `unserialize()` method
 		once.
 	**/
-	public static function run(v:String):Dynamic {
-		return new Unserializer(v).unserialize();
+	public static function run(v : String) : Dynamic {
+		return new Unserializer(v)
+			.unserialize();
 	}
 
 	#if neko
 	static var base_decode = neko.Lib.load("std", "base_decode", 2);
 	#end
 
-	static inline function fastLength(s:String):Int {
+	static inline function fastLength(s : String) : Int {
 		#if php
 		return php.Global.strlen(s);
 		#else
@@ -483,7 +491,7 @@ class Unserializer {
 		#end
 	}
 
-	static inline function fastCharCodeAt(s:String, pos:Int):Int {
+	static inline function fastCharCodeAt(s : String, pos : Int) : Int {
 		#if php
 		return php.Global.ord((s:php.NativeString)[pos]);
 		#else
@@ -491,7 +499,7 @@ class Unserializer {
 		#end
 	}
 
-	static inline function fastCharAt(s:String, pos:Int):String {
+	static inline function fastCharAt(s : String, pos : Int) : String {
 		#if php
 		return (s:php.NativeString)[pos];
 		#else
@@ -499,7 +507,7 @@ class Unserializer {
 		#end
 	}
 
-	static inline function fastSubstr(s:String, pos:Int, length:Int):String {
+	static inline function fastSubstr(s : String, pos : Int, length : Int) : String {
 		#if php
 		return php.Global.substr(s, pos, length);
 		#else
@@ -511,26 +519,26 @@ class Unserializer {
 private class DefaultResolver {
 	public function new() {}
 
-	public inline function resolveClass(name:String):Class<Dynamic>
+	public inline function resolveClass(name : String) : Class<Dynamic>
 		return Type.resolveClass(name);
 
-	public inline function resolveEnum(name:String):Enum<Dynamic>
+	public inline function resolveEnum(name : String) : Enum<Dynamic>
 		return Type.resolveEnum(name);
 }
 
 private class NullResolver {
 	function new() {}
 
-	public inline function resolveClass(name:String):Class<Dynamic>
+	public inline function resolveClass(name : String) : Class<Dynamic>
 		return null;
 
-	public inline function resolveEnum(name:String):Enum<Dynamic>
+	public inline function resolveEnum(name : String) : Enum<Dynamic>
 		return null;
 
-	public static var instance(get, null):NullResolver;
+	public static var instance(get, null) : NullResolver;
 
-	inline static function get_instance():NullResolver {
-		if (instance == null)
+	inline static function get_instance() : NullResolver {
+		if(instance == null)
 			instance = new NullResolver();
 		return instance;
 	}

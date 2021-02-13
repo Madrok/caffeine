@@ -22,21 +22,21 @@
 
 package haxe.zip;
 
-import haxe.ds.List;
+import chx.ds.List;
 
 enum ExtraField {
-	FUnknown(tag:Int, bytes:haxe.io.Bytes);
-	FInfoZipUnicodePath(name:String, crc:Int);
+	FUnknown(tag : Int, bytes : haxe.io.Bytes);
+	FInfoZipUnicodePath(name : String, crc : Int);
 	FUtf8;
 }
 
 typedef Entry = {
-	var fileName:String;
-	var fileSize:Int;
-	var fileTime:Date;
-	var compressed:Bool;
-	var dataSize:Int;
-	var data:Null<haxe.io.Bytes>;
-	var crc32:Null<Int>;
-	var ?extraFields:List<ExtraField>;
+	var fileName : String;
+	var fileSize : Int;
+	var fileTime : Date;
+	var compressed : Bool;
+	var dataSize : Int;
+	var data : Null<haxe.io.Bytes>;
+	var crc32 : Null<Int>;
+	var ?extraFields : List<ExtraField>;
 }

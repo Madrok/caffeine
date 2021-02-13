@@ -26,19 +26,19 @@ import sys.io.Process;
 
 @:coreApi
 class Sys {
-	private static var _env:haxe.ds.StringMap<String>;
-	private static var _args:Array<String>;
+	private static var _env : chx.ds.StringMap<String>;
+	private static var _args : Array<String>;
 
-	public static inline function print(v:Dynamic):Void {
+	public static inline function print(v : Dynamic) : Void {
 		cs.system.Console.Write(v);
 	}
 
-	public static inline function println(v:Dynamic):Void {
+	public static inline function println(v : Dynamic) : Void {
 		cs.system.Console.WriteLine(v);
 	}
 
-	public static function args():Array<String> {
-		if (_args == null) {
+	public static function args() : Array<String> {
+		if(_args == null) {
 			var ret = cs.Lib.array(Environment.GetCommandLineArgs());
 			ret.shift();
 			_args = ret;
@@ -46,21 +46,23 @@ class Sys {
 		return _args.copy();
 	}
 
-	public static inline function getEnv(s:String):String {
+	public static inline function getEnv(s : String) : String {
 		return Environment.GetEnvironmentVariable(s);
 	}
 
-	public static function putEnv(s:String, v:String):Void {
+	public static function putEnv(s : String, v : String) : Void {
 		Environment.SetEnvironmentVariable(s, v);
-		if (_env != null)
+		if(_env != null)
 			_env.set(s, v);
 	}
 
-	public static function environment():Map<String, String> {
-		if (_env == null) {
-			var e = _env = new haxe.ds.StringMap();
-			var nenv = Environment.GetEnvironmentVariables().GetEnumerator();
-			while (nenv.MoveNext()) {
+	public static function environment() : Map<String, String> {
+		if(_env == null) {
+			var e = _env = new chx.ds.StringMap();
+			var nenv = Environment
+				.GetEnvironmentVariables()
+				.GetEnumerator();
+			while(nenv.MoveNext()) {
 				e.set(nenv.Key, nenv.Value);
 			}
 		}
@@ -68,26 +70,26 @@ class Sys {
 		return _env;
 	}
 
-	public static inline function sleep(seconds:Float):Void {
+	public static inline function sleep(seconds : Float) : Void {
 		Thread.Sleep(Std.int(seconds * 1000));
 	}
 
-	public static function setTimeLocale(loc:String):Bool {
+	public static function setTimeLocale(loc : String) : Bool {
 		// TODO C#
 		return false;
 	}
 
-	public static inline function getCwd():String {
+	public static inline function getCwd() : String {
 		return cs.system.io.Directory.GetCurrentDirectory();
 	}
 
-	public static inline function setCwd(s:String):Void {
+	public static inline function setCwd(s : String) : Void {
 		cs.system.io.Directory.SetCurrentDirectory(s);
 	}
 
-	public static function systemName():String {
+	public static function systemName() : String {
 		// doing a switch with strings since MacOS might not be available
-		switch (Environment.OSVersion.Platform + "") {
+		switch(Environment.OSVersion.Platform + "") {
 			case "Unix":
 				return "Linux";
 			case "Xbox":
@@ -96,23 +98,25 @@ class Sys {
 				return "Mac";
 			default:
 				var ver = cast(Environment.OSVersion.Platform, Int);
-				if (ver == 4 || ver == 6 || ver == 128)
+				if(ver == 4 || ver == 6 || ver == 128)
 					return "Linux";
 				return "Windows";
 		}
 	}
 
-	public static function command(cmd:String, ?args:Array<String>):Int {
+	public static function command(cmd : String, ?args : Array<String>) : Int {
 		var proc = Process.createNativeProcess(cmd, args);
-		proc.add_OutputDataReceived(new cs.system.diagnostics.DataReceivedEventHandler(function(p, evtArgs) {
+		proc.add_OutputDataReceived(new cs.system.diagnostics.DataReceivedEventHandler(function(p,
+				evtArgs) {
 			var data = evtArgs.Data;
-			if (data != null && data != "")
+			if(data != null && data != "")
 				println(data);
 		}));
 		var stderr = stderr();
-		proc.add_ErrorDataReceived(new cs.system.diagnostics.DataReceivedEventHandler(function(p, evtArgs) {
+		proc.add_ErrorDataReceived(new cs.system.diagnostics.DataReceivedEventHandler(function(p,
+				evtArgs) {
 			var data = evtArgs.Data;
-			if (data != null && data != "")
+			if(data != null && data != "")
 				stderr.writeString(data + "\n");
 		}));
 		proc.Start();
@@ -124,33 +128,39 @@ class Sys {
 		return exitCode;
 	}
 
-	public static inline function exit(code:Int):Void {
+	public static inline function exit(code : Int) : Void {
 		Environment.Exit(code);
 	}
 
-	@:readOnly static var epochTicks = new cs.system.DateTime(1970, 1, 1).Ticks;
+	@:readOnly static var epochTicks = new cs.system.DateTime(1970, 1, 1)
+		.Ticks;
 
-	public static function time():Float {
-		return cast((cs.system.DateTime.UtcNow.Ticks - epochTicks), Float) / cast(cs.system.TimeSpan.TicksPerSecond, Float);
+	public static function time() : Float {
+		return cast((cs.system.DateTime.UtcNow.Ticks - epochTicks),
+			Float) / cast(cs.system.TimeSpan.TicksPerSecond, Float);
 	}
 
-	public static inline function cpuTime():Float {
+	public static inline function cpuTime() : Float {
 		return Environment.TickCount / 1000;
 	}
 
-	public static function programPath():String {
-		return cs.system.reflection.Assembly.GetExecutingAssembly().Location;
+	public static function programPath() : String {
+		return cs.system.reflection.Assembly
+			.GetExecutingAssembly()
+			.Location;
 	}
 
-	public static function getChar(echo:Bool):Int {
+	public static function getChar(echo : Bool) : Int {
 		#if !(Xbox || CF || MF) // Xbox, Compact Framework, Micro Framework
-		return cast(cs.system.Console.ReadKey(!echo).KeyChar, Int);
+		return cast(cs.system.Console
+			.ReadKey(!echo)
+			.KeyChar, Int);
 		#else
 		return -1;
 		#end
 	}
 
-	public static inline function stdin():chx.io.Input {
+	public static inline function stdin() : chx.io.Input {
 		#if !(Xbox || CF || MF)
 		return new cs.io.NativeInput(cs.system.Console.OpenStandardInput());
 		#else
@@ -158,7 +168,7 @@ class Sys {
 		#end
 	}
 
-	public static inline function stdout():chx.io.Output {
+	public static inline function stdout() : chx.io.Output {
 		#if !(Xbox || CF || MF)
 		return new cs.io.NativeOutput(cs.system.Console.OpenStandardOutput());
 		#else
@@ -166,7 +176,7 @@ class Sys {
 		#end
 	}
 
-	public static inline function stderr():chx.io.Output {
+	public static inline function stderr() : chx.io.Output {
 		#if !(Xbox || CF || MF)
 		return new cs.io.NativeOutput(cs.system.Console.OpenStandardError());
 		#else

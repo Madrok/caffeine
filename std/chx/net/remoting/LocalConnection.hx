@@ -31,7 +31,7 @@ class LocalConnection implements AsyncConnection {
 	var __path : Array<String>;
 	var __data : {
 		ctx : Context,
-		results : haxe.ds.IntMap<{error : Dynamic->Void, result : Dynamic->Void}>,
+		results : chx.ds.IntMap<{error : Dynamic->Void, result : Dynamic->Void}>,
 		error : Dynamic->Void,
 		target : String,
 		cnx : Dynamic,

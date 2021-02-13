@@ -22,7 +22,7 @@
 
 package haxe.zip;
 
-import haxe.ds.List;
+import chx.ds.List;
 
 class Writer {
 	/**
@@ -41,23 +41,23 @@ class Writer {
 	**/
 	inline static var LOCAL_FILE_HEADER_FIELDS_SIZE = 30;
 
-	var o:chx.io.Output;
-	var files:List<{
-		name:String,
-		compressed:Bool,
-		clen:Int,
-		size:Int,
-		crc:Int,
-		date:Date,
-		fields:haxe.io.Bytes
+	var o : chx.io.Output;
+	var files : List<{
+		name : String,
+		compressed : Bool,
+		clen : Int,
+		size : Int,
+		crc : Int,
+		date : Date,
+		fields : haxe.io.Bytes
 	}>;
 
-	public function new(o:chx.io.Output) {
+	public function new(o : chx.io.Output) {
 		this.o = o;
 		files = new List();
 	}
 
-	function writeZipDate(date:Date) {
+	function writeZipDate(date : Date) {
 		var hour = date.getHours();
 		var min = date.getMinutes();
 		var sec = date.getSeconds() >> 1;
@@ -68,12 +68,12 @@ class Writer {
 		o.writeUInt16((year << 9) | (month << 5) | day);
 	}
 
-	public function writeEntryHeader(f:Entry) {
+	public function writeEntryHeader(f : Entry) {
 		var o = this.o;
 		var flags = 0;
-		if (f.extraFields != null) {
+		if(f.extraFields != null) {
 			for (e in f.extraFields)
-				switch (e) {
+				switch(e) {
 					case FUtf8:
 						flags |= 0x800;
 					default:
@@ -82,19 +82,20 @@ class Writer {
 		o.writeInt32(0x04034B50);
 		o.writeUInt16(0x0014); // version
 		o.writeUInt16(flags); // flags
-		if (f.data == null) {
+		if(f.data == null) {
 			f.fileSize = 0;
 			f.dataSize = 0;
 			f.crc32 = 0;
 			f.compressed = false;
 			f.data = haxe.io.Bytes.alloc(0);
-		} else {
-			if (f.crc32 == null) {
-				if (f.compressed)
+		}
+		else {
+			if(f.crc32 == null) {
+				if(f.compressed)
 					throw "CRC32 must be processed before compression";
 				f.crc32 = haxe.crypto.Crc32.make(f.data);
 			}
-			if (!f.compressed)
+			if(!f.compressed)
 				f.fileSize = f.data.length;
 			f.dataSize = f.data.length;
 		}
@@ -105,9 +106,9 @@ class Writer {
 		o.writeInt32(f.fileSize);
 		o.writeUInt16(f.fileName.length);
 		var e = new haxe.io.BytesOutput();
-		if (f.extraFields != null) {
+		if(f.extraFields != null) {
 			for (f in f.extraFields)
-				switch (f) {
+				switch(f) {
 					case FInfoZipUnicodePath(name, crc):
 						var namebytes = haxe.io.Bytes.ofString(name);
 						e.writeUInt16(0x7075);
@@ -128,17 +129,17 @@ class Writer {
 		o.writeString(f.fileName);
 		o.write(ebytes);
 		files.add({
-			name: f.fileName,
-			compressed: f.compressed,
-			clen: f.data.length,
-			size: f.fileSize,
-			crc: f.crc32,
-			date: f.fileTime,
-			fields: ebytes
+			name : f.fileName,
+			compressed : f.compressed,
+			clen : f.data.length,
+			size : f.fileSize,
+			crc : f.crc32,
+			date : f.fileTime,
+			fields : ebytes
 		});
 	}
 
-	public function write(files:List<Entry>) {
+	public function write(files : List<Entry>) {
 		for (f in files) {
 			writeEntryHeader(f);
 			o.writeFullBytes(f.data, 0, f.data.length);

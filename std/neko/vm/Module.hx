@@ -37,9 +37,9 @@ class Module {
 	/**
 		The abstract handle.
 	**/
-	public var m:ModuleHandle;
+	public var m : ModuleHandle;
 
-	public var name(get, set):String;
+	public var name(get, set) : String;
 
 	public function new(m) {
 		this.m = m;
@@ -50,7 +50,7 @@ class Module {
 		A module can be executed several times but its globals are only initialized once
 		the first time the Module is loaded.
 	**/
-	public function execute():Dynamic {
+	public function execute() : Dynamic {
 		return _module_exec(m);
 	}
 
@@ -58,7 +58,7 @@ class Module {
 		return new String(_module_name(m));
 	}
 
-	function set_name(n:String) {
+	function set_name(n : String) {
 		_module_set_name(m, untyped n.__s);
 		return n;
 	}
@@ -73,28 +73,28 @@ class Module {
 	/**
 		Returns the codeSize of the Module.
 	**/
-	public function codeSize():Int {
+	public function codeSize() : Int {
 		return _module_code_size(m);
 	}
 
 	/**
 		Returns the number of globals in this Module global table.
 	**/
-	public function globalsCount():Int {
+	public function globalsCount() : Int {
 		return _module_nglobals(m);
 	}
 
 	/**
 		Get a Module global value.
 	**/
-	public function getGlobal(n:Int):Dynamic {
+	public function getGlobal(n : Int) : Dynamic {
 		return _module_global_get(m, n);
 	}
 
 	/**
 		Set a Module global value.
 	**/
-	public function setGlobal(n:Int, v:Dynamic) {
+	public function setGlobal(n : Int, v : Dynamic) {
 		_module_global_set(m, n, v);
 	}
 
@@ -106,8 +106,8 @@ class Module {
 		Each Module has an export table which can be useful to transfert
 		values between modules.
 	**/
-	public function getExports():Map<String, Dynamic> {
-		var h = new haxe.ds.StringMap();
+	public function getExports() : Map<String, Dynamic> {
+		var h = new chx.ds.StringMap();
 		var exp = _module_exports(m);
 		for (f in Reflect.fields(exp))
 			h.set(f, Reflect.field(exp, f));
@@ -117,14 +117,14 @@ class Module {
 	/**
 		The raw export table.
 	**/
-	public function exportsTable():Dynamic {
+	public function exportsTable() : Dynamic {
 		return _module_exports(m);
 	}
 
 	/**
 		Set a value in the Module export table.
 	**/
-	public function setExport(name:String, value:Dynamic) {
+	public function setExport(name : String, value : Dynamic) {
 		var exp = _module_exports(m);
 		Reflect.setField(exp, name, value);
 	}
@@ -141,7 +141,7 @@ class Module {
 		Reads a module from an Input by using the given Loader.
 		The module is initialized but has not yet been executed.
 	**/
-	public static function read(i:chx.io.Input, l:Loader):Module {
+	public static function read(i : chx.io.Input, l : Loader) : Module {
 		var m = _module_read(function(buf, pos, len) {
 			return i.readBytes(untyped new haxe.io.Bytes(len, buf), pos, len);
 		}, l.l);
@@ -152,7 +152,7 @@ class Module {
 		Reads a module from Bytes using the given Loader.
 		The module is initialized but has not yet been executed.
 	**/
-	public static function readBytes(b:haxe.io.Bytes, loader:Loader):Module {
+	public static function readBytes(b : haxe.io.Bytes, loader : Loader) : Module {
 		return new Module(_module_read_string(b.getData(), loader.l));
 	}
 
@@ -160,10 +160,10 @@ class Module {
 		Reads a module from a name and using the specified seach path and loader.
 		The module is initialized but has not yet been executed.
 	**/
-	public static function readPath(name:String, path:Array<String>, loader:Loader) {
+	public static function readPath(name : String, path : Array<String>, loader : Loader) {
 		var p = null;
 		var i = path.length;
-		while (--i >= 0)
+		while(--i >= 0)
 			p = untyped __dollar__array(path[i].__s, p);
 		var m = _module_read_path(p, untyped name.__s, loader.l);
 		return new Module(m);
@@ -172,8 +172,11 @@ class Module {
 	/**
 		Extract the globals names from the given module
 	**/
-	public static function readGlobalsNames(i:chx.io.Input) {
-		if (i.readByte() != 0x4E || i.readByte() != 0x45 || i.readByte() != 0x4B || i.readByte() != 0x4F)
+	public static function readGlobalsNames(i : chx.io.Input) {
+		if(i.readByte() != 0x4E
+			|| i.readByte() != 0x45
+			|| i.readByte() != 0x4B
+			|| i.readByte() != 0x4F)
 			throw "Not a neko file";
 		function readInt() {
 			return i.readInt32();
@@ -183,7 +186,7 @@ class Module {
 		/*var codesize =*/ readInt();
 		var a = new Array();
 		for (k in 0...nglobals) {
-			switch (i.readByte()) {
+			switch(i.readByte()) {
 				case 1:
 					a.push(i.readUntil(0));
 				case 2:
@@ -203,7 +206,7 @@ class Module {
 		return a;
 	}
 
-	function __compare(other:Module) {
+	function __compare(other : Module) {
 		return untyped __dollar__compare(this.m, other.m);
 	}
 

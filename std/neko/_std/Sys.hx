@@ -23,107 +23,109 @@
 import haxe.SysTools;
 
 @:coreApi class Sys {
-	public static function print(v:Dynamic):Void {
+	public static function print(v : Dynamic) : Void {
 		untyped __dollar__print(v);
 	}
 
-	public static function println(v:Dynamic):Void {
+	public static function println(v : Dynamic) : Void {
 		untyped __dollar__print(v, "\n");
 	}
 
-	public static function getChar(echo:Bool):Int {
+	public static function getChar(echo : Bool) : Int {
 		return getch(echo);
 	}
 
-	public static function stdin():chx.io.Input {
+	public static function stdin() : chx.io.Input {
 		return untyped new sys.io.FileInput(file_stdin());
 	}
 
-	public static function stdout():chx.io.Output {
+	public static function stdout() : chx.io.Output {
 		return untyped new sys.io.FileOutput(file_stdout());
 	}
 
-	public static function stderr():chx.io.Output {
+	public static function stderr() : chx.io.Output {
 		return untyped new sys.io.FileOutput(file_stderr());
 	}
 
-	public static function args():Array<String> untyped {
+	public static function args() : Array<String> untyped {
 		var a = __dollar__loader.args;
-		if (__dollar__typeof(a) != __dollar__tarray)
+		if(__dollar__typeof(a) != __dollar__tarray)
 			return [];
 		var r = new Array();
 		var i = 0;
 		var l = __dollar__asize(a);
-		while (i < l) {
-			if (__dollar__typeof(a[i]) == __dollar__tstring)
+		while(i < l) {
+			if(__dollar__typeof(a[i]) == __dollar__tstring)
 				r.push(new String(a[i]));
 			i += 1;
 		}
 		return r;
 	}
 
-	public static function getEnv(s:String):String {
+	public static function getEnv(s : String) : String {
 		var v = get_env(untyped s.__s);
-		if (v == null)
+		if(v == null)
 			return null;
 		return new String(v);
 	}
 
-	public static function putEnv(s:String, v:String):Void {
-		untyped put_env(s.__s, if (v == null) null else v.__s);
+	public static function putEnv(s : String, v : String) : Void {
+		untyped put_env(s.__s, if(v == null) null else v.__s);
 	}
 
-	public static function sleep(seconds:Float):Void {
+	public static function sleep(seconds : Float) : Void {
 		_sleep(seconds);
 	}
 
-	public static function setTimeLocale(loc:String):Bool {
+	public static function setTimeLocale(loc : String) : Bool {
 		return set_time_locale(untyped loc.__s);
 	}
 
-	public static function getCwd():String {
+	public static function getCwd() : String {
 		return new String(get_cwd());
 	}
 
-	public static function setCwd(s:String):Void {
+	public static function setCwd(s : String) : Void {
 		set_cwd(untyped s.__s);
 	}
 
-	public static function systemName():String {
+	public static function systemName() : String {
 		return new String(sys_string());
 	}
 
-	public static function command(cmd:String, ?args:Array<String>):Int {
-		if (args == null) {
+	public static function command(cmd : String, ?args : Array<String>) : Int {
+		if(args == null) {
 			return sys_command(untyped cmd.__s);
-		} else {
-			switch (systemName()) {
+		}
+		else {
+			switch(systemName()) {
 				case "Windows":
-					cmd = [
-						for (a in [StringTools.replace(cmd, "/", "\\")].concat(args))
-							SysTools.quoteWinArg(a, true)
-					].join(" ");
+					cmd = [for (a in [StringTools.replace(cmd, "/", "\\")].concat(args))
+						SysTools.quoteWinArg(a, true)].join(" ");
 					return sys_command(untyped cmd.__s);
 				case _:
-					cmd = [cmd].concat(args).map(SysTools.quoteUnixArg).join(" ");
+					cmd = [cmd]
+						.concat(args)
+						.map(SysTools.quoteUnixArg)
+						.join(" ");
 					return sys_command(untyped cmd.__s);
 			}
 		}
 	}
 
-	public static function exit(code:Int):Void {
+	public static function exit(code : Int) : Void {
 		sys_exit(code);
 	}
 
-	public static function time():Float {
+	public static function time() : Float {
 		return sys_time();
 	}
 
-	public static function cpuTime():Float {
+	public static function cpuTime() : Float {
 		return sys_cpu_time();
 	}
 
-	public static function programPath():String {
+	public static function programPath() : String {
 		#if macro
 		return null;
 		#elseif interp
@@ -133,10 +135,10 @@ import haxe.SysTools;
 		#end
 	}
 
-	public static function environment():Map<String, String> {
-		var l:Array<Dynamic> = sys_env();
-		var h = new haxe.ds.StringMap();
-		while (l != null) {
+	public static function environment() : Map<String, String> {
+		var l : Array<Dynamic> = sys_env();
+		var h = new chx.ds.StringMap();
+		while(l != null) {
 			h.set(new String(l[0]), new String(l[1]));
 			l = l[2];
 		}
@@ -160,26 +162,33 @@ import haxe.SysTools;
 	#elseif !macro
 	// It has to be initialized before any call to loadModule or Sys.setCwd()...
 	private static var sys_program_path = {
-		var m = neko.vm.Module.local().name;
-		if (m == "") { // it is likely neko embedded in an exe
+		var m = neko.vm.Module
+			.local()
+			.name;
+		if(m == "") { // it is likely neko embedded in an exe
 			var exe = new String(sys_exe_path());
 			try {
 				sys.FileSystem.fullPath(exe);
-			} catch (e:Dynamic) {
+			}
+			catch(e:Dynamic) {
 				exe;
 			}
-		} else {
+		}
+		else {
 			try {
 				sys.FileSystem.fullPath(m);
-			} catch (e:Dynamic) {
+			}
+			catch(e:Dynamic) {
 				// maybe the neko module name was supplied without .n extension...
-				if (!StringTools.endsWith(m, ".n")) {
+				if(!StringTools.endsWith(m, ".n")) {
 					try {
 						sys.FileSystem.fullPath(m + ".n");
-					} catch (e:Dynamic) {
+					}
+					catch(e:Dynamic) {
 						m;
 					}
-				} else {
+				}
+				else {
 					m;
 				}
 			}

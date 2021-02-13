@@ -22,6 +22,7 @@
 
 package sys.io;
 
+import chx.lang.EofException;
 import haxe.io.Bytes;
 import lua.Boot;
 import lua.FileHandle;
@@ -59,7 +60,7 @@ class FileInput extends chx.io.Input {
 		return _eof;
 	}
 
-	override inline public function readByte() : Int {
+	inline public function readByte() : Int {
 		var byte = f.read(1);
 		if(byte == null) {
 			_eof = true;
@@ -91,7 +92,7 @@ class FileInput extends chx.io.Input {
 				total.addBytes(buf, 0, len);
 			}
 		}
-		catch(e:Eof) {
+		catch(e:EofException) {
 			_eof = true;
 		}
 		return total.getBytes();

@@ -103,7 +103,7 @@ class Heap<T:(Heapable<T>)> implements Collection<T> {
 	var mIterator : HeapIterator<T> = null;
 
 	#if debug
-	var mMap : haxe.ds.ObjectMap<T, Bool>;
+	var mMap : chx.ds.ObjectMap<T, Bool>;
 	#end
 
 	/**
@@ -124,7 +124,7 @@ class Heap<T:(Heapable<T>)> implements Collection<T> {
 		mData.set(0, cast null); // reserved
 
 		#if debug
-		mMap = new haxe.ds.ObjectMap<T, Bool>();
+		mMap = new chx.ds.ObjectMap<T, Bool>();
 		#end
 
 		if(source != null) {
@@ -536,7 +536,7 @@ class Heap<T:(Heapable<T>)> implements Collection<T> {
 	**/
 	public function clear(gc : Bool = false) {
 		#if debug
-		mMap = new haxe.ds.ObjectMap<T, Bool>();
+		mMap = new chx.ds.ObjectMap<T, Bool>();
 		#end
 
 		if(gc)

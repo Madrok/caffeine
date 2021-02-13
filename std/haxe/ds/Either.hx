@@ -22,11 +22,4 @@
 
 package haxe.ds;
 
-/**
-	Either represents values which are either of type `L` (Left) or type `R`
-	(Right).
-**/
-enum Either<L, R> {
-	Left(v:L);
-	Right(v:R);
-}
+typedef Either<L, R> = chx.ds.Either<L, R>

@@ -25,10 +25,10 @@
 
 package chx.text;
 
+import chx.ds.IntMap;
 import chx.io.Output;
 import chx.lang.FatalException;
 import chx.lang.NullPointerException;
-import haxe.ds.IntMap;
 
 /**
  * A custom printf writer that writes to an Output. Handlers may be registered
@@ -158,16 +158,8 @@ class CallbackPrintf {
 							else {
 								fieldOutcome = '** sprintf: "." came too late **';
 							}
-						case '0'.code
-							, '1'.code
-							, '2'.code
-							, '3'.code
-							, '4'.code
-							, '5'.code
-							, '6'.code
-							, '7'.code
-							, '8'.code
-							, '9'.code:
+						case '0'.code, '1'.code, '2'.code, '3'.code, '4'.code, '5'.code, '6'.code,
+							'7'.code, '8'.code, '9'.code:
 							if(ch == '0'.code && fieldCount == 0) {
 								properties |= Sprintf.kPAD_ZEROES;
 							}
