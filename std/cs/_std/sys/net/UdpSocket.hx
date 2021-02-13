@@ -22,6 +22,7 @@
 
 package sys.net;
 
+import chx.ds.Bytes;
 import chx.io.Input;
 import chx.io.Output;
 import cs.NativeArray;
@@ -40,7 +41,6 @@ import cs.system.net.sockets.SocketType;
 import cs.system.threading.Thread;
 import cs.types.UInt8;
 import haxe.extern.Rest;
-import haxe.io.Bytes;
 import sys.net.Socket;
 
 @:coreapi
@@ -59,7 +59,7 @@ class UdpSocket extends Socket {
 		sock.Bind(endpoint);
 	}
 
-	public function sendTo(buf : haxe.io.Bytes, pos : Int, len : Int, addr : Address) : Int {
+	public function sendTo(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		var data = new NativeArray<UInt8>(len);
 		var indices : NativeArray<Int>;
 		for (i in 0...len) {
@@ -72,7 +72,7 @@ class UdpSocket extends Socket {
 		return this.sock.SendTo(data, endpoint);
 	}
 
-	public function readFrom(buf : haxe.io.Bytes, pos : Int, len : Int, addr : Address) : Int {
+	public function readFrom(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		var endpoint : EndPoint = cast new IPEndPoint(IPAddress.Any, 0);
 		var data : NativeArray<UInt8> = new NativeArray(len);
 		var length : Int = -1;

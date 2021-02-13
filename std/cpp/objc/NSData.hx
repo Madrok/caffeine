@@ -26,27 +26,27 @@ package cpp.objc;
 
 @:objc
 extern abstract NSData(NSDataData) {
-	@:native("_hx_value_to_objc") extern static function to_data(b:haxe.io.BytesData):NSData;
+	@:native("_hx_value_to_objc") extern static function to_data(b : chx.ds.BytesData) : NSData;
 
-	@:native("_hx_value_to_objc") extern static function to_data_data(b:haxe.io.BytesData):NSDataData;
+	@:native("_hx_value_to_objc") extern static function to_data_data(b : chx.ds.BytesData) : NSDataData;
 
-	@:native("_hx_objc_to_bytes") extern static function NSDataDataToBytes(d:NSDataData):haxe.io.BytesData;
+	@:native("_hx_objc_to_bytes") extern static function NSDataDataToBytes(d : NSDataData) : chx.ds.BytesData;
 
-	inline function new(d:NSDataData)
+	inline function new(d : NSDataData)
 		this = d;
 
-	@:from extern static public inline function fromBytesData(d:haxe.io.BytesData):NSData
+	@:from extern static public inline function fromBytesData(d : chx.ds.BytesData) : NSData
 		return new NSData(to_data_data(d));
 
-	@:from extern static public inline function fromBytes(d:haxe.io.Bytes):NSData
+	@:from extern static public inline function fromBytes(d : chx.ds.Bytes) : NSData
 		return new NSData(to_data_data(d.getData()));
 
-	@:to extern public inline function toBytesData():haxe.io.BytesData
+	@:to extern public inline function toBytesData() : chx.ds.BytesData
 		return NSDataDataToBytes(this);
 
-	@:to extern public inline function toBytes():haxe.io.Bytes
-		return haxe.io.Bytes.ofData(NSDataDataToBytes(this));
+	@:to extern public inline function toBytes() : chx.ds.Bytes
+		return chx.ds.Bytes.ofData(NSDataDataToBytes(this));
 
-	@:to extern public inline function toNSObject():NSObject
+	@:to extern public inline function toNSObject() : NSObject
 		return cast this;
 }

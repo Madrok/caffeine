@@ -27,13 +27,13 @@
 
 package chx.net.servers;
 
+import chx.ds.Bytes;
 import chx.lang.EofException;
 import chx.net.Host;
 import chx.net.Socket;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Timer;
-import haxe.io.Bytes;
 
 interface ServerClientList<ClientData> {
 	var clients : List<ClientData>;

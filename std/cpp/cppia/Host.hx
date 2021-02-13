@@ -24,13 +24,13 @@ package cpp.cppia;
 
 class Host {
 	#if utf16
-	public static function run(source:haxe.io.Bytes) {
+	public static function run(source : chx.ds.Bytes) {
 		var module = Module.fromData(source.getData());
 		module.boot();
 		module.run();
 	}
 	#else
-	public static function run(source:String) {
+	public static function run(source : String) {
 		var module = Module.fromString(source);
 		module.boot();
 		module.run();
@@ -38,9 +38,9 @@ class Host {
 	#end
 
 	@:native("::hx::EnableJit")
-	extern public static function enableJit(enable:Bool):Void;
+	extern public static function enableJit(enable : Bool) : Void;
 
-	public static function runFile(filename:String) {
+	public static function runFile(filename : String) {
 		var source = sys.io.File.getBytes(filename);
 		var module = Module.fromData(source.getData());
 		module.boot();
@@ -49,17 +49,18 @@ class Host {
 
 	public static function main() {
 		var args = Sys.args();
-		if (args.remove("-jit"))
+		if(args.remove("-jit"))
 			enableJit(true);
 
 		var script = args[0];
 
-		#if (!scriptable && !doc_gen)
+		#if( !scriptable && !doc_gen )
 		#error "Please define scriptable to use cppia"
 		#end
-		if (script == null) {
+		if(script == null) {
 			Sys.println("Usage : Cppia scriptname");
-		} else {
+		}
+		else {
 			runFile(script);
 		}
 	}

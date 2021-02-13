@@ -30,20 +30,20 @@ private extern class NativeProcess {
 	function getPid() : Int;
 	function kill() : Void;
 
-	function readStderr(bytes : haxe.io.Bytes, pos : Int, len : Int) : Int;
-	function readStdout(bytes : haxe.io.Bytes, pos : Int, len : Int) : Int;
+	function readStderr(bytes : chx.ds.Bytes, pos : Int, len : Int) : Int;
+	function readStdout(bytes : chx.ds.Bytes, pos : Int, len : Int) : Int;
 
 	function closeStdin() : Void;
-	function writeStdin(bytes : haxe.io.Bytes, pos : Int, len : Int) : Int;
+	function writeStdin(bytes : chx.ds.Bytes, pos : Int, len : Int) : Int;
 }
 
 private class Stdin extends chx.io.Output {
 	var proc : NativeProcess;
-	var buf : haxe.io.Bytes;
+	var buf : chx.ds.Bytes;
 
 	public function new(proc : NativeProcess) {
 		this.proc = proc;
-		buf = haxe.io.Bytes.alloc(1);
+		buf = chx.ds.Bytes.alloc(1);
 	}
 
 	public override function close() {
@@ -56,7 +56,7 @@ private class Stdin extends chx.io.Output {
 		writeBytes(buf, 0, 1);
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) {
 		try {
 			return proc.writeStdin(buf, pos, len);
 		}
@@ -69,12 +69,12 @@ private class Stdin extends chx.io.Output {
 private class Stdout extends chx.io.Input {
 	var proc : NativeProcess;
 	var out : Bool;
-	var buf : haxe.io.Bytes;
+	var buf : chx.ds.Bytes;
 
 	public function new(proc : NativeProcess, out : Bool) {
 		this.proc = proc;
 		this.out = out;
-		buf = haxe.io.Bytes.alloc(1);
+		buf = chx.ds.Bytes.alloc(1);
 	}
 
 	public override function readByte() {
@@ -83,7 +83,7 @@ private class Stdout extends chx.io.Input {
 		return buf.get(0);
 	}
 
-	public override function readBytes(bytes : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(bytes : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		try {
 			if(out) {
 				return proc.readStdout(bytes, pos, len);

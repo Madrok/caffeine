@@ -24,37 +24,38 @@ package haxe.zip;
 
 @:coreApi @:buildXml('<include name="${HXCPP}/src/hx/libs/zlib/Build.xml"/>')
 class Uncompress {
-	var s:Dynamic;
+	var s : Dynamic;
 
-	public function new(?windowBits:Int):Void {
+	public function new(?windowBits : Int) : Void {
 		s = _inflate_init(windowBits);
 	}
 
-	public function execute(src:haxe.io.Bytes, srcPos:Int, dst:haxe.io.Bytes, dstPos:Int):{done:Bool, read:Int, write:Int} {
+	public function execute(src : chx.ds.Bytes, srcPos : Int, dst : chx.ds.Bytes,
+			dstPos : Int) : {done : Bool, read : Int, write : Int} {
 		return _inflate_buffer(s, src.getData(), srcPos, dst.getData(), dstPos);
 	}
 
-	public function setFlushMode(f:FlushMode):Void {
+	public function setFlushMode(f : FlushMode) : Void {
 		_set_flush_mode(s, untyped f.__Tag());
 	}
 
-	public function close():Void {
+	public function close() : Void {
 		_inflate_end(s);
 	}
 
-	public static function run(src:haxe.io.Bytes, ?bufsize:Int):haxe.io.Bytes {
+	public static function run(src : chx.ds.Bytes, ?bufsize : Int) : chx.ds.Bytes {
 		var u = new Uncompress(null);
-		if (bufsize == null)
+		if(bufsize == null)
 			bufsize = 1 << 16; // 64K
-		var tmp = haxe.io.Bytes.alloc(bufsize);
-		var b = new haxe.io.BytesBuffer();
+		var tmp = chx.ds.Bytes.alloc(bufsize);
+		var b = new chx.ds.BytesBuffer();
 		var pos = 0;
 		u.setFlushMode(FlushMode.SYNC);
-		while (true) {
+		while(true) {
 			var r = u.execute(src, pos, tmp, 0);
 			b.addBytes(tmp, 0, r.write);
 			pos += r.read;
-			if (r.done)
+			if(r.done)
 				break;
 		}
 		u.close();
@@ -62,15 +63,16 @@ class Uncompress {
 	}
 
 	@:native("_hx_inflate_init")
-	extern static function _inflate_init(windowBits:Dynamic):Dynamic;
+	extern static function _inflate_init(windowBits : Dynamic) : Dynamic;
 
 	@:native("_hx_inflate_buffer")
-	extern static function _inflate_buffer(handle:Dynamic, src:haxe.io.BytesData, srcPos:Int, dest:haxe.io.BytesData,
-		destPos:Int):{done:Bool, read:Int, write:Int};
+	extern static function _inflate_buffer(handle : Dynamic, src : chx.ds.BytesData, srcPos : Int,
+		dest : chx.ds.BytesData, destPos : Int) : {done : Bool, read : Int, write : Int
+	};
 
 	@:native("_hx_inflate_end")
-	extern static function _inflate_end(handle:Dynamic):Void;
+	extern static function _inflate_end(handle : Dynamic) : Void;
 
 	@:native("_hx_zip_set_flush_mode")
-	extern static function _set_flush_mode(handle:Dynamic, flushMode:String):Void;
+	extern static function _set_flush_mode(handle : Dynamic, flushMode : String) : Void;
 }

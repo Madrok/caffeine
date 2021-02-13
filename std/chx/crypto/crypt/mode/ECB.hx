@@ -25,17 +25,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
 import chx.io.Output;
 
-class ECB extends ModeBase, implements chx.crypt.IMode {
-
+class ECB extends ModeBase implements chx.crypto.crypt.IMode {
 	override public function toString() {
 		return "ecb";
 	}
 
-	override public function updateEncrypt( b : Bytes, out : Output) : Int {
+	override public function updateEncrypt(b : Bytes, out : Output) : Int {
 		var n = blockSize;
 		if(b.length != n)
 			return 0;
@@ -45,7 +44,7 @@ class ECB extends ModeBase, implements chx.crypt.IMode {
 		return n;
 	}
 
-	override public function updateDecrypt( b : Bytes, out : Output ) : Int {
+	override public function updateDecrypt(b : Bytes, out : Output) : Int {
 		var n = blockSize;
 		if(b.length != n)
 			return 0;
@@ -54,5 +53,4 @@ class ECB extends ModeBase, implements chx.crypt.IMode {
 		out.writeBytes(dec, 0, n);
 		return n;
 	}
-
 }

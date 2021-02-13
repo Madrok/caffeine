@@ -58,7 +58,7 @@ class Reader {
 				case 0x7075:
 					var version = i.readByte();
 					if(version != 1) {
-						var data = new haxe.io.BytesBuffer();
+						var data = new chx.ds.BytesBuffer();
 						data.addByte(version);
 						data.add(i.read(len - 1));
 						fields.add(FUnknown(tag, data.getBytes()));
@@ -139,11 +139,11 @@ class Reader {
 					// that needs to be processed
 					var bufSize = 65536;
 					if(buf == null) {
-						buf = new haxe.io.BufferInput(i, haxe.io.Bytes.alloc(bufSize));
-						tmp = haxe.io.Bytes.alloc(bufSize);
+						buf = new haxe.io.BufferInput(i, chx.ds.Bytes.alloc(bufSize));
+						tmp = chx.ds.Bytes.alloc(bufSize);
 						i = buf;
 					}
-					var out = new haxe.io.BytesBuffer();
+					var out = new chx.ds.BytesBuffer();
 					var z = new neko.zip.Uncompress(-15);
 					z.setFlushMode(neko.zip.Flush.SYNC);
 					while(true) {
@@ -166,8 +166,8 @@ class Reader {
 					#else
 					var bufSize = 65536;
 					if(tmp == null)
-						tmp = haxe.io.Bytes.alloc(bufSize);
-					var out = new haxe.io.BytesBuffer();
+						tmp = chx.ds.Bytes.alloc(bufSize);
+					var out = new chx.ds.BytesBuffer();
 					var z = new InflateImpl(i, false, false);
 					while(true) {
 						var n = z.readBytes(tmp, 0, bufSize);
@@ -205,7 +205,7 @@ class Reader {
 		if(!f.compressed)
 			return f.data;
 		var c = new haxe.zip.Uncompress(-15);
-		var s = haxe.io.Bytes.alloc(f.fileSize);
+		var s = chx.ds.Bytes.alloc(f.fileSize);
 		var r = c.execute(f.data, 0, s, 0);
 		c.close();
 		if(!r.done || r.read != f.data.length || r.write != f.fileSize)

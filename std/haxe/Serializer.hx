@@ -335,8 +335,8 @@ class Serializer {
 							serialize(v.get(k));
 						}
 						buf.add("h");
-					case #if( neko || cs || python ) "haxe.io.Bytes" #else cast haxe.io.Bytes #end:
-						var v : haxe.io.Bytes = v;
+					case #if( neko || cs || python ) "chx.ds.Bytes" #else cast chx.ds.Bytes #end:
+						var v : chx.ds.Bytes = v;
 						#if neko
 						var chars = new String(base_encode(v.getData(), untyped BASE64.__s));
 						buf.add("s");

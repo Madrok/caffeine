@@ -26,16 +26,20 @@ package haxe.crypto;
 	Allows one to encode/decode String and bytes using Base64 encoding.
 **/
 class Base64 {
-	public static var CHARS(default, null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	public static var BYTES(default, null) = haxe.io.Bytes.ofString(CHARS);
+	public static var CHARS(default,
+		null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	public static var BYTES(default, null) = chx.ds.Bytes.ofString(CHARS);
 
-	public static var URL_CHARS(default, null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-	public static var URL_BYTES(default, null) = haxe.io.Bytes.ofString(URL_CHARS);
+	public static var URL_CHARS(default,
+		null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+	public static var URL_BYTES(default, null) = chx.ds.Bytes.ofString(URL_CHARS);
 
-	public static function encode(bytes:haxe.io.Bytes, complement = true):String {
-		var str = new BaseCode(BYTES).encodeBytes(bytes).toString();
-		if (complement)
-			switch (bytes.length % 3) {
+	public static function encode(bytes : chx.ds.Bytes, complement = true) : String {
+		var str = new BaseCode(BYTES)
+			.encodeBytes(bytes)
+			.toString();
+		if(complement)
+			switch(bytes.length % 3) {
 				case 1:
 					str += "==";
 				case 2:
@@ -45,17 +49,20 @@ class Base64 {
 		return str;
 	}
 
-	public static function decode(str:String, complement = true):haxe.io.Bytes {
-		if (complement)
-			while (str.charCodeAt(str.length - 1) == "=".code)
+	public static function decode(str : String, complement = true) : chx.ds.Bytes {
+		if(complement)
+			while(str.charCodeAt(str.length - 1) == "=".code)
 				str = str.substr(0, -1);
-		return new BaseCode(BYTES).decodeBytes(haxe.io.Bytes.ofString(str));
+		return new BaseCode(BYTES)
+			.decodeBytes(chx.ds.Bytes.ofString(str));
 	}
 
-	public static function urlEncode(bytes:haxe.io.Bytes, complement = false):String {
-		var str = new BaseCode(URL_BYTES).encodeBytes(bytes).toString();
-		if (complement)
-			switch (bytes.length % 3) {
+	public static function urlEncode(bytes : chx.ds.Bytes, complement = false) : String {
+		var str = new BaseCode(URL_BYTES)
+			.encodeBytes(bytes)
+			.toString();
+		if(complement)
+			switch(bytes.length % 3) {
 				case 1:
 					str += "==";
 				case 2:
@@ -65,10 +72,11 @@ class Base64 {
 		return str;
 	}
 
-	public static function urlDecode(str:String, complement = false):haxe.io.Bytes {
-		if (complement)
-			while (str.charCodeAt(str.length - 1) == "=".code)
+	public static function urlDecode(str : String, complement = false) : chx.ds.Bytes {
+		if(complement)
+			while(str.charCodeAt(str.length - 1) == "=".code)
 				str = str.substr(0, -1);
-		return new BaseCode(URL_BYTES).decodeBytes(haxe.io.Bytes.ofString(str));
+		return new BaseCode(URL_BYTES)
+			.decodeBytes(chx.ds.Bytes.ofString(str));
 	}
 }

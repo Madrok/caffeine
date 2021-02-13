@@ -25,7 +25,7 @@ package haxe.zip;
 import chx.ds.List;
 
 enum ExtraField {
-	FUnknown(tag : Int, bytes : haxe.io.Bytes);
+	FUnknown(tag : Int, bytes : chx.ds.Bytes);
 	FInfoZipUnicodePath(name : String, crc : Int);
 	FUtf8;
 }
@@ -36,7 +36,7 @@ typedef Entry = {
 	var fileTime : Date;
 	var compressed : Bool;
 	var dataSize : Int;
-	var data : Null<haxe.io.Bytes>;
+	var data : Null<chx.ds.Bytes>;
 	var crc32 : Null<Int>;
 	var ?extraFields : List<ExtraField>;
 }

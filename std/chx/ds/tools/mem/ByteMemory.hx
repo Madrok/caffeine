@@ -101,7 +101,7 @@ class ByteMemory extends MemoryAccess {
 		_The bytes are written in little endian format._
 	**/
 	public static function toBytesData(input : ByteMemory, min : Int = -1,
-			max : Int = -1) : haxe.io.BytesData {
+			max : Int = -1) : chx.ds.BytesData {
 		assert(input != null, "invalid input");
 
 		if(min == -1)
@@ -113,7 +113,7 @@ class ByteMemory extends MemoryAccess {
 		assert(max <= input.size, 'max out of range ($max)');
 		assert(max - min > 0, 'min equals max ($min)');
 
-		var out = new haxe.io.BytesBuffer();
+		var out = new chx.ds.BytesBuffer();
 		for (i in 0...max - min)
 			out.addByte(input.get(min + i));
 		return out
@@ -125,14 +125,14 @@ class ByteMemory extends MemoryAccess {
 		Converts `input` in the range [`min`, `max`] to a `ByteMemory` object.
 		If no range is specified, all `input` bytes are copied.
 	**/
-	public static function ofBytesData(input : haxe.io.BytesData, min : Int = -1,
+	public static function ofBytesData(input : chx.ds.BytesData, min : Int = -1,
 			max : Int = -1) : ByteMemory {
 		assert(input != null, "invalid input");
 
 		if(min == -1)
 			min = 0;
 
-		var bytes = haxe.io.Bytes.ofData(input);
+		var bytes = chx.ds.Bytes.ofData(input);
 		if(max == -1)
 			max = bytes.length;
 
@@ -264,12 +264,12 @@ class ByteMemory extends MemoryAccess {
 	}
 
 	#if( !flash && alchemy )
-	var mData : haxe.io.Bytes;
+	var mData : chx.ds.Bytes;
 	#else
 	#if flash
 	var mData : flash.utils.ByteArray;
 	#else
-	var mData : haxe.io.Bytes;
+	var mData : chx.ds.Bytes;
 	#end
 	#end
 
@@ -289,7 +289,7 @@ class ByteMemory extends MemoryAccess {
 		mData = new flash.utils.ByteArray();
 		mData.length = size;
 		#else
-		mData = haxe.io.Bytes.alloc(size);
+		mData = chx.ds.Bytes.alloc(size);
 		#end
 		#end
 	}
@@ -374,7 +374,7 @@ class ByteMemory extends MemoryAccess {
 		for (i in 0...MathTools.min(newSize, size))
 			t[i] = mData[i];
 		#else
-		var t = haxe.io.Bytes.alloc(newSize);
+		var t = chx.ds.Bytes.alloc(newSize);
 		for (i in 0...MathTools.min(newSize, size))
 			t.set(i, mData.get(i));
 		#end

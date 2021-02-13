@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import haxe.io.Encoding;
 import haxe.iterators.StringIteratorUnicode;
 import haxe.iterators.StringKeyValueIteratorUnicode;
@@ -36,69 +36,77 @@ abstract UnicodeString(String) from String to String {
 	/**
 		Tells if `b` is a correctly encoded UTF8 byte sequence.
 	**/
-	static public function validate(b:Bytes, encoding:Encoding):Bool {
-		switch (encoding) {
+	static public function validate(b : Bytes, encoding : Encoding) : Bool {
+		switch(encoding) {
 			case RawNative:
 				throw "UnicodeString.validate: RawNative encoding is not supported";
 			case UTF8:
 				var data = b.getData();
 				var pos = 0;
 				var max = b.length;
-				while (pos < max) {
-					var c:Int = Bytes.fastGet(data, pos++);
-					if (c < 0x80) {} else if (c < 0xC2) {
+				while(pos < max) {
+					var c : Int = Bytes.fastGet(data, pos++);
+					if(c < 0x80) {}
+					else if(c < 0xC2) {
 						return false;
-					} else if (c < 0xE0) {
-						if (pos + 1 > max) {
+					}
+					else if(c < 0xE0) {
+						if(pos + 1 > max) {
 							return false;
 						}
-						var c2:Int = Bytes.fastGet(data, pos++);
-						if (c2 < 0x80 || c2 > 0xBF) {
+						var c2 : Int = Bytes.fastGet(data, pos++);
+						if(c2 < 0x80 || c2 > 0xBF) {
 							return false;
 						}
-					} else if (c < 0xF0) {
-						if (pos + 2 > max) {
+					}
+					else if(c < 0xF0) {
+						if(pos + 2 > max) {
 							return false;
 						}
-						var c2:Int = Bytes.fastGet(data, pos++);
-						if (c == 0xE0) {
-							if (c2 < 0xA0 || c2 > 0xBF)
+						var c2 : Int = Bytes.fastGet(data, pos++);
+						if(c == 0xE0) {
+							if(c2 < 0xA0 || c2 > 0xBF)
 								return false;
-						} else {
-							if (c2 < 0x80 || c2 > 0xBF)
+						}
+						else {
+							if(c2 < 0x80 || c2 > 0xBF)
 								return false;
 						}
-						var c3:Int = Bytes.fastGet(data, pos++);
-						if (c3 < 0x80 || c3 > 0xBF) {
+						var c3 : Int = Bytes.fastGet(data, pos++);
+						if(c3 < 0x80 || c3 > 0xBF) {
 							return false;
 						}
 						c = (c << 16) | (c2 << 8) | c3;
-						if (0xEDA080 <= c && c <= 0xEDBFBF) { // surrogate pairs
+						if(0xEDA080 <= c && c <= 0xEDBFBF) { // surrogate pairs
 							return false;
 						}
-					} else if (c > 0xF4) {
+					}
+					else if(c > 0xF4) {
 						return false;
-					} else {
-						if (pos + 3 > max) {
+					}
+					else {
+						if(pos + 3 > max) {
 							return false;
 						}
-						var c2:Int = Bytes.fastGet(data, pos++);
-						if (c == 0xF0) {
-							if (c2 < 0x90 || c2 > 0xBF)
-								return false;
-						} else if (c == 0xF4) {
-							if (c2 < 0x80 || c2 > 0x8F)
-								return false;
-						} else {
-							if (c2 < 0x80 || c2 > 0xBF)
+						var c2 : Int = Bytes.fastGet(data, pos++);
+						if(c == 0xF0) {
+							if(c2 < 0x90 || c2 > 0xBF)
 								return false;
 						}
-						var c3:Int = Bytes.fastGet(data, pos++);
-						if (c3 < 0x80 || c3 > 0xBF) {
+						else if(c == 0xF4) {
+							if(c2 < 0x80 || c2 > 0x8F)
+								return false;
+						}
+						else {
+							if(c2 < 0x80 || c2 > 0xBF)
+								return false;
+						}
+						var c3 : Int = Bytes.fastGet(data, pos++);
+						if(c3 < 0x80 || c3 > 0xBF) {
 							return false;
 						}
-						var c4:Int = Bytes.fastGet(data, pos++);
-						if (c4 < 0x80 || c4 > 0xBF) {
+						var c4 : Int = Bytes.fastGet(data, pos++);
+						if(c4 < 0x80 || c4 > 0xBF) {
 							return false;
 						}
 					}
@@ -111,21 +119,21 @@ abstract UnicodeString(String) from String to String {
 	/**
 		Creates an instance of UnicodeString.
 	**/
-	public inline function new(string:String):Void {
+	public inline function new(string : String) : Void {
 		this = string;
 	}
 
 	/**
 		Returns an iterator of the unicode code points.
 	**/
-	public inline function iterator():StringIteratorUnicode {
+	public inline function iterator() : StringIteratorUnicode {
 		return new StringIteratorUnicode(this);
 	}
 
 	/**
 		Returns an iterator of the code point indices and unicode code points.
 	**/
-	public inline function keyValueIterator():StringKeyValueIteratorUnicode {
+	public inline function keyValueIterator() : StringKeyValueIteratorUnicode {
 		return new StringKeyValueIteratorUnicode(this);
 	}
 
@@ -133,7 +141,7 @@ abstract UnicodeString(String) from String to String {
 	/**
 		The number of characters in `this` String.
 	**/
-	public var length(get, never):Int;
+	public var length(get, never) : Int;
 
 	/**
 		Returns the character at position `index` of `this` String.
@@ -141,17 +149,17 @@ abstract UnicodeString(String) from String to String {
 		If `index` is negative or exceeds `this.length`, the empty String `""`
 		is returned.
 	**/
-	public function charAt(index:Int):String {
-		if (index < 0)
+	public function charAt(index : Int) : String {
+		if(index < 0)
 			return '';
 		var unicodeOffset = 0;
 		var nativeOffset = 0;
-		while (nativeOffset < this.length) {
+		while(nativeOffset < this.length) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset++);
-			if (unicodeOffset == index) {
+			if(unicodeOffset == index) {
 				return String.fromCharCode(c);
 			}
-			if (c >= StringTools.MIN_SURROGATE_CODE_POINT) {
+			if(c >= StringTools.MIN_SURROGATE_CODE_POINT) {
 				nativeOffset++;
 			}
 			unicodeOffset++;
@@ -164,17 +172,17 @@ abstract UnicodeString(String) from String to String {
 
 		If `index` is negative or exceeds `this.length`, `null` is returned.
 	**/
-	public function charCodeAt(index:Int):Null<Int> {
-		if (index < 0)
+	public function charCodeAt(index : Int) : Null<Int> {
+		if(index < 0)
 			return null;
 		var unicodeOffset = 0;
 		var nativeOffset = 0;
-		while (nativeOffset < this.length) {
+		while(nativeOffset < this.length) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset++);
-			if (unicodeOffset == index) {
+			if(unicodeOffset == index) {
 				return c;
 			}
-			if (c >= StringTools.MIN_SURROGATE_CODE_POINT) {
+			if(c >= StringTools.MIN_SURROGATE_CODE_POINT) {
 				nativeOffset++;
 			}
 			unicodeOffset++;
@@ -197,12 +205,15 @@ abstract UnicodeString(String) from String to String {
 
 		If `str` cannot be found, -1 is returned.
 	**/
-	public function indexOf(str:String, ?startIndex:Int):Int {
-		if (startIndex == null) {
+	public function indexOf(str : String, ?startIndex : Int) : Int {
+		if(startIndex == null) {
 			startIndex = 0;
-		} else {
-			if (startIndex < 0) {
-				startIndex = (this : UnicodeString).length + startIndex;
+		}
+		else {
+			if(startIndex < 0) {
+				startIndex = (this:UnicodeString)
+					.length
+					+ startIndex;
 			}
 		}
 
@@ -210,23 +221,24 @@ abstract UnicodeString(String) from String to String {
 		var nativeOffset = 0;
 		var matchingOffset = 0;
 		var result = -1;
-		while (nativeOffset <= this.length) {
+		while(nativeOffset <= this.length) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset);
 
-			if (unicodeOffset >= startIndex) {
+			if(unicodeOffset >= startIndex) {
 				var c2 = StringTools.utf16CodePointAt(str, matchingOffset);
-				if (c == c2) {
-					if (matchingOffset == 0) {
+				if(c == c2) {
+					if(matchingOffset == 0) {
 						result = unicodeOffset;
 					}
 					matchingOffset++;
-					if (c2 >= StringTools.MIN_SURROGATE_CODE_POINT) {
+					if(c2 >= StringTools.MIN_SURROGATE_CODE_POINT) {
 						matchingOffset++;
 					}
-					if (matchingOffset == str.length) {
+					if(matchingOffset == str.length) {
 						return result;
 					}
-				} else if (matchingOffset != 0) {
+				}
+				else if(matchingOffset != 0) {
 					result = -1;
 					matchingOffset = 0;
 					continue;
@@ -234,7 +246,7 @@ abstract UnicodeString(String) from String to String {
 			}
 
 			nativeOffset++;
-			if (c >= StringTools.MIN_SURROGATE_CODE_POINT) {
+			if(c >= StringTools.MIN_SURROGATE_CODE_POINT) {
 				nativeOffset++;
 			}
 			unicodeOffset++;
@@ -253,10 +265,11 @@ abstract UnicodeString(String) from String to String {
 
 		If `str` cannot be found, -1 is returned.
 	**/
-	public function lastIndexOf(str:String, ?startIndex:Int):Int {
-		if (startIndex == null) {
+	public function lastIndexOf(str : String, ?startIndex : Int) : Int {
+		if(startIndex == null) {
 			startIndex = this.length;
-		} else if (startIndex < 0) {
+		}
+		else if(startIndex < 0) {
 			startIndex = 0;
 		}
 
@@ -265,31 +278,33 @@ abstract UnicodeString(String) from String to String {
 		var result = -1;
 		var lastIndex = -1;
 		var matchingOffset = 0;
-		var strUnicodeLength = (str : UnicodeString).length;
-		while (nativeOffset < this.length && unicodeOffset < startIndex + strUnicodeLength) {
+		var strUnicodeLength = (str:UnicodeString)
+			.length;
+		while(nativeOffset < this.length && unicodeOffset < startIndex + strUnicodeLength) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset);
 
 			var c2 = StringTools.utf16CodePointAt(str, matchingOffset);
-			if (c == c2) {
-				if (matchingOffset == 0) {
+			if(c == c2) {
+				if(matchingOffset == 0) {
 					lastIndex = unicodeOffset;
 				}
 				matchingOffset++;
-				if (c2 >= StringTools.MIN_SURROGATE_CODE_POINT) {
+				if(c2 >= StringTools.MIN_SURROGATE_CODE_POINT) {
 					matchingOffset++;
 				}
-				if (matchingOffset == str.length) {
+				if(matchingOffset == str.length) {
 					result = lastIndex;
 					lastIndex = -1;
 				}
-			} else if (matchingOffset != 0) {
+			}
+			else if(matchingOffset != 0) {
 				lastIndex = -1;
 				matchingOffset = 0;
 				continue;
 			}
 
 			nativeOffset++;
-			if (c >= StringTools.MIN_SURROGATE_CODE_POINT) {
+			if(c >= StringTools.MIN_SURROGATE_CODE_POINT) {
 				nativeOffset++;
 			}
 			unicodeOffset++;
@@ -312,18 +327,22 @@ abstract UnicodeString(String) from String to String {
 
 		If `len` is negative, the result is unspecified.
 	**/
-	public function substr(pos:Int, ?len:Int):String {
-		if (pos < 0) {
-			pos = (this : UnicodeString).length + pos;
-			if (pos < 0) {
+	public function substr(pos : Int, ?len : Int) : String {
+		if(pos < 0) {
+			pos = (this:UnicodeString)
+				.length
+				+ pos;
+			if(pos < 0) {
 				pos = 0;
 			}
 		}
-		if (len != null) {
-			if (len < 0) {
-				len = (this : UnicodeString).length + len;
+		if(len != null) {
+			if(len < 0) {
+				len = (this:UnicodeString)
+					.length
+					+ len;
 			}
-			if (len <= 0) {
+			if(len <= 0) {
 				return "";
 			}
 		}
@@ -331,19 +350,20 @@ abstract UnicodeString(String) from String to String {
 		var nativeOffset = 0;
 		var fromOffset = -1;
 		var subLength = 0;
-		while (nativeOffset < this.length) {
+		while(nativeOffset < this.length) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset);
 
-			if (unicodeOffset >= pos) {
-				if (fromOffset < 0) {
-					if (len == null) {
+			if(unicodeOffset >= pos) {
+				if(fromOffset < 0) {
+					if(len == null) {
 						return this.substr(nativeOffset);
 					}
 					fromOffset = nativeOffset;
 				}
 				subLength++;
-				if (subLength >= len) {
-					var lastOffset = (c < StringTools.MIN_SURROGATE_CODE_POINT ? nativeOffset : nativeOffset + 1);
+				if(subLength >= len) {
+					var lastOffset = (c < StringTools.MIN_SURROGATE_CODE_POINT ? nativeOffset : nativeOffset
+						+ 1);
 					return this.substr(fromOffset, lastOffset - fromOffset + 1);
 				}
 			}
@@ -367,18 +387,18 @@ abstract UnicodeString(String) from String to String {
 		If the (possibly swapped) `startIndex` exceeds `this.length`, the empty
 		String `""` is returned.
 	**/
-	public function substring(startIndex:Int, ?endIndex:Int):String {
-		if (startIndex < 0) {
+	public function substring(startIndex : Int, ?endIndex : Int) : String {
+		if(startIndex < 0) {
 			startIndex = 0;
 		}
-		if (endIndex != null) {
-			if (endIndex < 0) {
+		if(endIndex != null) {
+			if(endIndex < 0) {
 				endIndex = 0;
 			}
-			if (startIndex == endIndex) {
+			if(startIndex == endIndex) {
 				return "";
 			}
-			if (startIndex > endIndex) {
+			if(startIndex > endIndex) {
 				var tmp = startIndex;
 				startIndex = endIndex;
 				endIndex = tmp;
@@ -389,19 +409,20 @@ abstract UnicodeString(String) from String to String {
 		var nativeOffset = 0;
 		var fromOffset = -1;
 		var subLength = 0;
-		while (nativeOffset < this.length) {
+		while(nativeOffset < this.length) {
 			var c = StringTools.utf16CodePointAt(this, nativeOffset);
 
-			if (startIndex <= unicodeOffset) {
-				if (fromOffset < 0) {
-					if (endIndex == null) {
+			if(startIndex <= unicodeOffset) {
+				if(fromOffset < 0) {
+					if(endIndex == null) {
 						return this.substr(nativeOffset);
 					}
 					fromOffset = nativeOffset;
 				}
 				subLength++;
-				if (subLength >= endIndex - startIndex) {
-					var lastOffset = (c < StringTools.MIN_SURROGATE_CODE_POINT ? nativeOffset : nativeOffset + 1);
+				if(subLength >= endIndex - startIndex) {
+					var lastOffset = (c < StringTools.MIN_SURROGATE_CODE_POINT ? nativeOffset : nativeOffset
+						+ 1);
 					return this.substr(fromOffset, lastOffset - fromOffset + 1);
 				}
 			}
@@ -412,7 +433,7 @@ abstract UnicodeString(String) from String to String {
 		return (fromOffset < 0 ? "" : this.substr(fromOffset));
 	}
 
-	function get_length():Int {
+	function get_length() : Int {
 		var l = 0;
 		for (c in new StringIteratorUnicode(this)) {
 			l++;
@@ -421,23 +442,24 @@ abstract UnicodeString(String) from String to String {
 	}
 	#end
 	#end
-	@:op(A < B) static function lt(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A < B) static function lt(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A <= B) static function lte(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A <= B) static function lte(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A > B) static function gt(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A > B) static function gt(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A >= B) static function gte(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A >= B) static function gte(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A == B) static function eq(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A == B) static function eq(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A != B) static function neq(a:UnicodeString, b:UnicodeString):Bool;
+	@:op(A != B) static function neq(a : UnicodeString, b : UnicodeString) : Bool;
 
-	@:op(A + B) static function add(a:UnicodeString, b:UnicodeString):UnicodeString;
+	@:op(A + B) static function add(a : UnicodeString, b : UnicodeString) : UnicodeString;
 
-	@:op(A += B) static function assignAdd(a:UnicodeString, b:UnicodeString):UnicodeString;
+	@:op(A += B) static function assignAdd(a : UnicodeString, b : UnicodeString) : UnicodeString;
 
-	@:op(A + B) @:commutative static function add(a:UnicodeString, b:String):UnicodeString;
+	@:op(A + B) @:commutative static function add(a : UnicodeString, b : String) : UnicodeString;
 
-	@:op(A += B) @:commutative static function assignAdd(a:UnicodeString, b:String):UnicodeString;
+	@:op(A += B) @:commutative static function assignAdd(a : UnicodeString,
+		b : String) : UnicodeString;
 }

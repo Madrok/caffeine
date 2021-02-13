@@ -171,7 +171,7 @@ class JsTcpSocketInput extends chx.io.Input {
 		return b;
 	}
 
-	override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		s.waitInputData();
 		if(s.inputData.length == 0)
 			throw new BlockedException();
@@ -218,7 +218,7 @@ class JsTcpSocketOutput extends chx.io.Output {
 
 		if(!s.blocking && s.outputBlocked)
 			throw new BlockedException();
-		var buf = haxe.io.Bytes.alloc(1);
+		var buf = chx.ds.Bytes.alloc(1);
 		buf.set(0, c);
 
 		s.outputBlocked = !s.client.write(js.node.Buffer.hxFromBytes(buf));

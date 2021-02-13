@@ -37,12 +37,12 @@ typedef FileHandle = hl.Abstract<"hl_fdesc">;
 		return @:privateAccess String.fromUTF8(bytes);
 	}
 
-	public static function getBytes(path : String) : haxe.io.Bytes {
+	public static function getBytes(path : String) : chx.ds.Bytes {
 		var size = 0;
 		var bytes = file_contents(Sys.getPath(path), size);
 		if(bytes == null)
 			throw new chx.lang.IOException("Can't read " + path);
-		return @:privateAccess new haxe.io.Bytes(bytes, size);
+		return @:privateAccess new chx.ds.Bytes(bytes, size);
 	}
 
 	public static function saveContent(path : String, content : String) : Void {
@@ -51,7 +51,7 @@ typedef FileHandle = hl.Abstract<"hl_fdesc">;
 		f.close();
 	}
 
-	public static function saveBytes(path : String, bytes : haxe.io.Bytes) : Void {
+	public static function saveBytes(path : String, bytes : chx.ds.Bytes) : Void {
 		var f = write(path);
 		f.write(bytes);
 		f.close();

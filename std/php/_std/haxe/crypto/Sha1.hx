@@ -22,15 +22,15 @@
 
 package haxe.crypto;
 
+import chx.ds.Bytes;
 import php.Global;
-import haxe.io.Bytes;
 
 class Sha1 {
-	public static inline function encode(s:String):String {
+	public static inline function encode(s : String) : String {
 		return Global.sha1(s);
 	}
 
-	public static inline function make(b:haxe.io.Bytes):haxe.io.Bytes {
+	public static inline function make(b : chx.ds.Bytes) : chx.ds.Bytes {
 		return Bytes.ofData(Global.sha1(b.getData(), true));
 	}
 }

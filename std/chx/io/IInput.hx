@@ -48,6 +48,8 @@
  */
 package chx.io;
 
+import chx.ds.Bytes;
+
 /**
  * An abstract reader. See chx.io for implementations
  *

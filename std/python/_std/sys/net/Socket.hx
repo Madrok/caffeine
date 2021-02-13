@@ -22,9 +22,9 @@
 
 package sys.net;
 
+import chx.ds.Bytes;
+import chx.ds.BytesData;
 import chx.lang.IOException;
-import haxe.io.Bytes;
-import haxe.io.BytesData;
 import python.Exceptions;
 import python.Tuple;
 import python.lib.Select;
@@ -52,7 +52,7 @@ private class SocketInput extends chx.io.Input {
 		return python.Syntax.code("r[0]");
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		var r;
 		var data = buf.getData();
 		try {
@@ -92,7 +92,7 @@ private class SocketOutput extends chx.io.Output {
 		}
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		try {
 			var data = buf.getData();
 			var payload = python.Syntax.code("{0}[{1}:{1}+{2}]", data, pos, len);

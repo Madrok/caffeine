@@ -29,36 +29,36 @@ private class Window {
 	public static inline var SIZE = 1 << 15;
 	public static inline var BUFSIZE = 1 << 16;
 
-	public var buffer:haxe.io.Bytes;
-	public var pos:Int;
+	public var buffer : chx.ds.Bytes;
+	public var pos : Int;
 
-	var crc:Adler32;
+	var crc : Adler32;
 
 	public function new(hasCrc) {
-		buffer = haxe.io.Bytes.alloc(BUFSIZE);
+		buffer = chx.ds.Bytes.alloc(BUFSIZE);
 		pos = 0;
-		if (hasCrc)
+		if(hasCrc)
 			crc = new Adler32();
 	}
 
 	public function slide() {
-		if (crc != null)
+		if(crc != null)
 			crc.update(buffer, 0, SIZE);
-		var b = haxe.io.Bytes.alloc(BUFSIZE);
+		var b = chx.ds.Bytes.alloc(BUFSIZE);
 		pos -= SIZE;
 		b.blit(0, buffer, SIZE, pos);
 		buffer = b;
 	}
 
 	public function addBytes(b, p, len) {
-		if (pos + len > BUFSIZE)
+		if(pos + len > BUFSIZE)
 			slide();
 		buffer.blit(pos, b, p, len);
 		pos += len;
 	}
 
 	public function addByte(c) {
-		if (pos == BUFSIZE)
+		if(pos == BUFSIZE)
 			slide();
 		buffer.set(pos, c);
 		pos++;
@@ -73,7 +73,7 @@ private class Window {
 	}
 
 	public function checksum() {
-		if (crc != null)
+		if(crc != null)
 			crc.update(buffer, 0, pos);
 		return crc;
 	}
@@ -94,35 +94,32 @@ private enum State {
 	A pure Haxe implementation of the ZLIB Inflate algorithm which allows reading compressed data without any platform-specific support.
 **/
 class InflateImpl {
-	static var LEN_EXTRA_BITS_TBL = [
-		0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, -1, -1
-	];
-	static var LEN_BASE_VAL_TBL = [
-		3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258
-	];
-	static var DIST_EXTRA_BITS_TBL = [
-		0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, -1, -1
-	];
-	static var DIST_BASE_VAL_TBL = [
-		1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577
-	];
-	static var CODE_LENGTHS_POS = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+	static var LEN_EXTRA_BITS_TBL = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
+		4, 4, 4, 4, 5, 5, 5, 5, 0, -1, -1];
+	static var LEN_BASE_VAL_TBL = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35,
+		43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258];
+	static var DIST_EXTRA_BITS_TBL = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8,
+		9, 9, 10, 10, 11, 11, 12, 12, 13, 13, -1, -1];
+	static var DIST_BASE_VAL_TBL = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
+		257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577];
+	static var CODE_LENGTHS_POS = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1,
+		15];
 
-	var nbits:Int;
-	var bits:Int;
-	var state:State;
-	var isFinal:Bool;
-	var huffman:Huffman;
-	var huffdist:Null<Huffman>;
-	var htools:HuffTools;
-	var len:Int;
-	var dist:Int;
-	var needed:Int;
-	var output:haxe.io.Bytes;
-	var outpos:Int;
-	var input:chx.io.Input;
-	var lengths:Array<Int>;
-	var window:Window;
+	var nbits : Int;
+	var bits : Int;
+	var state : State;
+	var isFinal : Bool;
+	var huffman : Huffman;
+	var huffdist : Null<Huffman>;
+	var htools : HuffTools;
+	var len : Int;
+	var dist : Int;
+	var needed : Int;
+	var output : chx.ds.Bytes;
+	var outpos : Int;
+	var input : chx.io.Input;
+	var lengths : Array<Int>;
+	var window : Window;
 
 	static var FIXED_HUFFMAN = null;
 
@@ -147,11 +144,11 @@ class InflateImpl {
 	}
 
 	function buildFixedHuffman() {
-		if (FIXED_HUFFMAN != null)
+		if(FIXED_HUFFMAN != null)
 			return FIXED_HUFFMAN;
 		var a = new Array();
 		for (n in 0...288)
-			a.push(if (n <= 143) 8 else if (n <= 255) 9 else if (n <= 279) 7 else 8);
+			a.push(if(n <= 143)8 else if(n <= 255)9 else if(n <= 279)7 else 8);
 		FIXED_HUFFMAN = htools.make(a, 0, 288, 10);
 		return FIXED_HUFFMAN;
 	}
@@ -160,13 +157,13 @@ class InflateImpl {
 		needed = len;
 		outpos = pos;
 		output = b;
-		if (len > 0)
-			while (inflateLoop()) {}
+		if(len > 0)
+			while(inflateLoop()) {}
 		return len - needed;
 	}
 
 	function getBits(n) {
-		while (nbits < n) {
+		while(nbits < n) {
 			bits |= input.readByte() << nbits;
 			nbits += 8;
 		}
@@ -177,7 +174,7 @@ class InflateImpl {
 	}
 
 	function getBit() {
-		if (nbits == 0) {
+		if(nbits == 0) {
 			nbits = 8;
 			bits = input.readByte();
 		}
@@ -188,7 +185,8 @@ class InflateImpl {
 	}
 
 	function getRevBits(n) {
-		return if (n == 0) 0 else if (getBit()) (1 << (n - 1)) | getRevBits(n - 1) else getRevBits(n - 1);
+		return if(n == 0)0 else if(getBit()) (1 << (n - 1)) | getRevBits(n - 1) else getRevBits(n
+			- 1);
 	}
 
 	function resetBits() {
@@ -221,38 +219,38 @@ class InflateImpl {
 	}
 
 	function applyHuffman(h) {
-		return switch (h) {
-			case Found(n): n;
-			case NeedBit(a, b): applyHuffman(getBit() ? b : a);
-			case NeedBits(n, tbl): applyHuffman(tbl[getBits(n)]);
+		return switch(h) {
+			case Found(n):n;
+			case NeedBit(a, b):applyHuffman(getBit() ? b : a);
+			case NeedBits(n, tbl):applyHuffman(tbl[getBits(n)]);
 		}
 	}
 
 	function inflateLengths(a, max) {
 		var i = 0;
 		var prev = 0;
-		while (i < max) {
+		while(i < max) {
 			var n = applyHuffman(huffman);
-			switch (n) {
+			switch(n) {
 				case 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15:
 					prev = n;
 					a[i] = n;
 					i++;
 				case 16:
 					var end = i + 3 + getBits(2);
-					if (end > max)
+					if(end > max)
 						throw "Invalid data";
-					while (i < end) {
+					while(i < end) {
 						a[i] = prev;
 						i++;
 					}
 				case 17:
 					i += 3 + getBits(3);
-					if (i > max)
+					if(i > max)
 						throw "Invalid data";
 				case 18:
 					i += 11 + getBits(7);
-					if (i > max)
+					if(i > max)
 						throw "Invalid data";
 				default:
 					throw "Invalid data";
@@ -261,31 +259,31 @@ class InflateImpl {
 	}
 
 	function inflateLoop() {
-		switch (state) {
+		switch(state) {
 			case Head:
 				var cmf = input.readByte();
 				var cm = cmf & 15;
 				var cinfo = cmf >> 4;
-				if (cm != 8)
+				if(cm != 8)
 					throw "Invalid data";
 				var flg = input.readByte();
 				// var fcheck = flg & 31;
 				var fdict = flg & 32 != 0;
 				// var flevel = flg >> 6;
-				if (((cmf << 8) + flg) % 31 != 0)
+				if(((cmf << 8) + flg) % 31 != 0)
 					throw "Invalid data";
-				if (fdict)
+				if(fdict)
 					throw "Unsupported dictionary";
 				state = Block;
 				return true;
 			case Crc:
 				var calc = window.checksum();
-				if (calc == null) {
+				if(calc == null) {
 					state = Done;
 					return true;
 				}
 				var crc = Adler32.read(input);
-				if (!calc.equals(crc))
+				if(!calc.equals(crc))
 					throw "Invalid CRC";
 				state = Done;
 				return true;
@@ -294,11 +292,11 @@ class InflateImpl {
 				return false;
 			case Block:
 				isFinal = getBit();
-				switch (getBits(2)) {
+				switch(getBits(2)) {
 					case 0: // no compression
 						len = input.readUInt16();
 						var nlen = input.readUInt16();
-						if (nlen != 0xFFFF - len)
+						if(nlen != 0xFFFF - len)
 							throw "Invalid data";
 						state = Flat;
 						var r = inflateLoop();
@@ -334,46 +332,48 @@ class InflateImpl {
 				var bytes = input.read(rlen);
 				len -= rlen;
 				addBytes(bytes, 0, rlen);
-				if (len == 0)
+				if(len == 0)
 					state = isFinal ? Crc : Block;
 				return needed > 0;
 			case DistOne:
 				var rlen = (len < needed) ? len : needed;
 				addDistOne(rlen);
 				len -= rlen;
-				if (len == 0)
+				if(len == 0)
 					state = CData;
 				return needed > 0;
 			case Dist:
-				while (len > 0 && needed > 0) {
+				while(len > 0 && needed > 0) {
 					var rdist = (len < dist) ? len : dist;
 					var rlen = (needed < rdist) ? needed : rdist;
 					addDist(dist, rlen);
 					len -= rlen;
 				}
-				if (len == 0)
+				if(len == 0)
 					state = CData;
 				return needed > 0;
 			case CData:
 				var n = applyHuffman(huffman);
-				if (n < 256) {
+				if(n < 256) {
 					addByte(n);
 					return needed > 0;
-				} else if (n == 256) {
+				}
+				else if(n == 256) {
 					state = isFinal ? Crc : Block;
 					return true;
-				} else {
+				}
+				else {
 					n -= 257;
 					var extra_bits = LEN_EXTRA_BITS_TBL[n];
-					if (extra_bits == -1)
+					if(extra_bits == -1)
 						throw "Invalid data";
 					len = LEN_BASE_VAL_TBL[n] + getBits(extra_bits);
-					var dist_code = if (huffdist == null) getRevBits(5) else applyHuffman(huffdist);
+					var dist_code = if(huffdist == null)getRevBits(5) else applyHuffman(huffdist);
 					extra_bits = DIST_EXTRA_BITS_TBL[dist_code];
-					if (extra_bits == -1)
+					if(extra_bits == -1)
 						throw "Invalid data";
 					dist = DIST_BASE_VAL_TBL[dist_code] + getBits(extra_bits);
-					if (dist > window.available())
+					if(dist > window.available())
 						throw "Invalid data";
 					state = (dist == 1) ? DistOne : Dist;
 					return true;
@@ -381,14 +381,14 @@ class InflateImpl {
 		}
 	}
 
-	public static function run(i:chx.io.Input, ?bufsize = 65536) {
-		var buf = haxe.io.Bytes.alloc(bufsize);
-		var output = new haxe.io.BytesBuffer();
+	public static function run(i : chx.io.Input, ?bufsize = 65536) {
+		var buf = chx.ds.Bytes.alloc(bufsize);
+		var output = new chx.ds.BytesBuffer();
 		var inflate = new InflateImpl(i);
-		while (true) {
+		while(true) {
 			var len = inflate.readBytes(buf, 0, bufsize);
 			output.addBytes(buf, 0, len);
-			if (len < bufsize)
+			if(len < bufsize)
 				break;
 		}
 		return output.getBytes();

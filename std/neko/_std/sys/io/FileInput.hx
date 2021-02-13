@@ -41,7 +41,7 @@ package sys.io;
 		}
 	}
 
-	public override function readBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function readBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		return try {
 			file_read(__f, s.getData(), p, l);
 		}

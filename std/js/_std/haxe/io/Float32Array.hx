@@ -28,51 +28,52 @@ typedef Float32ArrayData = js.lib.Float32Array;
 abstract Float32Array(Float32ArrayData) {
 	public static inline var BYTES_PER_ELEMENT = 4;
 
-	public var length(get, never):Int;
-	public var view(get, never):ArrayBufferView;
+	public var length(get, never) : Int;
+	public var view(get, never) : ArrayBufferView;
 
-	public inline function new(elements:Int):Void {
+	public inline function new(elements : Int) : Void {
 		this = new Float32ArrayData(elements);
 	}
 
-	inline function get_length():Int {
+	inline function get_length() : Int {
 		return this.length;
 	}
 
-	public inline function get_view():ArrayBufferView {
+	public inline function get_view() : ArrayBufferView {
 		return ArrayBufferView.fromData(this);
 	}
 
-	@:arrayAccess public inline function get(index:Int):Float {
+	@:arrayAccess public inline function get(index : Int) : Float {
 		return this[index];
 	}
 
-	@:arrayAccess public inline function set(index:Int, value:Float):Float {
+	@:arrayAccess public inline function set(index : Int, value : Float) : Float {
 		return this[index] = value;
 	}
 
-	public inline function sub(begin:Int, ?length:Int):Float32Array {
+	public inline function sub(begin : Int, ?length : Int) : Float32Array {
 		return fromData(this.subarray(begin, length == null ? this.length : begin + length));
 	}
 
-	public inline function subarray(?begin:Int, ?end:Int):Float32Array {
+	public inline function subarray(?begin : Int, ?end : Int) : Float32Array {
 		return fromData(this.subarray(begin, end));
 	}
 
-	public inline function getData():Float32ArrayData {
+	public inline function getData() : Float32ArrayData {
 		return this;
 	}
 
-	public inline static function fromData(d:Float32ArrayData):Float32Array {
+	public inline static function fromData(d : Float32ArrayData) : Float32Array {
 		return cast d;
 	}
 
-	public static function fromArray(a:Array<Float>, pos:Int = 0, ?length:Int):Float32Array {
-		if (length == null)
+	public static function fromArray(a : Array<Float>, pos : Int = 0,
+			?length : Int) : Float32Array {
+		if(length == null)
 			length = a.length - pos;
-		if (pos < 0 || length < 0 || pos + length > a.length)
-			throw Error.OutsideBounds;
-		if (pos == 0 && length == a.length)
+		if(pos < 0 || length < 0 || pos + length > a.length)
+			throw new chx.lang.OutsideBoundsException();
+		if(pos == 0 && length == a.length)
 			return fromData(new Float32ArrayData(a));
 		var i = new Float32Array(a.length);
 		for (idx in 0...length)
@@ -80,8 +81,9 @@ abstract Float32Array(Float32ArrayData) {
 		return i;
 	}
 
-	public static function fromBytes(bytes:haxe.io.Bytes, bytePos:Int = 0, ?length:Int):Float32Array {
-		if (length == null)
+	public static function fromBytes(bytes : chx.ds.Bytes, bytePos : Int = 0,
+			?length : Int) : Float32Array {
+		if(length == null)
 			length = (bytes.length - bytePos) >> 2;
 		return fromData(new Float32ArrayData(bytes.getData(), bytePos, length));
 	}

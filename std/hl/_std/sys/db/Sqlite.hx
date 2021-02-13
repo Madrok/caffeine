@@ -29,45 +29,46 @@ private typedef SqliteResultHandle = hl.Abstract<"sqlite_result">;
 
 @:hlNative("sqlite")
 private class SqliteLib {
-	public static function connect(path:hl.Bytes):SqliteConnectionHandle {
+	public static function connect(path : hl.Bytes) : SqliteConnectionHandle {
 		return null;
 	}
 
-	public static function close(c:SqliteConnectionHandle):Void {}
+	public static function close(c : SqliteConnectionHandle) : Void {}
 
-	public static function request(c:SqliteConnectionHandle, sql:hl.Bytes):SqliteResultHandle {
+	public static function request(c : SqliteConnectionHandle,
+			sql : hl.Bytes) : SqliteResultHandle {
 		return null;
 	}
 
-	public static function last_id(c:SqliteConnectionHandle):Int {
+	public static function last_id(c : SqliteConnectionHandle) : Int {
 		return 0;
 	}
 
-	public static function result_next(c:SqliteResultHandle):hl.NativeArray<Dynamic> {
+	public static function result_next(c : SqliteResultHandle) : hl.NativeArray<Dynamic> {
 		return null;
 	}
 
-	public static function result_get(c:SqliteResultHandle, n:Int):Null<hl.Bytes> {
+	public static function result_get(c : SqliteResultHandle, n : Int) : Null<hl.Bytes> {
 		return null;
 	}
 
-	public static function result_get_int(c:SqliteResultHandle, n:Int):Null<Int> {
+	public static function result_get_int(c : SqliteResultHandle, n : Int) : Null<Int> {
 		return 0;
 	}
 
-	public static function result_get_float(c:SqliteResultHandle, n:Int):Null<Float> {
+	public static function result_get_float(c : SqliteResultHandle, n : Int) : Null<Float> {
 		return .0;
 	}
 
-	public static function result_get_length(c:SqliteResultHandle):Null<Int> {
+	public static function result_get_length(c : SqliteResultHandle) : Null<Int> {
 		return 0;
 	}
 
-	public static function result_get_nfields(c:SqliteResultHandle):Int {
+	public static function result_get_nfields(c : SqliteResultHandle) : Int {
 		return 0;
 	}
 
-	public static function result_get_fields(c:SqliteResultHandle):hl.NativeArray<hl.Bytes> {
+	public static function result_get_fields(c : SqliteResultHandle) : hl.NativeArray<hl.Bytes> {
 		return null;
 	}
 }
@@ -75,96 +76,104 @@ private class SqliteLib {
 @:access(Sys)
 @:access(String)
 private class SqliteConnection implements Connection {
-	var c:SqliteConnectionHandle;
+	var c : SqliteConnectionHandle;
 
-	public function new(file:String) {
+	public function new(file : String) {
 		c = SqliteLib.connect(file.bytes);
 	}
 
-	public function close():Void {
+	public function close() : Void {
 		SqliteLib.close(c);
 	}
 
-	public function request(s:String):ResultSet {
+	public function request(s : String) : ResultSet {
 		try {
-			var r:SqliteResultHandle = SqliteLib.request(c, s.bytes);
+			var r : SqliteResultHandle = SqliteLib.request(c, s.bytes);
 
 			return new SqliteResultSet(r);
-		} catch (e:String) {
+		}
+		catch(e:String) {
 			throw 'Error while executing $s ($e)';
 		}
 
 		return null;
 	}
 
-	public function escape(s:String):String {
-		return s.split("'").join("''");
+	public function escape(s : String) : String {
+		return s
+			.split("'")
+			.join("''");
 	}
 
-	public function quote(s:String):String {
-		if (s.indexOf("\000") >= 0)
+	public function quote(s : String) : String {
+		if(s.indexOf("\000") >= 0)
 			return "x'" + BaseCode.encode(s, "0123456789ABCDEF") + "'";
 
-		return "'" + s.split("'").join("''") + "'";
+		return "'" + s
+			.split("'")
+			.join("''")
+			+ "'";
 	}
 
-	public function addValue(s:StringBuf, v:Dynamic):Void {
-		switch (Type.typeof(v)) {
+	public function addValue(s : StringBuf, v : Dynamic) : Void {
+		switch(Type.typeof(v)) {
 			case TNull, TInt:
 				s.add(v);
 			case TBool:
 				s.add(v ? 1 : 0);
-			case TClass(haxe.io.Bytes):
+			case TClass(chx.ds.Bytes):
 				s.add("x'");
-				s.add((v : haxe.io.Bytes).toHex());
+				s.add((v:chx.ds.Bytes)
+					.toHex()
+				);
 				s.add("'");
 			case _:
 				s.add(quote(Std.string(v)));
 		}
 	}
 
-	public function lastInsertId():Int {
+	public function lastInsertId() : Int {
 		return SqliteLib.last_id(c);
 	}
 
-	public function dbName():String {
+	public function dbName() : String {
 		return "SQLite";
 	}
 
-	public function startTransaction():Void {
+	public function startTransaction() : Void {
 		request("BEGIN TRANSACTION");
 	}
 
-	public function commit():Void {
+	public function commit() : Void {
 		request("COMMIT");
 	}
 
-	public function rollback():Void {
+	public function rollback() : Void {
 		request("ROLLBACK");
 	}
 }
 
 @:access(String)
 private class SqliteResultSet implements ResultSet {
-	public var length(get, null):Int;
-	public var nfields(get, null):Int;
+	public var length(get, null) : Int;
+	public var nfields(get, null) : Int;
 
-	var names:Array<String>;
-	var cache:List<Dynamic>;
+	var names : Array<String>;
+	var cache : List<Dynamic>;
 
-	var r:SqliteResultHandle;
+	var r : SqliteResultHandle;
 
-	public function new(r:SqliteResultHandle) {
+	public function new(r : SqliteResultHandle) {
 		cache = new List();
 		this.r = r;
 		hasNext(); // execute the request
 	}
 
-	function get_length():Int {
-		if (nfields != 0) {
-			while (true) {
+	function get_length() : Int {
+		if(nfields != 0) {
+			while(true) {
 				var c = doNext();
-				if (c == null)
+				if(c == null)
 					break;
 
 				cache.add(c);
@@ -176,13 +185,13 @@ private class SqliteResultSet implements ResultSet {
 		return SqliteLib.result_get_length(r);
 	}
 
-	function get_nfields():Int {
+	function get_nfields() : Int {
 		return SqliteLib.result_get_nfields(r);
 	}
 
-	public function hasNext():Bool {
+	public function hasNext() : Bool {
 		var c = next();
-		if (c == null)
+		if(c == null)
 			return false;
 
 		cache.push(c);
@@ -190,33 +199,36 @@ private class SqliteResultSet implements ResultSet {
 		return true;
 	}
 
-	public function next():Dynamic {
+	public function next() : Dynamic {
 		var c = cache.pop();
-		if (c != null)
+		if(c != null)
 			return c;
 
 		return doNext();
 	}
 
-	private function doNext():Dynamic {
-		var o:Dynamic = {};
+	private function doNext() : Dynamic {
+		var o : Dynamic = {};
 		var a = SqliteLib.result_next(r);
-		if (a == null)
+		if(a == null)
 			return null;
 
 		var names = getFieldsNames();
 		var i = 0;
 		var l = names.length;
-		while (i < l) {
-			var n:String = names[i];
-			var v:Dynamic = a[i];
-			switch (hl.Type.getDynamic(v).kind) {
+		while(i < l) {
+			var n : String = names[i];
+			var v : Dynamic = a[i];
+			switch(hl.Type
+				.getDynamic(v)
+				.kind
+			) {
 				case hl.Type.TypeKind.HArray:
-					var pair:hl.NativeArray<Dynamic> = v;
-					var bytes:hl.Bytes = pair[0];
-					var len:Int = pair[1];
-					var data = new haxe.io.BytesData(bytes, len);
-					Reflect.setField(o, n, haxe.io.Bytes.ofData(data));
+					var pair : hl.NativeArray<Dynamic> = v;
+					var bytes : hl.Bytes = pair[0];
+					var len : Int = pair[1];
+					var data = new chx.ds.BytesData(bytes, len);
+					Reflect.setField(o, n, chx.ds.Bytes.ofData(data));
 
 				case hl.Type.TypeKind.HBytes:
 					Reflect.setField(o, n, String.fromUCS2(v));
@@ -229,11 +241,11 @@ private class SqliteResultSet implements ResultSet {
 		return o;
 	}
 
-	public function results():List<Dynamic> {
+	public function results() : List<Dynamic> {
 		var l = new List();
-		while (true) {
+		while(true) {
 			var c = next();
-			if (c == null)
+			if(c == null)
 				break;
 
 			l.add(c);
@@ -242,31 +254,31 @@ private class SqliteResultSet implements ResultSet {
 		return l;
 	}
 
-	public function getResult(n:Int):String {
+	public function getResult(n : Int) : String {
 		var bytes = SqliteLib.result_get(r, n);
-		if (bytes == null)
+		if(bytes == null)
 			return null;
 
 		return String.fromUCS2(bytes);
 	}
 
-	public function getIntResult(n:Int):Int {
+	public function getIntResult(n : Int) : Int {
 		return SqliteLib.result_get_int(r, n);
 	}
 
-	public function getFloatResult(n:Int):Float {
+	public function getFloatResult(n : Int) : Float {
 		return SqliteLib.result_get_float(r, n);
 	}
 
-	public function getFieldsNames():Array<String> {
-		if (this.names != null)
+	public function getFieldsNames() : Array<String> {
+		if(this.names != null)
 			return this.names;
 
 		this.names = [];
 		var names = SqliteLib.result_get_fields(r);
 		var i = 0;
 		var l = names.length;
-		while (i < l) {
+		while(i < l) {
 			var name = String.fromUCS2(names[i]);
 			this.names.push(name);
 			i++;
@@ -277,7 +289,7 @@ private class SqliteResultSet implements ResultSet {
 }
 
 @:coreApi class Sqlite {
-	public static function open(file:String):Connection {
+	public static function open(file : String) : Connection {
 		return new SqliteConnection(file);
 	}
 }

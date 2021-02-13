@@ -31,7 +31,7 @@
  */
 package chx.math;
 
-import haxe.io.BytesData;
+import chx.ds.BytesData;
 #if neko
 enum HndBI {}
 #elseif useOpenSSL

@@ -25,60 +25,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
 import chx.io.BytesOutput;
 import chx.io.Output;
 
 /**
  * Cipher Block Chaining mode
- **/
-class CBC extends IVBase, implements chx.crypt.IMode {
-
+**/
+class CBC extends IVBase implements chx.crypto.crypt.IMode {
 	override public function toString() {
 		return "cbc";
 	}
 
-	override public function updateEncrypt( b : Bytes, out : Output) : Int {
+	override public function updateEncrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateEncrypt: ");
-			trace("IV " + iv.toHex());
-			trace("Plaintext: " + b.toHex());
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateEncrypt: ");
+		trace("IV " + iv.toHex());
+		trace("Plaintext: " + b.toHex());
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		var n = cipher.blockSize;
 		if(b.length != n)
 			return 0;
-		for(i in 0...n)
+		for (i in 0...n)
 			b.set(i, b.get(i) ^ iv.get(i));
 		#if CAFFEINE_DEBUG
-			trace("Input Block: " + b.toHex());
+		trace("Input Block: " + b.toHex());
 		#end
 		var crypted = cipher.encryptBlock(b);
-		out.writeBytes(crypted,0,n);
+		out.writeBytes(crypted, 0, n);
 		iv = crypted;
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Output Block: " + db.toHex());
-			trace("Ciphertext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Output Block: " + db.toHex());
+		trace("Ciphertext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return n;
 	}
 
-	override public function updateDecrypt( b : Bytes, out : Output ) : Int {
+	override public function updateDecrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateDecrypt: ");
-			trace("IV " + iv.toHex());
-			trace("Ciphertext: " + b.toHex());
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateDecrypt: ");
+		trace("IV " + iv.toHex());
+		trace("Ciphertext: " + b.toHex());
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		var n = cipher.blockSize;
@@ -87,24 +86,23 @@ class CBC extends IVBase, implements chx.crypt.IMode {
 		var tmp = Bytes.alloc(n);
 		tmp.blit(0, b, 0, n);
 		var tb = cipher.decryptBlock(b);
-		for(i in 0...cipher.blockSize)
+		for (i in 0...cipher.blockSize)
 			tb.set(i, tb.get(i) ^ iv.get(i));
 		#if CAFFEINE_DEBUG
-			trace("Input Block: " + b.toHex());
+		trace("Input Block: " + b.toHex());
 		#end
 		out.writeBytes(tb, 0, n);
 		iv = tmp;
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Output Block: " + db.toHex());
-			trace("Plaintext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Output Block: " + db.toHex());
+		trace("Plaintext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return n;
 	}
-
 }

@@ -22,6 +22,8 @@
 
 package chx.io;
 
+import chx.ds.Bytes;
+import chx.ds.BytesData;
 import chx.lang.EofException;
 import chx.lang.OutsideBoundsException;
 
@@ -97,7 +99,7 @@ class BytesInput extends Input {
 		#end
 	}
 
-	public override function readByte() : Int {
+	public function readByte() : Int {
 		#if flash
 		return try b.readUnsignedByte()
 		catch(e:Dynamic) throw new EofException();

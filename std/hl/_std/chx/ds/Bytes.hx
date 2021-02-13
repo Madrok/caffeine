@@ -20,9 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package haxe.io;
+package chx.ds;
 
 import chx.lang.OutsideBoundsException;
+import haxe.io.Encoding;
 
 @:coreApi
 class Bytes {
@@ -206,7 +207,7 @@ class Bytes {
 	}
 
 	public inline function getData() : BytesData {
-		return new haxe.io.BytesData(b, length);
+		return new chx.ds.BytesData(b, length);
 	}
 
 	public static function alloc(length : Int) : Bytes {

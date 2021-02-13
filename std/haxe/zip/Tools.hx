@@ -23,8 +23,8 @@
 package haxe.zip;
 
 class Tools {
-	public static function compress(f:Entry, level:Int) {
-		if (f.compressed)
+	public static function compress(f : Entry, level : Int) {
+		if(f.compressed)
 			return;
 		// this should be optimized with a temp buffer
 		// that would discard the first two bytes
@@ -35,16 +35,16 @@ class Tools {
 		f.dataSize = f.data.length;
 	}
 
-	public static function uncompress(f:Entry) {
-		if( !f.compressed )
+	public static function uncompress(f : Entry) {
+		if(!f.compressed)
 			return;
 
 		var c = new Uncompress(-15);
-		var s = haxe.io.Bytes.alloc(f.fileSize);
-		var r = c.execute(f.data,0,s,0);
+		var s = chx.ds.Bytes.alloc(f.fileSize);
+		var r = c.execute(f.data, 0, s, 0);
 		c.close();
-		if( !r.done || r.read != f.data.length || r.write != f.fileSize )
-			throw "Invalid compressed data for "+f.fileName;
+		if(!r.done || r.read != f.data.length || r.write != f.fileSize)
+			throw "Invalid compressed data for " + f.fileName;
 		f.compressed = false;
 		f.dataSize = f.fileSize;
 		f.data = s;

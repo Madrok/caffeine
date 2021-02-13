@@ -22,9 +22,9 @@
 
 package sys;
 
+import chx.ds.Bytes;
+import chx.ds.BytesOutput;
 import chx.io.Input;
-import haxe.io.Bytes;
-import haxe.io.BytesOutput;
 import sys.net.Host;
 import sys.net.Socket;
 
@@ -34,7 +34,7 @@ class Http extends haxe.http.HttpBase {
 	public var responseHeaders : Map<String, String>;
 
 	var chunk_size : Null<Int>;
-	var chunk_buf : haxe.io.Bytes;
+	var chunk_buf : chx.ds.Bytes;
 	var file : {
 		param : String,
 		filename : String,
@@ -54,7 +54,7 @@ class Http extends haxe.http.HttpBase {
 	}
 
 	public override function request(?post : Bool) {
-		var output = new haxe.io.BytesOutput();
+		var output = new chx.ds.BytesOutput();
 		var old = onError;
 		var err = false;
 		onError = function(e) {
@@ -270,7 +270,7 @@ class Http extends haxe.http.HttpBase {
 		}
 		if(boundary != null) {
 			var bufsize = 4096;
-			var buf = haxe.io.Bytes.alloc(bufsize);
+			var buf = chx.ds.Bytes.alloc(bufsize);
 			while(fileSize > 0) {
 				var size = if(fileSize > bufsize)bufsize else fileSize;
 				var len = 0;
@@ -291,9 +291,9 @@ class Http extends haxe.http.HttpBase {
 
 	function readHttpResponse(api : chx.io.Output, sock : sys.net.Socket) {
 		// READ the HTTP header (until \r\n\r\n)
-		var b = new haxe.io.BytesBuffer();
+		var b = new chx.ds.BytesBuffer();
 		var k = 4;
-		var s = haxe.io.Bytes.alloc(4);
+		var s = chx.ds.Bytes.alloc(4);
 		sock.setTimeout(cnxTimeout);
 		while(true) {
 			var p = sock.input.readBytes(s, 0, k);
@@ -399,7 +399,7 @@ class Http extends haxe.http.HttpBase {
 		chunk_buf = null;
 
 		var bufsize = 1024;
-		var buf = haxe.io.Bytes.alloc(bufsize);
+		var buf = chx.ds.Bytes.alloc(bufsize);
 		if(chunked) {
 			try {
 				while(true) {
@@ -445,10 +445,10 @@ class Http extends haxe.http.HttpBase {
 		api.close();
 	}
 
-	function readChunk(chunk_re : EReg, api : chx.io.Output, buf : haxe.io.Bytes, len) {
+	function readChunk(chunk_re : EReg, api : chx.io.Output, buf : chx.ds.Bytes, len) {
 		if(chunk_size == null) {
 			if(chunk_buf != null) {
-				var b = new haxe.io.BytesBuffer();
+				var b = new chx.ds.BytesBuffer();
 				b.add(chunk_buf);
 				b.addBytes(buf, 0, len);
 				buf = b.getBytes();

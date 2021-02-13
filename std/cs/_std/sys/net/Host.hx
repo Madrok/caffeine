@@ -22,54 +22,56 @@
 
 package sys.net;
 
+import chx.ds.Bytes;
+import chx.ds.BytesInput;
 import cs.system.Array;
 import cs.system.net.Dns;
 import cs.system.net.IPAddress;
 import cs.system.net.IPHostEntry;
 import cs.system.net.sockets.AddressFamily;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
 
 @:coreapi
 class Host {
-	public var hostEntry(default, null):IPHostEntry;
-	public var ipAddress(default, null):IPAddress;
+	public var hostEntry(default, null) : IPHostEntry;
+	public var ipAddress(default, null) : IPAddress;
 
-	public var host(default, null):String;
+	public var host(default, null) : String;
 
-	public var ip(get, null):Int;
+	public var ip(get, null) : Int;
 
-	private function get_ip():Int {
-		return new BytesInput(Bytes.ofData(ipAddress.GetAddressBytes())).readInt32();
+	private function get_ip() : Int {
+		return new BytesInput(Bytes.ofData(ipAddress.GetAddressBytes()))
+			.readInt32();
 	}
 
-	public function new(name:String):Void {
+	public function new(name : String) : Void {
 		host = name;
-		try{
+		try {
 			hostEntry = Dns.GetHostEntry(host);
 			for (i in 0...hostEntry.AddressList.Length) {
-				if (hostEntry.AddressList[i].AddressFamily == InterNetwork) {
+				if(hostEntry.AddressList[i].AddressFamily == InterNetwork) {
 					ipAddress = hostEntry.AddressList[i];
 					break;
 				}
 			}
-		}catch (e:Dynamic){
+		}
+		catch(e:Dynamic) {
 			ipAddress = IPAddress.Any;
-			if (!IPAddress.TryParse(host, ipAddress)){
+			if(!IPAddress.TryParse(host, ipAddress)) {
 				throw "Unknown host.";
 			}
 		}
 	}
 
-	public function toString():String {
+	public function toString() : String {
 		return ipAddress.ToString();
 	}
 
-	public function reverse():String {
+	public function reverse() : String {
 		return hostEntry.HostName;
 	}
 
-	static public function localhost():String {
+	static public function localhost() : String {
 		return Dns.GetHostName();
 	}
 }

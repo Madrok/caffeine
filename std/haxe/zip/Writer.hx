@@ -49,7 +49,7 @@ class Writer {
 		size : Int,
 		crc : Int,
 		date : Date,
-		fields : haxe.io.Bytes
+		fields : chx.ds.Bytes
 	}>;
 
 	public function new(o : chx.io.Output) {
@@ -87,7 +87,7 @@ class Writer {
 			f.dataSize = 0;
 			f.crc32 = 0;
 			f.compressed = false;
-			f.data = haxe.io.Bytes.alloc(0);
+			f.data = chx.ds.Bytes.alloc(0);
 		}
 		else {
 			if(f.crc32 == null) {
@@ -105,12 +105,12 @@ class Writer {
 		o.writeInt32(f.dataSize);
 		o.writeInt32(f.fileSize);
 		o.writeUInt16(f.fileName.length);
-		var e = new haxe.io.BytesOutput();
+		var e = new chx.ds.BytesOutput();
 		if(f.extraFields != null) {
 			for (f in f.extraFields)
 				switch(f) {
 					case FInfoZipUnicodePath(name, crc):
-						var namebytes = haxe.io.Bytes.ofString(name);
+						var namebytes = chx.ds.Bytes.ofString(name);
 						e.writeUInt16(0x7075);
 						e.writeUInt16(namebytes.length + 5);
 						e.writeByte(1); // version

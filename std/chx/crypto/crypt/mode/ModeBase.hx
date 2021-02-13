@@ -25,25 +25,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
-import chx.crypt.CipherParams;
-import chx.crypt.IBlockCipher;
-import chx.crypt.IPad;
-import chx.crypt.padding.PadPkcs5;
+import chx.crypto.crypt.CipherParams;
+import chx.crypto.crypt.IBlockCipher;
+import chx.crypto.crypt.IPad;
+import chx.crypto.crypt.padding.PadPkcs5;
 import chx.io.BytesOutput;
 import chx.io.Output;
 
 /**
  * Abstract base class for crypto modes. Default mode is PKCS5
- **/
+**/
 class ModeBase implements IMode {
 	public var cipher(default, setCipher) : IBlockCipher;
-	public var padding(default,setPadding) : IPad;
-	public var blockSize(getBlockSize,never) : Int;
-	
+	public var padding(default, setPadding) : IPad;
+	public var blockSize(getBlockSize, never) : Int;
+
 	var params : CipherParams;
-	
+
 	public function new() {
 		padding = new PadPkcs5();
 	}
@@ -52,12 +52,12 @@ class ModeBase implements IMode {
 		return "??";
 	}
 
-	public function updateEncrypt( b : Bytes, out : Output) : Int {
+	public function updateEncrypt(b : Bytes, out : Output) : Int {
 		throw new chx.lang.FatalException("not implemented");
 		return 0;
 	}
-	
-	public function updateDecrypt( b : Bytes, out : Output ) : Int {
+
+	public function updateDecrypt(b : Bytes, out : Output) : Int {
 		throw new chx.lang.FatalException("not implemented");
 		return 0;
 	}
@@ -67,14 +67,14 @@ class ModeBase implements IMode {
 		return cipher.blockSize;
 	}
 
-	function setCipher(v:IBlockCipher) {
+	function setCipher(v : IBlockCipher) {
 		this.cipher = v;
 		if(padding != null)
 			padding.blockSize = cipher.blockSize;
 		return v;
 	}
 
-	function setPadding(v:IPad) {
+	function setPadding(v : IPad) {
 		this.padding = v;
 		if(this.cipher != null)
 			this.padding.blockSize = this.cipher.blockSize;
@@ -85,7 +85,7 @@ class ModeBase implements IMode {
 		this.params = params;
 	}
 
-	public function finalEncrypt( b : Bytes, out : Output) : Int {
+	public function finalEncrypt(b : Bytes, out : Output) : Int {
 		var n = blockSize;
 		var buf = padding.pad(b);
 		Assert.isEqual(0, buf.length % n);
@@ -93,7 +93,7 @@ class ModeBase implements IMode {
 		var ptr = 0;
 		var rv = 0;
 		while(ptr < buf.length) {
-			n = updateEncrypt(buf.sub(ptr,n), out);
+			n = updateEncrypt(buf.sub(ptr, n), out);
 			ptr += n;
 			rv += n;
 			if(n == 0)
@@ -102,14 +102,14 @@ class ModeBase implements IMode {
 		return rv;
 	}
 
-	public function finalDecrypt( b : Bytes, out : Output ) : Int {
+	public function finalDecrypt(b : Bytes, out : Output) : Int {
 		var n = blockSize;
 		Assert.isTrue(b.length % n == 0);
 		var bo = new BytesOutput();
 		var ptr = 0;
 		var rv = 0;
 		while(ptr < b.length) {
-			n = updateDecrypt(b.sub(ptr,n), bo);
+			n = updateDecrypt(b.sub(ptr, n), bo);
 			ptr += n;
 			rv += n;
 			if(n == 0)

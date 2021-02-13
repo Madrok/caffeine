@@ -23,9 +23,10 @@
 package haxe.zip;
 
 extern class Uncompress {
-	function new(?windowBits:Int):Void;
-	function execute(src:haxe.io.Bytes, srcPos:Int, dst:haxe.io.Bytes, dstPos:Int):{done:Bool, read:Int, write:Int};
-	function setFlushMode(f:FlushMode):Void;
-	function close():Void;
-	static function run(src:haxe.io.Bytes, ?bufsize:Int):haxe.io.Bytes;
+	function new(?windowBits : Int) : Void;
+	function execute(src : chx.ds.Bytes, srcPos : Int, dst : chx.ds.Bytes,
+		dstPos : Int) : {done : Bool, read : Int, write : Int};
+	function setFlushMode(f : FlushMode) : Void;
+	function close() : Void;
+	static function run(src : chx.ds.Bytes, ?bufsize : Int) : chx.ds.Bytes;
 }

@@ -254,7 +254,7 @@ class BitVector implements Hashable {
 		The number of bytes equals `this.bucketSize()` × 4 and the number of bits equals `numBits`.
 		@param bigEndian the byte order (default is little endian)
 	**/
-	public function toBytes(bigEndian : Bool = false) : haxe.io.BytesData {
+	public function toBytes(bigEndian : Bool = false) : chx.ds.BytesData {
 		#if flash
 		var out = new flash.utils.ByteArray();
 		if(!bigEndian)
@@ -263,7 +263,7 @@ class BitVector implements Hashable {
 			out.writeInt(mData.get(i));
 		return out;
 		#else
-		var out = new haxe.io.BytesOutput();
+		var out = new chx.ds.BytesOutput();
 		out.bigEndian = bigEndian;
 		for (i in 0...arrSize)
 			out.writeInt32(mData.get(i));
@@ -279,14 +279,14 @@ class BitVector implements Hashable {
 		The bit-vector is resized to the size of `bytes`.
 		@param bigEndian the input byte order (default is little endian)
 	**/
-	public function ofBytes(bytes : haxe.io.BytesData, bigEndian : Bool = false) {
+	public function ofBytes(bytes : chx.ds.BytesData, bigEndian : Bool = false) {
 		#if flash
 		var input = bytes;
 		input.position = 0;
 		if(!bigEndian)
 			input.endian = flash.utils.Endian.LITTLE_ENDIAN;
 		#else
-		var input = new haxe.io.BytesInput(haxe.io.Bytes.ofData(bytes));
+		var input = new chx.ds.BytesInput(chx.ds.Bytes.ofData(bytes));
 		input.bigEndian = bigEndian;
 		#end
 

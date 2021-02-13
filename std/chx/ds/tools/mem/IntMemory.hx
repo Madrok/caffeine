@@ -187,7 +187,7 @@ class IntMemory extends MemoryAccess {
 		@param max index pointing to the last integer.
 	**/
 	public static function toBytesData(input : IntMemory, min : Int = -1,
-			max : Int = -1) : haxe.io.BytesData {
+			max : Int = -1) : chx.ds.BytesData {
 		assert(input != null, "invalid input");
 
 		if(min == -1)
@@ -203,7 +203,7 @@ class IntMemory extends MemoryAccess {
 		min = input.getAddr(t);
 		max = input.getAddr(max - 1);
 
-		var out = new haxe.io.BytesOutput();
+		var out = new chx.ds.BytesOutput();
 
 		for (i in 0...(max - min) + 1)
 			out.writeInt32(input.get(min + i));
@@ -218,7 +218,7 @@ class IntMemory extends MemoryAccess {
 		@param min index pointing to the byte storing the first integer.
 		@param min index pointing to the byte storing the last integer.
 	**/
-	public static function ofBytesData(input : haxe.io.BytesData, min : Int = -1,
+	public static function ofBytesData(input : chx.ds.BytesData, min : Int = -1,
 			max : Int = -1) : IntMemory {
 		assert(input != null, "invalid input");
 
@@ -234,7 +234,7 @@ class IntMemory extends MemoryAccess {
 		assert(max <= Std.int(input.length), "max <= input.length");
 		#end
 
-		var bytesInput = new haxe.io.BytesInput(haxe.io.Bytes.ofData(input), min);
+		var bytesInput = new chx.ds.BytesInput(chx.ds.Bytes.ofData(input), min);
 		min >>= 2;
 		max >>= 2;
 		var out = new IntMemory(max - min, "ofBytesData");

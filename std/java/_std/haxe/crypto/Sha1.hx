@@ -19,24 +19,31 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 package haxe.crypto;
 
-import haxe.io.Bytes;
-import haxe.io.BytesData;
-import java.security.MessageDigest;
+import chx.ds.Bytes;
+import chx.ds.BytesData;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 @:coreApi
 class Sha1 {
-	public static function encode(s:String):String {
-		return Bytes.ofData(digest((cast s : java.NativeString).getBytes(StandardCharsets.UTF_8))).toHex();
+	public static function encode(s : String) : String {
+		return Bytes
+			.ofData(digest((cast s:java.NativeString)
+				.getBytes(StandardCharsets.UTF_8)
+			))
+			.toHex();
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
 		return Bytes.ofData(digest(b.getData()));
 	}
 
-	inline static function digest(b:BytesData):BytesData {
-		return MessageDigest.getInstance("SHA-1").digest(b);
+	inline static function digest(b : BytesData) : BytesData {
+		return MessageDigest
+			.getInstance("SHA-1")
+			.digest(b);
 	}
 }

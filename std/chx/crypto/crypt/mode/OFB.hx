@@ -25,27 +25,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
 import chx.io.BytesOutput;
 import chx.io.Output;
 
 /**
  * Output Feedback mode
- **/
-class OFB extends IVBase, implements chx.crypt.IMode {
-
+**/
+class OFB extends IVBase implements chx.crypto.crypt.IMode {
 	override public function toString() {
 		return "ofb";
 	}
 
-	override public function updateEncrypt( b : Bytes, out : Output) : Int {
+	override public function updateEncrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateEncrypt: ");
-			trace("IV " + iv.toHex());
-			trace("Plaintext: " + b.toHex());
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateEncrypt: ");
+		trace("IV " + iv.toHex());
+		trace("Plaintext: " + b.toHex());
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		var n = cipher.blockSize;
@@ -54,24 +53,24 @@ class OFB extends IVBase, implements chx.crypt.IMode {
 		common(b, out);
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Output Block: " + db.toHex());
-			trace("Ciphertext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Output Block: " + db.toHex());
+		trace("Ciphertext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return n;
 	}
 
-	override public function updateDecrypt( b : Bytes, out : Output ) : Int {
+	override public function updateDecrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateDecrypt: ");
-			trace("IV " + iv.toHex());
-			trace("Plaintext: " + b.toHex());
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateDecrypt: ");
+		trace("IV " + iv.toHex());
+		trace("Plaintext: " + b.toHex());
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		var n = cipher.blockSize;
@@ -80,30 +79,29 @@ class OFB extends IVBase, implements chx.crypt.IMode {
 		common(b, out);
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Output Block: " + db.toHex());
-			trace("Ciphertext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Output Block: " + db.toHex());
+		trace("Ciphertext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return n;
 	}
 
-	private function common(b:Bytes, out:Output) : Int {
+	private function common(b : Bytes, out : Output) : Int {
 		var n = cipher.blockSize;
 		if(b.length != n)
 			return 0;
 		iv = cipher.encryptBlock(iv);
 
-		for(i in 0...n)
+		for (i in 0...n)
 			b.set(i, b.get(i) ^ iv.get(i));
 		#if CAFFEINE_DEBUG
-			trace("Input Block: " + b.toHex());
+		trace("Input Block: " + b.toHex());
 		#end
 		out.writeBytes(b, 0, n);
 		return n;
 	}
-
 }

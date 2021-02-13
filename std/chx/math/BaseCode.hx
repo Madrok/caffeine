@@ -25,7 +25,7 @@
 
 package math;
 
-import chx.io.Bytes;
+import chx.ds.Bytes;
 
 class BaseCode {
 	var base : Bytes;

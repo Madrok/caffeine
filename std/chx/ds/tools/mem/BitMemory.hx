@@ -105,8 +105,8 @@ class BitMemory extends MemoryAccess {
 		Converts `input` to a `BytesData` object.
 		_The bytes are written in little endian format._
 	**/
-	public static function toBytesData(input : BitMemory) : haxe.io.BytesData {
-		var out = new haxe.io.BytesOutput();
+	public static function toBytesData(input : BitMemory) : chx.ds.BytesData {
+		var out = new chx.ds.BytesOutput();
 		out.bigEndian = false;
 
 		var x = 0;
@@ -133,7 +133,7 @@ class BitMemory extends MemoryAccess {
 		Converts `input` in the range [`min`, `max`] to a `ByteMemory` object.
 		If no range is specified, all `input` bytes are copied.
 	**/
-	public static function ofBytesData(input : haxe.io.BytesData, min : Int = -1,
+	public static function ofBytesData(input : chx.ds.BytesData, min : Int = -1,
 			max : Int = -1) : BitMemory {
 		assert(input != null, "invalid input");
 
@@ -169,7 +169,7 @@ class BitMemory extends MemoryAccess {
 			}
 		}
 		#else
-		var input2 = haxe.io.Bytes.ofData(input);
+		var input2 = chx.ds.Bytes.ofData(input);
 		var i = 0;
 		for (j in min...max) {
 			var b = input2.get(j);

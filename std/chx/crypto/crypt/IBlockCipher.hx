@@ -25,10 +25,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt;
+package chx.crypto.crypt;
+
+import chx.ds.Bytes;
 
 interface IBlockCipher {
-	var blockSize(__getBlockSize,null) : Int;
-	function encryptBlock( plain : Bytes ) : Bytes;
-	function decryptBlock( enc : Bytes ) : Bytes;
+	var blockSize(get, null) : Int;
+	function encryptBlock(plain : Bytes) : Bytes;
+	function decryptBlock(enc : Bytes) : Bytes;
 }

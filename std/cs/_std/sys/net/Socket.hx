@@ -22,6 +22,7 @@
 
 package sys.net;
 
+import chx.ds.Bytes;
 import chx.io.Input;
 import chx.io.Output;
 import cs.NativeArray;
@@ -36,7 +37,6 @@ import cs.system.net.sockets.SocketShutdown;
 import cs.system.net.sockets.SocketType;
 import cs.system.threading.Thread;
 import cs.types.UInt8;
-import haxe.io.Bytes;
 
 @:coreApi
 class Socket implements chx.net.Socket {

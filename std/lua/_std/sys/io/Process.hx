@@ -22,8 +22,8 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
 import haxe.SysTools;
-import haxe.io.Bytes;
 import lua.Boot;
 import lua.Io;
 import lua.NativeStringTools;
@@ -189,7 +189,7 @@ private class ProcessInput extends chx.io.Input {
 			bufsize = (1 << 14); // 16 Ko
 
 		var buf = Bytes.alloc(bufsize);
-		var total = new haxe.io.BytesBuffer();
+		var total = new chx.ds.BytesBuffer();
 		try {
 			while(true) {
 				var len = readBytes(buf, 0, bufsize);

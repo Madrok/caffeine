@@ -32,13 +32,13 @@ package haxe;
 	A list of all available resource names can be obtained from `listNames()`.
 **/
 class Resource {
-	static var content:Array<{name:String, data:String, str:String}>;
+	static var content : Array<{name : String, data : String, str : String}>;
 
 	/**
 		Lists all available resource names. The resource name is the name part
 		of the `--resource file@name` command line parameter.
 	**/
-	public static function listNames():Array<String> {
+	public static function listNames() : Array<String> {
 		return [for (x in content) x.name];
 	}
 
@@ -47,12 +47,12 @@ class Resource {
 
 		If `name` does not match any resource name, `null` is returned.
 	**/
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		for (x in content)
-			if (x.name == name) {
-				if (x.str != null)
+			if(x.name == name) {
+				if(x.str != null)
 					return x.str;
-				var b:haxe.io.Bytes = haxe.crypto.Base64.decode(x.data);
+				var b : chx.ds.Bytes = haxe.crypto.Base64.decode(x.data);
 				return b.toString();
 			}
 		return null;
@@ -60,15 +60,15 @@ class Resource {
 
 	/**
 		Retrieves the resource identified by `name` as an instance of
-		haxe.io.Bytes.
+		chx.ds.Bytes.
 
 		If `name` does not match any resource name, `null` is returned.
 	**/
-	public static function getBytes(name:String):haxe.io.Bytes {
+	public static function getBytes(name : String) : chx.ds.Bytes {
 		for (x in content)
-			if (x.name == name) {
-				if (x.str != null)
-					return haxe.io.Bytes.ofString(x.str);
+			if(x.name == name) {
+				if(x.str != null)
+					return chx.ds.Bytes.ofString(x.str);
 				return haxe.crypto.Base64.decode(x.data);
 			}
 		return null;

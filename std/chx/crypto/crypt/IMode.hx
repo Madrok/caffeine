@@ -25,29 +25,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt;
+package chx.crypto.crypt;
 
 import chx.io.Output;
 
 interface IMode {
-	var cipher(default, setCipher) : IBlockCipher;
-	var padding(default,setPadding) : IPad;
-	var blockSize(getBlockSize,never) : Int;
+	var cipher(default, set) : IBlockCipher;
+	var padding(default, set) : IPad;
+	var blockSize(get, never) : Int;
 
 	function init(params : CipherParams) : Void;
-	/**
-	 * This method requires exactly the number of bytes in the
-	 * cipher blockSize, and overwrites b
-	 **/
-	function updateEncrypt( b : Bytes, out : Output) : Int;
-	function finalEncrypt( b : Bytes, out : Output) : Int;
 
 	/**
 	 * This method requires exactly the number of bytes in the
 	 * cipher blockSize, and overwrites b
-	 **/
-	function updateDecrypt( b : Bytes, out : Output) : Int;
-	function finalDecrypt( b : Bytes, out : Output) : Int;
+	**/
+	function updateEncrypt(b : Bytes, out : Output) : Int;
+
+	function finalEncrypt(b : Bytes, out : Output) : Int;
+
+	/**
+	 * This method requires exactly the number of bytes in the
+	 * cipher blockSize, and overwrites b
+	**/
+	function updateDecrypt(b : Bytes, out : Output) : Int;
+
+	function finalDecrypt(b : Bytes, out : Output) : Int;
 
 	function toString() : String;
 }

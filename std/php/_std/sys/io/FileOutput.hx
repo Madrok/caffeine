@@ -40,7 +40,7 @@ class FileOutput extends chx.io.Output {
 			throw new chx.lang.Exception(';An error occurred');
 	}
 
-	public override function writeBytes(b : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function writeBytes(b : chx.ds.Bytes, p : Int, l : Int) : Int {
 		var s = b.getString(p, l);
 		if(feof(__f))
 			throw new chx.lang.EofException();

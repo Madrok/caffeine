@@ -23,14 +23,14 @@
 package haxe.crypto;
 
 class Sha1 {
-	public static function encode(s:String):String {
-		var out = haxe.io.Bytes.alloc(20);
+	public static function encode(s : String) : String {
+		var out = chx.ds.Bytes.alloc(20);
 		@:privateAccess hl.Format.digest(out.b, s.bytes, s.length, 256 | 1);
 		return out.toHex();
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
-		var out = haxe.io.Bytes.alloc(20);
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
+		var out = chx.ds.Bytes.alloc(20);
 		@:privateAccess hl.Format.digest(out.b, b.b, b.length, 1);
 		return out;
 	}

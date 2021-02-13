@@ -24,31 +24,35 @@ package haxe.zip;
 
 @:coreApi
 class Compress {
-	var s:Dynamic;
+	var s : Dynamic;
 
-	public function new(level:Int):Void {
+	public function new(level : Int) : Void {
 		s = _deflate_init(level);
 	}
 
-	public function execute(src:haxe.io.Bytes, srcPos:Int, dst:haxe.io.Bytes, dstPos:Int):{done:Bool, read:Int, write:Int} {
+	public function execute(src : chx.ds.Bytes, srcPos : Int, dst : chx.ds.Bytes,
+			dstPos : Int) : {done : Bool, read : Int, write : Int} {
 		return _deflate_buffer(s, src.getData(), srcPos, dst.getData(), dstPos);
 	}
 
-	public function setFlushMode(f:FlushMode):Void {
-		_set_flush_mode(s, untyped Std.string(f).__s);
+	public function setFlushMode(f : FlushMode) : Void {
+		_set_flush_mode(s, untyped Std
+			.string(f)
+			.__s
+		);
 	}
 
-	public function close():Void {
+	public function close() : Void {
 		_deflate_end(s);
 	}
 
-	public static function run(s:haxe.io.Bytes, level:Int):haxe.io.Bytes {
+	public static function run(s : chx.ds.Bytes, level : Int) : chx.ds.Bytes {
 		var c = new Compress(level);
 		c.setFlushMode(FlushMode.FINISH);
-		var out = haxe.io.Bytes.alloc(_deflate_bound(c.s, s.length));
+		var out = chx.ds.Bytes.alloc(_deflate_bound(c.s, s.length));
 		var r = c.execute(s, 0, out, 0);
 		c.close();
-		if (!r.done || r.read != s.length)
+		if(!r.done || r.read != s.length)
 			throw "Compression failed";
 		return out.sub(0, r.write);
 	}

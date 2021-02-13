@@ -23,37 +23,37 @@
 package sys.ssl;
 
 extern class Certificate {
-	static function loadFile(file:String):Certificate;
+	static function loadFile(file : String) : Certificate;
 
-	static function loadPath(path:String):Certificate;
+	static function loadPath(path : String) : Certificate;
 
-	static function fromString(str:String):Certificate;
+	static function fromString(str : String) : Certificate;
 
-	static function loadDefaults():Certificate;
+	static function loadDefaults() : Certificate;
 
-	var commonName(get, null):Null<String>;
+	var commonName(get, null) : Null<String>;
 
-	var altNames(get, null):Array<String>;
+	var altNames(get, null) : Array<String>;
 
-	var notBefore(get, null):Date;
+	var notBefore(get, null) : Date;
 
-	var notAfter(get, null):Date;
+	var notAfter(get, null) : Date;
 
-	function subject(field:String):Null<String>;
+	function subject(field : String) : Null<String>;
 
-	function issuer(field:String):Null<String>;
+	function issuer(field : String) : Null<String>;
 
-	function next():Null<Certificate>;
+	function next() : Null<Certificate>;
 
-	function add(pem:String):Void;
+	function add(pem : String) : Void;
 
-	function addDER(der:haxe.io.Bytes):Void;
+	function addDER(der : chx.ds.Bytes) : Void;
 
-	private function get_commonName():Null<String>;
+	private function get_commonName() : Null<String>;
 
-	private function get_altNames():Array<String>;
+	private function get_altNames() : Array<String>;
 
-	private function get_notBefore():Date;
+	private function get_notBefore() : Date;
 
-	private function get_notAfter():Date;
+	private function get_notAfter() : Date;
 }

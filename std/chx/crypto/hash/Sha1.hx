@@ -26,15 +26,16 @@ package haxe.crypto;
 	Creates a Sha1 of a String.
 **/
 class Sha1 {
-	public static function encode(s:String):String {
+	public static function encode(s : String) : String {
 		var sh = new Sha1();
 		var h = sh.doEncode(str2blks(s));
 		return sh.hex(h);
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
-		var h = new Sha1().doEncode(bytes2blks(b));
-		var out = haxe.io.Bytes.alloc(20);
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
+		var h = new Sha1()
+			.doEncode(bytes2blks(b));
+		var out = chx.ds.Bytes.alloc(20);
 		var p = 0;
 		for (i in 0...5) {
 			out.set(p++, h[i] >>> 24);
@@ -47,7 +48,7 @@ class Sha1 {
 
 	function new() {}
 
-	function doEncode(x:Array<Int>):Array<Int> {
+	function doEncode(x : Array<Int>) : Array<Int> {
 		var w = new Array<Int>();
 
 		var a = 0x67452301;
@@ -57,7 +58,7 @@ class Sha1 {
 		var e = 0xC3D2E1F0;
 
 		var i = 0;
-		while (i < x.length) {
+		while(i < x.length) {
 			var olda = a;
 			var oldb = b;
 			var oldc = c;
@@ -65,8 +66,8 @@ class Sha1 {
 			var olde = e;
 
 			var j = 0;
-			while (j < 80) {
-				if (j < 16)
+			while(j < 80) {
+				if(j < 16)
 					w[j] = x[i + j];
 				else
 					w[j] = rol(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
@@ -92,9 +93,9 @@ class Sha1 {
 		Convert a string to a sequence of 16-word blocks, stored as an array.
 		Append padding bits and the length, as described in the SHA1 standard.
 	**/
-	static function str2blks(s:String):Array<Int> {
+	static function str2blks(s : String) : Array<Int> {
 		#if target.unicode
-		var s = haxe.io.Bytes.ofString(s);
+		var s = chx.ds.Bytes.ofString(s);
 		#end
 		var nblk = ((s.length + 8) >> 6) + 1;
 		var blks = new Array<Int>();
@@ -103,7 +104,8 @@ class Sha1 {
 			blks[i] = 0;
 		for (i in 0...s.length) {
 			var p = i >> 2;
-			blks[p] |= #if target.unicode s.get(i) #else StringTools.fastCodeAt(s, i) #end << (24 - ((i & 3) << 3));
+			blks[p] |= #if target.unicode s.get(i) #else StringTools.fastCodeAt(s,
+				i) #end << (24 - ((i & 3) << 3));
 		}
 		var i = s.length;
 		var p = i >> 2;
@@ -112,7 +114,7 @@ class Sha1 {
 		return blks;
 	}
 
-	static function bytes2blks(b:haxe.io.Bytes):Array<Int> {
+	static function bytes2blks(b : chx.ds.Bytes) : Array<Int> {
 		var nblk = ((b.length + 8) >> 6) + 1;
 		var blks = new Array<Int>();
 
@@ -132,19 +134,19 @@ class Sha1 {
 	/**
 		Bitwise rotate a 32-bit number to the left
 	**/
-	inline function rol(num:Int, cnt:Int):Int {
+	inline function rol(num : Int, cnt : Int) : Int {
 		return (num << cnt) | (num >>> (32 - cnt));
 	}
 
 	/**
 		Perform the appropriate triplet combination function for the current iteration
 	**/
-	function ft(t:Int, b:Int, c:Int, d:Int):Int {
-		if (t < 20)
+	function ft(t : Int, b : Int, c : Int, d : Int) : Int {
+		if(t < 20)
 			return (b & c) | ((~b) & d);
-		if (t < 40)
+		if(t < 40)
 			return b ^ c ^ d;
-		if (t < 60)
+		if(t < 60)
 			return (b & c) | (b & d) | (c & d);
 		return b ^ c ^ d;
 	}
@@ -152,17 +154,17 @@ class Sha1 {
 	/**
 		Determine the appropriate additive constant for the current iteration
 	**/
-	function kt(t:Int):Int {
-		if (t < 20)
+	function kt(t : Int) : Int {
+		if(t < 20)
 			return 0x5A827999;
-		if (t < 40)
+		if(t < 40)
 			return 0x6ED9EBA1;
-		if (t < 60)
+		if(t < 60)
 			return 0x8F1BBCDC;
 		return 0xCA62C1D6;
 	}
 
-	function hex(a:Array<Int>) {
+	function hex(a : Array<Int>) {
 		var str = "";
 		for (num in a) {
 			str += StringTools.hex(num, 8);

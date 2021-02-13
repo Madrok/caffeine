@@ -22,17 +22,17 @@
 
 package haxe;
 
-import php.*;
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import haxe.crypto.Base64;
+import php.*;
 
 @:coreApi
 class Resource {
-	static function cleanName(name:String):String {
+	static function cleanName(name : String) : String {
 		return ~/[\\\/:?"*<>|]/.replace(name, '_');
 	}
 
-	static function getDir():String {
+	static function getDir() : String {
 		var pathToRoot = '/../..';
 		#if php_prefix
 		pathToRoot += '/..';
@@ -44,33 +44,28 @@ class Resource {
 	}
 
 	@:access(haxe.io.Path.escape)
-	static function getPath(name:String):String {
+	static function getPath(name : String) : String {
 		return getDir() + '/' + haxe.io.Path.escape(name);
 	}
 
 	@:access(haxe.io.Path.unescape)
-	public static function listNames():Array<String> {
+	public static function listNames() : Array<String> {
 		var a = sys.FileSystem.readDirectory(getDir());
-		if (a[0] == '.')
+		if(a[0] == '.')
 			a.shift();
-		if (a[0] == '..')
+		if(a[0] == '..')
 			a.shift();
-		return a.map(function(s) return haxe.io.Path.unescape(s));
+		return a.map(function(s)
+			return haxe.io.Path.unescape(s));
 	}
 
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		var path = getPath(name);
-		return if (!sys.FileSystem.exists(path))
-			null;
-		else
-			sys.io.File.getContent(path);
+		return if(!sys.FileSystem.exists(path)) null; else sys.io.File.getContent(path);
 	}
 
-	public static function getBytes(name:String):haxe.io.Bytes {
+	public static function getBytes(name : String) : chx.ds.Bytes {
 		var path = getPath(name);
-		return if (!sys.FileSystem.exists(path))
-			null;
-		else
-			sys.io.File.getBytes(path);
+		return if(!sys.FileSystem.exists(path)) null; else sys.io.File.getBytes(path);
 	}
 }

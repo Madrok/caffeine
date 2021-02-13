@@ -25,7 +25,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
 import chx.io.BytesOutput;
 import chx.io.Output;
@@ -33,9 +33,8 @@ import chx.io.Output;
 /**
  * Counter mode - a 1 byte block streaming mode. This version updates the
  * counter each time the number of bytes crypted matches the cipher block size
- **/
-class CTR extends CTR8, implements chx.crypt.IMode {
-
+**/
+class CTR extends CTR8 implements chx.crypto.crypt.IMode {
 	public function new() {
 		super();
 		num = 0;
@@ -46,7 +45,7 @@ class CTR extends CTR8, implements chx.crypt.IMode {
 		return "ctr";
 	}
 
-	override function setCipher(v:IBlockCipher) {
+	override function setCipher(v : IBlockCipher) {
 		super.setCipher(v);
 		if(v != null)
 			ctr_inc = v.blockSize;
@@ -56,7 +55,7 @@ class CTR extends CTR8, implements chx.crypt.IMode {
 	#if CAFFEINE_DEBUG
 	/**
 	 * Only for testing purposes to make sure that NIST vectors match
-	 **/
+	**/
 	override function getBlockSize() : Int {
 		return ctr_inc;
 	}

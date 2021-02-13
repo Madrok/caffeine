@@ -46,7 +46,7 @@ class FileInput extends chx.io.Input {
 		}
 	}
 
-	public override function readBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function readBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		return try {
 			NativeFile.file_read(__f, s.getData(), p, l);
 		}

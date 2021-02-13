@@ -22,9 +22,9 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
 import chx.io.Input;
 import haxe.Int64;
-import haxe.io.Bytes;
 import haxe.io.Eof;
 import java.io.EOFException;
 import java.io.IOException;

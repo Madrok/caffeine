@@ -23,17 +23,17 @@
 package haxe.http;
 
 #if js
-import js.html.XMLHttpRequestResponseType;
+import chx.ds.Bytes;
 import js.html.Blob;
-import haxe.io.Bytes;
+import js.html.XMLHttpRequestResponseType;
 
 class HttpJs extends haxe.http.HttpBase {
-	public var async:Bool;
-	public var withCredentials:Bool;
+	public var async : Bool;
+	public var withCredentials : Bool;
 
-	var req:js.html.XMLHttpRequest;
+	var req : js.html.XMLHttpRequest;
 
-	public function new(url:String) {
+	public function new(url : String) {
 		async = true;
 		withCredentials = false;
 		super(url);
@@ -44,41 +44,44 @@ class HttpJs extends haxe.http.HttpBase {
 		has not yet been received.
 	**/
 	public function cancel() {
-		if (req == null)
+		if(req == null)
 			return;
 		req.abort();
 		req = null;
 	}
 
-	public override function request(?post:Bool) {
+	public override function request(?post : Bool) {
 		this.responseAsString = null;
 		this.responseBytes = null;
 		var r = req = js.Browser.createXMLHttpRequest();
 		var onreadystatechange = function(_) {
-			if (r.readyState != 4)
+			if(r.readyState != 4)
 				return;
-			var s = try r.status catch (e:Dynamic) null;
-			if (s == 0 && js.Browser.supported && js.Browser.location != null) {
+			var s = try r.status
+			catch(e:Dynamic) null;
+			if(s == 0 && js.Browser.supported && js.Browser.location != null) {
 				// If the request is local and we have data: assume a success (jQuery approach):
 				var protocol = js.Browser.location.protocol.toLowerCase();
 				var rlocalProtocol = ~/^(?:about|app|app-storage|.+-extension|file|res|widget):$/;
 				var isLocal = rlocalProtocol.match(protocol);
-				if (isLocal) {
+				if(isLocal) {
 					s = r.response != null ? 200 : 404;
 				}
 			}
-			if (s == js.Lib.undefined)
+			if(s == js.Lib.undefined)
 				s = null;
-			if (s != null)
+			if(s != null)
 				onStatus(s);
-			if (s != null && s >= 200 && s < 400) {
+			if(s != null && s >= 200 && s < 400) {
 				req = null;
 				success(Bytes.ofData(r.response));
-			} else if (s == null || (s == 0 && r.response == null)) {
+			}
+			else if(s == null || (s == 0 && r.response == null)) {
 				req = null;
 				onError("Failed to connect or resolve host");
-			} else
-				switch (s) {
+			}
+			else
+				switch(s) {
 					case 12029:
 						req = null;
 						onError("Failed to connect to host");
@@ -91,47 +94,52 @@ class HttpJs extends haxe.http.HttpBase {
 						onError("Http Error #" + r.status);
 				}
 		};
-		if (async)
+		if(async)
 			r.onreadystatechange = onreadystatechange;
-		var uri:Null<Any> = switch [postData, postBytes] {
-			case [null, null]: null;
-			case [str, null]: str;
-			case [null, bytes]: new Blob([bytes.getData()]);
-			case _: null;
+		var uri : Null<Any> = switch [postData, postBytes] {
+			case [null, null]:null;
+			case [str, null]:str;
+			case [null, bytes]:new Blob([bytes.getData()]);
+			case _:null;
 		}
-		if (uri != null)
+		if(uri != null)
 			post = true;
 		else
 			for (p in params) {
-				if (uri == null)
+				if(uri == null)
 					uri = "";
 				else
 					uri = uri + "&";
 				uri = uri + StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value);
 			}
 		try {
-			if (post)
+			if(post)
 				r.open("POST", url, async);
-			else if (uri != null) {
-				var question = url.split("?").length <= 1;
-				r.open("GET", url + (if (question) "?" else "&") + uri, async);
+			else if(uri != null) {
+				var question = url
+					.split("?")
+					.length <= 1;
+				r.open("GET", url + (if(question)"?" else "&") + uri, async);
 				uri = null;
-			} else
+			}
+			else
 				r.open("GET", url, async);
 			r.responseType = ARRAYBUFFER;
-		} catch (e:Dynamic) {
+		}
+		catch(e:Dynamic) {
 			req = null;
 			onError(e.toString());
 			return;
 		}
 		r.withCredentials = withCredentials;
-		if (!Lambda.exists(headers, function(h) return h.name == "Content-Type") && post && postData == null)
+		if(!Lambda.exists(headers, function(h)
+			return h.name == "Content-Type") && post && postData == null)
 			r.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
 		for (h in headers)
 			r.setRequestHeader(h.name, h.value);
 		r.send(uri);
-		if (!async)
+		if(!async)
 			onreadystatechange(null);
 	}
 
@@ -143,7 +151,7 @@ class HttpJs extends haxe.http.HttpBase {
 
 		If `url` is null, the result is unspecified.
 	**/
-	public static function requestUrl(url:String):String {
+	public static function requestUrl(url : String) : String {
 		var h = new Http(url);
 		h.async = false;
 		var r = null;

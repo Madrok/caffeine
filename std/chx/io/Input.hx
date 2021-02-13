@@ -46,6 +46,7 @@
  */
 package chx.io;
 
+import chx.ds.Bytes;
 import chx.lang.BlockedException;
 import chx.lang.EofException;
 import chx.lang.OutsideBoundsException;
@@ -141,7 +142,7 @@ abstract class Input implements IInput {
 			#end
 
 		var buf = Bytes.alloc(bufsize);
-		var total = new haxe.io.BytesBuffer();
+		var total = new chx.ds.BytesBuffer();
 		try {
 			while(true) {
 				var len = readBytes(buf, 0, bufsize);

@@ -24,24 +24,24 @@ package haxe;
 
 @:coreApi
 class Resource {
-	static var content:Array<{name:String, data:String, str:String}>;
+	static var content : Array<{name : String, data : String, str : String}>;
 
-	public static function listNames():Array<String> {
+	public static function listNames() : Array<String> {
 		return [for (x in content) x.name];
 	}
 
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		for (x in content)
-			if (x.name == name) {
+			if(x.name == name) {
 				return new String(x.data);
 			}
 		return null;
 	}
 
-	public static function getBytes(name:String):haxe.io.Bytes {
+	public static function getBytes(name : String) : chx.ds.Bytes {
 		for (x in content)
-			if (x.name == name) {
-				return haxe.io.Bytes.ofData(cast x.data);
+			if(x.name == name) {
+				return chx.ds.Bytes.ofData(cast x.data);
 			}
 		return null;
 	}

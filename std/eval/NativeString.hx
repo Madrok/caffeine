@@ -1,29 +1,30 @@
 package eval;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 
 @:coreType abstract NativeString {
 	/** String length */
-	public var length(get,never):Int;
-	function get_length():Int;
+	public var length(get, never) : Int;
 
-	@:from static public function fromString(s:String):NativeString;
+	function get_length() : Int;
 
-	@:from static public function fromBytes(b:Bytes):NativeString;
+	@:from static public function fromString(s : String) : NativeString;
+
+	@:from static public function fromBytes(b : Bytes) : NativeString;
 
 	/**
 		Returns a character at the specified `index`.
 
 		Throws an exception if `index` is outside of the string bounds.
 	**/
-	public function char(index:Int):String;
+	public function char(index : Int) : String;
 
 	/**
 		Returns a character code at the specified `index`.
 
 		Throws an exception if `index` is outside of the string bounds.
 	**/
-	public function code(index:Int):Int;
+	public function code(index : Int) : Int;
 
 	/**
 		Returns a fresh string up to `length` characters long, containing the
@@ -34,12 +35,12 @@ import haxe.io.Bytes;
 
 		Throws an exception if `index` is outside of the string bounds.
 	**/
-	public function sub(start:Int, ?length:Int):NativeString;
+	public function sub(start : Int, ?length : Int) : NativeString;
 
-	public function toString():String;
+	public function toString() : String;
 
-	public function toBytes():Bytes;
+	public function toBytes() : Bytes;
 
 	@:op(A + B)
-	public function concat(s:NativeString):NativeString;
+	public function concat(s : NativeString) : NativeString;
 }

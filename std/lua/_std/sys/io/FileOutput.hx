@@ -22,36 +22,36 @@
 
 package sys.io;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import lua.FileHandle;
 
 class FileOutput extends chx.io.Output {
-	var f:FileHandle;
+	var f : FileHandle;
 
-	function new(f:FileHandle) {
-		if (f == null)
+	function new(f : FileHandle) {
+		if(f == null)
 			throw 'Invalid filehandle : $f';
 		this.f = f;
 	}
 
-	public inline function seek(p:Int, pos:FileSeek):Void {
-		var arg = switch (pos) {
-			case SeekBegin: "set";
-			case SeekCur: "cur";
-			case SeekEnd: "end";
+	public inline function seek(p : Int, pos : FileSeek) : Void {
+		var arg = switch(pos) {
+			case SeekBegin:"set";
+			case SeekCur:"cur";
+			case SeekEnd:"end";
 		}
 		return f.seek(arg, p);
 	}
 
-	public inline function tell():Int {
+	public inline function tell() : Int {
 		return f.seek();
 	}
 
-	override inline public function writeByte(c:Int):Void {
+	override inline public function writeByte(c : Int) : Void {
 		f.write(String.fromCharCode(c));
 	}
 
-	override inline public function writeBytes(s:Bytes, pos:Int, len:Int):Int {
+	override inline public function writeBytes(s : Bytes, pos : Int, len : Int) : Int {
 		f.write(s.getString(pos, len));
 		return s.length;
 	}

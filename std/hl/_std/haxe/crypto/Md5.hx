@@ -23,14 +23,14 @@
 package haxe.crypto;
 
 class Md5 {
-	public static function encode(s:String):String {
-		var out = haxe.io.Bytes.alloc(16);
+	public static function encode(s : String) : String {
+		var out = chx.ds.Bytes.alloc(16);
 		@:privateAccess hl.Format.digest(out.b, s.bytes, s.length, 256);
 		return out.toHex();
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
-		var out = haxe.io.Bytes.alloc(16);
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
+		var out = chx.ds.Bytes.alloc(16);
 		@:privateAccess hl.Format.digest(out.b, b.b, b.length, 0);
 		return out;
 	}

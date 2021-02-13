@@ -397,13 +397,13 @@ class Unserializer {
 				if(get(pos++) != ":".code || length - pos < len)
 					throw "Invalid bytes length";
 				#if neko
-				var bytes = haxe.io.Bytes.ofData(base_decode(untyped buf
+				var bytes = chx.ds.Bytes.ofData(base_decode(untyped buf
 					.fastSubstr(pos, len)
 					.__s,
 					untyped BASE64.__s));
 				#elseif php
 				var phpEncoded = php.Global.strtr(buf.fastSubstr(pos, len), '%:', '+/');
-				var bytes = haxe.io.Bytes.ofData(php.Global.base64_decode(phpEncoded));
+				var bytes = chx.ds.Bytes.ofData(php.Global.base64_decode(phpEncoded));
 				#else
 				var codes = CODES;
 				if(codes == null) {
@@ -414,7 +414,7 @@ class Unserializer {
 				var rest = len & 3;
 				var size = (len >> 2) * 3 + ((rest >= 2) ? rest - 1 : 0);
 				var max = i + (len - rest);
-				var bytes = haxe.io.Bytes.alloc(size);
+				var bytes = chx.ds.Bytes.alloc(size);
 				var bpos = 0;
 				while(i < max) {
 					var c1 = codes[StringTools.fastCodeAt(buf, i++)];

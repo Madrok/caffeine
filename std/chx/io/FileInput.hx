@@ -34,7 +34,7 @@ import sys.io.FileInput as SysFileInput;
 /**
  * @todo Finish implementation wrapping super calls
  */
-class FileInput extends InputAdaptor implements IInput {
+class FileInput extends Input implements IInput {
 	var fi : SysFileInput;
 
 	public function new(input) {

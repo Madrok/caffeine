@@ -35,49 +35,49 @@ enum HashMethod {
 	Calculates a Hmac of the given Bytes using a HashMethod.
 **/
 class Hmac {
-	var method:HashMethod;
-	var blockSize:Int;
-	var length:Int;
+	var method : HashMethod;
+	var blockSize : Int;
+	var length : Int;
 
-	public function new(hashMethod:HashMethod) {
+	public function new(hashMethod : HashMethod) {
 		method = hashMethod;
-		blockSize = switch (hashMethod) {
-			case MD5, SHA1, SHA256: 64;
+		blockSize = switch(hashMethod) {
+			case MD5, SHA1, SHA256:64;
 		}
-		length = switch (hashMethod) {
-			case MD5: 16;
-			case SHA1: 20;
-			case SHA256: 32;
-		}
-	}
-
-	inline function doHash(b:haxe.io.Bytes):haxe.io.Bytes {
-		return switch (method) {
-			case MD5: Md5.make(b);
-			case SHA1: Sha1.make(b);
-			case SHA256: Sha256.make(b);
+		length = switch(hashMethod) {
+			case MD5:16;
+			case SHA1:20;
+			case SHA256:32;
 		}
 	}
 
-	function nullPad(s:haxe.io.Bytes, chunkLen:Int):haxe.io.Bytes {
+	inline function doHash(b : chx.ds.Bytes) : chx.ds.Bytes {
+		return switch(method) {
+			case MD5:Md5.make(b);
+			case SHA1:Sha1.make(b);
+			case SHA256:Sha256.make(b);
+		}
+	}
+
+	function nullPad(s : chx.ds.Bytes, chunkLen : Int) : chx.ds.Bytes {
 		var r = chunkLen - (s.length % chunkLen);
-		if (r == chunkLen && s.length != 0)
+		if(r == chunkLen && s.length != 0)
 			return s;
-		var sb = new haxe.io.BytesBuffer();
+		var sb = new chx.ds.BytesBuffer();
 		sb.add(s);
 		for (x in 0...r)
 			sb.addByte(0);
 		return sb.getBytes();
 	}
 
-	public function make(key:haxe.io.Bytes, msg:haxe.io.Bytes):haxe.io.Bytes {
-		if (key.length > blockSize) {
+	public function make(key : chx.ds.Bytes, msg : chx.ds.Bytes) : chx.ds.Bytes {
+		if(key.length > blockSize) {
 			key = doHash(key);
 		}
 		key = nullPad(key, blockSize);
 
-		var Ki = new haxe.io.BytesBuffer();
-		var Ko = new haxe.io.BytesBuffer();
+		var Ki = new chx.ds.BytesBuffer();
+		var Ko = new chx.ds.BytesBuffer();
 		for (i in 0...key.length) {
 			Ko.addByte(key.get(i) ^ 0x5c);
 			Ki.addByte(key.get(i) ^ 0x36);

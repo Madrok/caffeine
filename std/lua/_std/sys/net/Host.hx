@@ -22,32 +22,33 @@
 
 package sys.net;
 
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-
+import chx.ds.Bytes;
+import chx.ds.BytesInput;
 import lua.NativeStringTools.find;
-
-import lua.lib.luv.net.Dns;
 import lua.lib.luv.Os;
+import lua.lib.luv.net.Dns;
 
 @:coreapi
 class Host {
-	public var host(default, null):String;
+	public var host(default, null) : String;
 
-	public var ip(default, null):Int;
+	public var ip(default, null) : Int;
 
-	var _ip:String;
+	var _ip : String;
 
-	public function new(name:String):Void {
+	public function new(name : String) : Void {
 		host = name;
-		if (find(name, "(%d+)%.(%d+)%.(%d+)%.(%d+)").begin != null) {
+		if(find(name, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+			.begin != null
+		) {
 			_ip = name;
-		} else {
+		}
+		else {
 			var res = lua.lib.luv.net.Dns.getaddrinfo(name);
-			if (res.result == null)
+			if(res.result == null)
 				throw "Unrecognized node name";
 			_ip = res.result[1].addr;
-			if (_ip == "::1")
+			if(_ip == "::1")
 				_ip = "127.0.0.0";
 		}
 		var num = 0;
@@ -57,15 +58,17 @@ class Host {
 		ip = num;
 	}
 
-	public function toString():String {
+	public function toString() : String {
 		return _ip;
 	}
 
-	public function reverse():String {
-		return Dns.getnameinfo({ip: _ip}).result;
+	public function reverse() : String {
+		return Dns
+			.getnameinfo({ip : _ip})
+			.result;
 	}
 
-	static public function localhost():String {
-        return Os.gethostname();
+	static public function localhost() : String {
+		return Os.gethostname();
 	}
 }

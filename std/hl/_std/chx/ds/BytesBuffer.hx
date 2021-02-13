@@ -20,9 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package haxe.io;
+package chx.ds;
 
 import chx.lang.OutsideBoundsException;
+import haxe.io.Encoding;
 
 @:coreApi
 class BytesBuffer {
@@ -97,8 +98,8 @@ class BytesBuffer {
 		if(pos & 3 == 0)
 			b.setF32(pos, v);
 		else @:privateAccess {
-			haxe.io.Bytes.alignBuffer.setF32(0, v);
-			b.blit(pos, haxe.io.Bytes.alignBuffer, 0, 4);
+			chx.ds.Bytes.alignBuffer.setF32(0, v);
+			b.blit(pos, chx.ds.Bytes.alignBuffer, 0, 4);
 		}
 		#else
 		b.setF32(pos, v);
@@ -113,8 +114,8 @@ class BytesBuffer {
 		if(pos & 7 == 0)
 			b.setF64(pos, v);
 		else @:privateAccess {
-			haxe.io.Bytes.alignBuffer.setF64(0, v);
-			b.blit(pos, haxe.io.Bytes.alignBuffer, 0, 8);
+			chx.ds.Bytes.alignBuffer.setF64(0, v);
+			b.blit(pos, chx.ds.Bytes.alignBuffer, 0, 8);
 		}
 		#else
 		b.setF64(pos, v);
@@ -129,6 +130,6 @@ class BytesBuffer {
 	}
 
 	public function getBytes() : Bytes {
-		return @:privateAccess new haxe.io.Bytes(b, pos);
+		return @:privateAccess new chx.ds.Bytes(b, pos);
 	}
 }

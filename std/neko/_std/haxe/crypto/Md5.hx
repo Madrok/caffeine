@@ -23,12 +23,12 @@
 package haxe.crypto;
 
 class Md5 {
-	public static function encode(s:String):String {
+	public static function encode(s : String) : String {
 		return untyped new String(base_encode(make_md5(s.__s), "0123456789abcdef".__s));
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
-		return haxe.io.Bytes.ofData(make_md5(b.getData()));
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
+		return chx.ds.Bytes.ofData(make_md5(b.getData()));
 	}
 
 	static var base_encode = neko.Lib.load("std", "base_encode", 2);

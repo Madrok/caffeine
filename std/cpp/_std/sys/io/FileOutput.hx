@@ -41,7 +41,7 @@ class FileOutput extends chx.io.Output {
 			throw throw new IOException(Std.string(e));
 	}
 
-	public override function writeBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function writeBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		return try NativeFile.file_write(__f, s.getData(), p, l)
 		catch(e:Dynamic) throw throw new IOException(Std.string(e));
 	}

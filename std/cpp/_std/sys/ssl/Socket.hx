@@ -52,7 +52,7 @@ private class SocketInput extends chx.io.Input {
 		}
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		var r : Int;
 		if(__s == null)
 			throw new Exeception("Invalid handle");
@@ -100,7 +100,7 @@ private class SocketOutput extends chx.io.Output {
 		}
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		return try {
 			__s.handshake();
 			NativeSsl.ssl_send(@:privateAccess __s.ssl, buf.getData(), pos, len);
@@ -211,14 +211,14 @@ class Socket extends sys.net.Socket {
 		var b = NativeSsl.ssl_read(ssl);
 		if(b == null)
 			return "";
-		return haxe.io.Bytes
+		return chx.ds.Bytes
 			.ofData(b)
 			.toString();
 	}
 
 	public override function write(content : String) : Void {
 		handshake();
-		NativeSsl.ssl_write(ssl, haxe.io.Bytes
+		NativeSsl.ssl_write(ssl, chx.ds.Bytes
 			.ofString(content)
 			.getData()
 		);

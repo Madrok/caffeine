@@ -39,7 +39,7 @@ import sys.io.File;
 		return c;
 	}
 
-	public override function readBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function readBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		if(p < 0 || l < 0 || p + l > s.length)
 			throw new OutsideBoundsException();
 		var v = file_read(__f, s.getData(), p, l);

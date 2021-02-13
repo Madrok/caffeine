@@ -22,8 +22,8 @@
 
 package php;
 
+import chx.ds.Bytes;
 import chx.ds.Map;
-import haxe.io.Bytes;
 import php.Global.*;
 import php.SuperGlobal.*;
 import php.Syntax.*;

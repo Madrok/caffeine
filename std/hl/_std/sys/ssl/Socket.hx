@@ -44,7 +44,7 @@ private class SocketInput extends chx.io.Input {
 		return r;
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || ((pos + len):UInt) > (buf.length:UInt))
 			throw new chx.lang.OutsideBoundsException();
 		__s.handshake();
@@ -79,7 +79,7 @@ private class SocketOutput extends chx.io.Output {
 			throw new chx.lang.EofException();
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || ((pos + len):UInt) > (buf.length:UInt))
 			throw new chx.lang.OutsideBoundsException();
 		__s.handshake();

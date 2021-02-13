@@ -25,15 +25,15 @@ package sys.io;
 // This class is not extern because externs overriding non-externs messes with DCE
 @:coreApi
 class FileInput extends chx.io.Input {
-	extern public override function close():Void;
+	extern public override function close() : Void;
 
-	extern public function eof():Bool;
+	extern public function eof() : Bool;
 
-	extern public function seek(p:Int, pos:FileSeek):Void;
+	extern public function seek(p : Int, pos : FileSeek) : Void;
 
-	extern public function tell():Int;
+	extern public function tell() : Int;
 
-	extern public override function readByte():Int;
+	extern public override function readByte() : Int;
 
-	extern public override function readBytes(bytes:haxe.io.Bytes, pos:Int, len:Int):Int;
+	extern public override function readBytes(bytes : chx.ds.Bytes, pos : Int, len : Int) : Int;
 }

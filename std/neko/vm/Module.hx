@@ -143,7 +143,7 @@ class Module {
 	**/
 	public static function read(i : chx.io.Input, l : Loader) : Module {
 		var m = _module_read(function(buf, pos, len) {
-			return i.readBytes(untyped new haxe.io.Bytes(len, buf), pos, len);
+			return i.readBytes(untyped new chx.ds.Bytes(len, buf), pos, len);
 		}, l.l);
 		return new Module(m);
 	}
@@ -152,7 +152,7 @@ class Module {
 		Reads a module from Bytes using the given Loader.
 		The module is initialized but has not yet been executed.
 	**/
-	public static function readBytes(b : haxe.io.Bytes, loader : Loader) : Module {
+	public static function readBytes(b : chx.ds.Bytes, loader : Loader) : Module {
 		return new Module(_module_read_string(b.getData(), loader.l));
 	}
 

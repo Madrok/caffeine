@@ -245,13 +245,13 @@ class Web {
 	**/
 	public static function getMultipart(maxSize : Int) : Map<String, String> {
 		var h = new chx.ds.StringMap();
-		var buf : haxe.io.BytesBuffer = null;
+		var buf : chx.ds.BytesBuffer = null;
 		var curname = null;
 		parseMultipart(function(p, _) {
 			if(curname != null)
 				h.set(curname, neko.Lib.stringReference(buf.getBytes()));
 			curname = p;
-			buf = new haxe.io.BytesBuffer();
+			buf = new chx.ds.BytesBuffer();
 			maxSize -= p.length;
 			if(maxSize < 0)
 				throw "Maximum size reached";
@@ -273,11 +273,11 @@ class Web {
 		directly save the data on hard drive in the case of a file upload.
 	**/
 	public static function parseMultipart(onPart : String->String->Void,
-			onData : haxe.io.Bytes->Int->Int->Void) : Void {
+			onData : chx.ds.Bytes->Int->Int->Void) : Void {
 		_parse_multipart(function(p, f) {
 			onPart(new String(p), if(f == null) null else new String(f));
 		}, function(buf, pos, len) {
-			onData(untyped new haxe.io.Bytes(__dollar__ssize(buf), buf), pos, len);
+			onData(untyped new chx.ds.Bytes(__dollar__ssize(buf), buf), pos, len);
 		});
 	}
 

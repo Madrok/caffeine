@@ -22,7 +22,7 @@
 
 package sys.io;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import haxe.io.Eof;
 import php.*;
 import php.Const.*;

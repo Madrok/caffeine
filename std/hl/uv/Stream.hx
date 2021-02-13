@@ -24,7 +24,7 @@ package hl.uv;
 
 @:hlNative("uv")
 class Stream extends Handle {
-	public function write(bytes : haxe.io.Bytes, ?onWrite : Bool->Void, pos = 0, len = -1) {
+	public function write(bytes : chx.ds.Bytes, ?onWrite : Bool->Void, pos = 0, len = -1) {
 		if(len < 0)
 			len = bytes.length - pos;
 		if(pos < 0 || len < 0 || pos + len > bytes.length)
@@ -39,7 +39,7 @@ class Stream extends Handle {
 			throw new chx.lang.EofException();
 	}
 
-	public function readStart(onData : haxe.io.Bytes->Void) {
+	public function readStart(onData : chx.ds.Bytes->Void) {
 		readStartRaw(function(b, len)
 			onData(if(len < 0) null else b.toBytes(len)));
 	}

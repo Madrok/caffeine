@@ -26,11 +26,11 @@ package cpp.cppia;
 @:build(cpp.cppia.HostClasses.include())
 extern class Module {
 	@:native("__scriptable_cppia_from_string")
-	static function fromString(sourceCode:String):Module;
+	static function fromString(sourceCode : String) : Module;
 	@:native("__scriptable_cppia_from_data")
-	static function fromData(data:haxe.io.BytesData):Module;
+	static function fromData(data : chx.ds.BytesData) : Module;
 
-	function boot():Void;
-	function run():Void;
-	function resolveClass(inName:String):Class<Dynamic>;
+	function boot() : Void;
+	function run() : Void;
+	function resolveClass(inName : String) : Class<Dynamic>;
 }

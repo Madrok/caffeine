@@ -29,7 +29,7 @@ package chx.collections;
 
 import chx.ds.StringMap;
 #if debug
-import chx.io.Bytes;
+import chx.ds.Bytes;
 import chx.lang.FatalException;
 #end
 

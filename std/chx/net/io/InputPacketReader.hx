@@ -27,8 +27,8 @@
 
 package chx.net.io;
 
+import chx.ds.Bytes;
 import chx.io.BufferedInput;
-import chx.io.Bytes;
 import chx.io.BytesInput;
 import chx.io.Input;
 import chx.net.packets.Packet;
@@ -128,8 +128,7 @@ class InputPacketReader {
 			cleanup();
 			throw new chx.lang.Exception("Error population packet " + type);
 		}
-		var rv = {
-			packet : p,
+		var rv = {packet : p,
 			version : networkVersion,
 			bytes : (length != null) ? 0 + length : 0
 		};

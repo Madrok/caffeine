@@ -22,81 +22,81 @@
 
 package sys.ssl;
 
-import haxe.io.Bytes;
-import sys.ssl.Mbedtls;
+import chx.ds.Bytes;
 import mbedtls.X509Crt;
+import sys.ssl.Mbedtls;
 
 @:coreApi
 class Certificate {
-	var native:X509Crt;
+	var native : X509Crt;
 
-	function new(native:X509Crt) {
+	function new(native : X509Crt) {
 		this.native = native;
 	}
 
-	public static function loadFile(file:String):Certificate {
+	public static function loadFile(file : String) : Certificate {
 		var cert = new X509Crt();
 		cert.parse_file(file);
 		return new Certificate(cert);
 	}
 
-	public static function loadPath(path:String):Certificate {
+	public static function loadPath(path : String) : Certificate {
 		var cert = new X509Crt();
 		cert.parse_path(path);
 		return new Certificate(cert);
 	}
 
-	public static function fromString(str:String):Certificate {
+	public static function fromString(str : String) : Certificate {
 		var cert = new X509Crt();
 		trace(mbedtls.Error.strerror(cert.parse(Bytes.ofString(str))));
 		return new Certificate(cert);
 	}
 
-	public static function loadDefaults():Certificate {
+	public static function loadDefaults() : Certificate {
 		var cert = new X509Crt();
 		Mbedtls.loadDefaultCertificates(cert);
 		return new Certificate(cert);
 	}
 
-	public var commonName(get, null):Null<String>;
+	public var commonName(get, null) : Null<String>;
 
-	public var altNames(get, null):Array<String>;
+	public var altNames(get, null) : Array<String>;
 
-	public var notBefore(get, null):Date;
+	public var notBefore(get, null) : Date;
 
-	public var notAfter(get, null):Date;
+	public var notAfter(get, null) : Date;
 
-	extern public function subject(field:String):Null<String>;
+	extern public function subject(field : String) : Null<String>;
 
-	extern public function issuer(field:String):Null<String>;
+	extern public function issuer(field : String) : Null<String>;
 
-	public function next():Null<Certificate> {
+	public function next() : Null<Certificate> {
 		var cert = native.next();
-		if (cert == null) {
+		if(cert == null) {
 			return null;
 		}
 		return new Certificate(cert);
 	}
 
-	public function add(pem:String):Void {
+	public function add(pem : String) : Void {
 		native.parse(Bytes.ofString(pem));
 	}
 
-	public function addDER(der:Bytes):Void {
+	public function addDER(der : Bytes) : Void {
 		native.parse(der);
 	}
 
-	private function get_commonName():Null<String> {
+	private function get_commonName() : Null<String> {
 		return subject("CN");
 	}
 
-	extern private function get_altNames():Array<String>;
+	extern private function get_altNames() : Array<String>;
 
-	extern private function get_notBefore():Date;
+	extern private function get_notBefore() : Date;
 
-	extern private function get_notAfter():Date;
+	extern private function get_notAfter() : Date;
 
-	private inline function getNative():X509Crt {
+	private inline function getNative() : X509Crt {
 		return native;
 	}
 }

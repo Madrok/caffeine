@@ -111,7 +111,7 @@ class ShortMemory extends MemoryAccess {
 		@param max index pointing to the last short.
 	**/
 	public static function toBytesData(input : ShortMemory, min : Int = -1,
-			max : Int = -1) : haxe.io.BytesData {
+			max : Int = -1) : chx.ds.BytesData {
 		assert(input != null, "invalid input");
 
 		if(min == -1)
@@ -123,7 +123,7 @@ class ShortMemory extends MemoryAccess {
 		assert(max <= input.size, 'max out of range ($max)');
 		assert(max - min > 0, 'min equals max ($min)');
 
-		var out = new haxe.io.BytesOutput();
+		var out = new chx.ds.BytesOutput();
 		for (i in 0...max - min)
 			out.writeInt16(input.get(min + i));
 		return out
@@ -137,7 +137,7 @@ class ShortMemory extends MemoryAccess {
 		@param min index pointing to the byte storing the first short.
 		@param min index pointing to the byte storing the last short.
 	**/
-	public static function ofBytesData(input : haxe.io.BytesData, min : Int = -1,
+	public static function ofBytesData(input : chx.ds.BytesData, min : Int = -1,
 			max : Int = -1) : ShortMemory {
 		assert(input != null, "invalid input");
 
@@ -154,7 +154,7 @@ class ShortMemory extends MemoryAccess {
 		assert(max <= Std.int(input.length), "max <= input.length");
 		#end
 
-		var bytesInput = new haxe.io.BytesInput(haxe.io.Bytes.ofData(input), min);
+		var bytesInput = new chx.ds.BytesInput(chx.ds.Bytes.ofData(input), min);
 		min >>= 1;
 		max >>= 1;
 		var out = new ShortMemory(max - min, "ofBytesData");

@@ -24,37 +24,41 @@ package haxe.zip;
 
 @:coreApi
 class Uncompress {
-	var s:Dynamic;
+	var s : Dynamic;
 
-	public function new(?windowBits:Int):Void {
+	public function new(?windowBits : Int) : Void {
 		s = _inflate_init(windowBits);
 	}
 
-	public function execute(src:haxe.io.Bytes, srcPos:Int, dst:haxe.io.Bytes, dstPos:Int):{done:Bool, read:Int, write:Int} {
+	public function execute(src : chx.ds.Bytes, srcPos : Int, dst : chx.ds.Bytes,
+			dstPos : Int) : {done : Bool, read : Int, write : Int} {
 		return _inflate_buffer(s, src.getData(), srcPos, dst.getData(), dstPos);
 	}
 
-	public function setFlushMode(f:FlushMode):Void {
-		_set_flush_mode(s, untyped Std.string(f).__s);
+	public function setFlushMode(f : FlushMode) : Void {
+		_set_flush_mode(s, untyped Std
+			.string(f)
+			.__s
+		);
 	}
 
-	public function close():Void {
+	public function close() : Void {
 		_inflate_end(s);
 	}
 
-	public static function run(src:haxe.io.Bytes, ?bufsize:Int):haxe.io.Bytes {
+	public static function run(src : chx.ds.Bytes, ?bufsize : Int) : chx.ds.Bytes {
 		var u = new Uncompress(null);
-		if (bufsize == null)
+		if(bufsize == null)
 			bufsize = 1 << 16; // 64K
-		var tmp = haxe.io.Bytes.alloc(bufsize);
-		var b = new haxe.io.BytesBuffer();
+		var tmp = chx.ds.Bytes.alloc(bufsize);
+		var b = new chx.ds.BytesBuffer();
 		var pos = 0;
 		u.setFlushMode(FlushMode.SYNC);
-		while (true) {
+		while(true) {
 			var r = u.execute(src, pos, tmp, 0);
 			b.addBytes(tmp, 0, r.write);
 			pos += r.read;
-			if (r.done)
+			if(r.done)
 				break;
 		}
 		u.close();

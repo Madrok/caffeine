@@ -22,7 +22,7 @@
 
 package python.lib.socket;
 
-import haxe.io.BytesData;
+import chx.ds.BytesData;
 import python.Tuple;
 
 /**

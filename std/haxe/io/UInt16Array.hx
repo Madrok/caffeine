@@ -27,61 +27,68 @@ typedef UInt16ArrayData = ArrayBufferView.ArrayBufferViewData;
 abstract UInt16Array(UInt16ArrayData) {
 	public static inline var BYTES_PER_ELEMENT = 2;
 
-	public var length(get, never):Int;
-	public var view(get, never):ArrayBufferView;
+	public var length(get, never) : Int;
+	public var view(get, never) : ArrayBufferView;
 
-	public inline function new(elements:Int) {
-		this = new ArrayBufferView(elements * BYTES_PER_ELEMENT).getData();
+	public inline function new(elements : Int) {
+		this = new ArrayBufferView(elements * BYTES_PER_ELEMENT)
+			.getData();
 	}
 
 	inline function get_length() {
 		return this.byteLength >> 1;
 	}
 
-	public inline function get_view():ArrayBufferView {
+	public inline function get_view() : ArrayBufferView {
 		return ArrayBufferView.fromData(this);
 	}
 
-	@:arrayAccess public inline function get(index:Int):Int {
+	@:arrayAccess public inline function get(index : Int) : Int {
 		return this.bytes.getUInt16((index << 1) + this.byteOffset);
 	}
 
-	@:arrayAccess public inline function set(index:Int, value:Int):Int {
-		if (index >= 0 && index < length) {
+	@:arrayAccess public inline function set(index : Int, value : Int) : Int {
+		if(index >= 0 && index < length) {
 			this.bytes.setUInt16((index << 1) + this.byteOffset, value);
 			return value;
 		}
 		return 0;
 	}
 
-	public inline function sub(begin:Int, ?length:Int):UInt16Array {
+	public inline function sub(begin : Int, ?length : Int) : UInt16Array {
 		return fromData(this.sub(begin << 1, length == null ? null : length << 1));
 	}
 
-	public inline function subarray(?begin:Int, ?end:Int):UInt16Array {
-		return fromData(this.subarray(begin == null ? null : begin << 1, end == null ? null : end << 1));
+	public inline function subarray(?begin : Int, ?end : Int) : UInt16Array {
+		return fromData(this.subarray(begin == null ? null : begin << 1,
+			end == null ? null : end << 1));
 	}
 
-	public inline function getData():UInt16ArrayData {
+	public inline function getData() : UInt16ArrayData {
 		return this;
 	}
 
-	public static function fromData(d:UInt16ArrayData):UInt16Array {
+	public static function fromData(d : UInt16ArrayData) : UInt16Array {
 		return cast d;
 	}
 
-	public static function fromArray(a:Array<Int>, pos = 0, ?length:Int):UInt16Array {
-		if (length == null)
+	public static function fromArray(a : Array<Int>, pos = 0, ?length : Int) : UInt16Array {
+		if(length == null)
 			length = a.length - pos;
-		if (pos < 0 || length < 0 || pos + length > a.length)
-			throw Error.OutsideBounds;
+		if(pos < 0 || length < 0 || pos + length > a.length)
+			throw new chx.lang.OutsideBoundsException();
 		var i = new UInt16Array(a.length);
 		for (idx in 0...length)
 			i[idx] = a[idx + pos];
 		return i;
 	}
 
-	public static function fromBytes(bytes:haxe.io.Bytes, bytePos = 0, ?length:Int):UInt16Array {
-		return fromData(ArrayBufferView.fromBytes(bytes, bytePos, (length == null ? (bytes.length - bytePos) >> 1 : length) << 1).getData());
+	public static function fromBytes(bytes : chx.ds.Bytes, bytePos = 0,
+			?length : Int) : UInt16Array {
+		return fromData(ArrayBufferView
+			.fromBytes(bytes, bytePos,
+				(length == null ? (bytes.length - bytePos) >> 1 : length) << 1)
+			.getData()
+		);
 	}
 }

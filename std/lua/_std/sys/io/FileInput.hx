@@ -22,8 +22,8 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
 import chx.lang.EofException;
-import haxe.io.Bytes;
 import lua.Boot;
 import lua.FileHandle;
 import lua.Io;
@@ -83,7 +83,7 @@ class FileInput extends chx.io.Input {
 		if(bufsize == null)
 			bufsize = (1 << 14); // 16 Ko
 		var buf = Bytes.alloc(bufsize);
-		var total = new haxe.io.BytesBuffer();
+		var total = new chx.ds.BytesBuffer();
 		try {
 			while(true) {
 				var len = readBytes(buf, 0, bufsize);

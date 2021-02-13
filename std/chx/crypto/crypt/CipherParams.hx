@@ -25,7 +25,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt;
+package chx.crypto.crypt;
 
 class CipherParams {
 	/**
@@ -33,10 +33,12 @@ class CipherParams {
 	 * generated, but must be set before decryption. See notes in chx.crypt.mode.IVBase
 	 * on proper IV creation.
 	 * @see chx.crypt.mode.IVBase
-	 **/
+	**/
 	public var iv : Bytes;
+
 	/** random generator used to generate IVs. Can be null and will create a default **/
-	public var prng : math.prng.Random;
+	public var prng : chx.math.prng.Random;
+
 	/** Does not have to be set manually, is set by Cipher **/
 	public var direction : CipherDirection;
 
@@ -47,7 +49,7 @@ class CipherParams {
 	public function clone() : CipherParams {
 		var o = new CipherParams();
 		if(iv != null)
-			o.iv = iv.sub(0,iv.length);
+			o.iv = iv.sub(0, iv.length);
 		o.prng = this.prng;
 		o.direction = this.direction;
 		return o;

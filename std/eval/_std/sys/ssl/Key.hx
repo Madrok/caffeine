@@ -22,48 +22,50 @@
 
 package sys.ssl;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import mbedtls.PkContext;
 
 @:coreApi
 class Key {
-	var native:PkContext;
+	var native : PkContext;
 
 	function new() {
 		native = new PkContext();
 	}
 
-	static public function loadFile(file:String, ?isPublic:Bool, ?pass:String):Key {
+	static public function loadFile(file : String, ?isPublic : Bool, ?pass : String) : Key {
 		var key = new Key();
-		var code = if (isPublic) {
+		var code = if(isPublic) {
 			key.native.parse_public_keyfile(file);
-		} else {
+		}
+		else {
 			key.native.parse_keyfile(file, pass);
 		}
-		if (code != 0) {
+		if(code != 0) {
 			throw(mbedtls.Error.strerror(code));
 		}
 		return key;
 	}
 
-	static function parse(data:Bytes, isPublic:Bool, ?pass:String):Key {
+	static function parse(data : Bytes, isPublic : Bool, ?pass : String) : Key {
 		var key = new Key();
-		var code = if (isPublic) {
+		var code = if(isPublic) {
 			key.native.parse_public_key(data);
-		} else {
+		}
+		else {
 			key.native.parse_key(data);
 		}
-		if (code != 0) {
+		if(code != 0) {
 			throw(mbedtls.Error.strerror(code));
 		}
 		return key;
 	}
 
-	static public function readPEM(data:String, isPublic:Bool, ?pass:String):Key {
+	static public function readPEM(data : String, isPublic : Bool, ?pass : String) : Key {
 		return parse(Bytes.ofString(data), isPublic, pass);
 	}
 
-	static public function readDER(data:haxe.io.Bytes, isPublic:Bool):Key {
+	static public function readDER(data : chx.ds.Bytes, isPublic : Bool) : Key {
 		return parse(data, isPublic);
 	}
 }

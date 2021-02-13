@@ -23,34 +23,34 @@
 package haxe;
 
 private class ResourceContent {
-	public var name:hl.Bytes;
-	public var data:hl.Bytes;
-	public var dataLen:Int;
+	public var name : hl.Bytes;
+	public var data : hl.Bytes;
+	public var dataLen : Int;
 }
 
 @:coreApi
 class Resource {
-	static var content:hl.NativeArray<ResourceContent>;
+	static var content : hl.NativeArray<ResourceContent>;
 
-	public static function listNames():Array<String> {
+	public static function listNames() : Array<String> {
 		return [for (x in content) @:privateAccess String.fromUCS2(x.name)];
 	}
 
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		for (x in content)
-			if (x.name.compare(0, @:privateAccess name.bytes, 0, (name.length + 1) << 1) == 0)
+			if(x.name.compare(0, @:privateAccess name.bytes, 0, (name.length + 1) << 1) == 0)
 				return @:privateAccess String.fromUTF8(x.data);
 		return null;
 	}
 
-	public static function getBytes(name:String):haxe.io.Bytes {
+	public static function getBytes(name : String) : chx.ds.Bytes {
 		for (x in content)
-			if (x.name.compare(0, @:privateAccess name.bytes, 0, (name.length + 1) << 1) == 0)
-				return @:privateAccess new haxe.io.Bytes(x.data, x.dataLen);
+			if(x.name.compare(0, @:privateAccess name.bytes, 0, (name.length + 1) << 1) == 0)
+				return @:privateAccess new chx.ds.Bytes(x.data, x.dataLen);
 		return null;
 	}
 
-	static function __init__():Void {
+	static function __init__() : Void {
 		content = untyped $resources();
 	}
 }

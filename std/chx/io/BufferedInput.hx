@@ -27,7 +27,7 @@
 
 package chx.io;
 
-import chx.io.Bytes;
+import chx.ds.Bytes;
 import chx.io.BytesBuffer;
 import chx.io.Input;
 import chx.lang.EofException;
@@ -161,7 +161,8 @@ class BufferedInput extends FilteredInput {
 			s = newBuffer()
 				.toString();
 			if(s.length == 0)
-				#if neko chx.Lib.rethrow #else throw #end (e);
+				#if neko chx.Lib.rethrow #else throw #end
+			(e);
 		}
 		return s;
 	}

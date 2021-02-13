@@ -48,7 +48,7 @@ private class SocketInput extends chx.io.Input {
 		}
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		var r;
 		if(__s == null)
 			throw new chx.lang.Exception("Invalid handle");
@@ -94,7 +94,7 @@ private class SocketOutput extends chx.io.Output {
 		}
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		return try {
 			NativeSocket.socket_send(__s, buf.getData(), pos, len);
 		}
@@ -159,7 +159,7 @@ class Socket implements chx.net.Socket {
 	}
 
 	public function read() : String {
-		var bytes : haxe.io.BytesData = NativeSocket.socket_read(__s);
+		var bytes : chx.ds.BytesData = NativeSocket.socket_read(__s);
 		if(bytes == null)
 			return "";
 		var arr : Array<cpp.Char> = cast bytes;
@@ -167,7 +167,7 @@ class Socket implements chx.net.Socket {
 	}
 
 	public function write(content : String) : Void {
-		NativeSocket.socket_write(__s, haxe.io.Bytes
+		NativeSocket.socket_write(__s, chx.ds.Bytes
 			.ofString(content)
 			.getData()
 		);
@@ -177,7 +177,7 @@ class Socket implements chx.net.Socket {
 		try {
 			if(host.ip == 0 && host.host != "0.0.0.0") {
 				// hack, hack, hack
-				var ipv6 : haxe.io.BytesData = Reflect.field(host, "ipv6");
+				var ipv6 : chx.ds.BytesData = Reflect.field(host, "ipv6");
 				if(ipv6 != null) {
 					close();
 					__s = NativeSocket.socket_new_ip(false, true);
@@ -212,7 +212,7 @@ class Socket implements chx.net.Socket {
 
 	public function bind(host : Host, port : Int) : Void {
 		if(host.ip == 0 && host.host != "0.0.0.0") {
-			var ipv6 : haxe.io.BytesData = Reflect.field(host, "ipv6");
+			var ipv6 : chx.ds.BytesData = Reflect.field(host, "ipv6");
 			if(ipv6 != null) {
 				close();
 				__s = NativeSocket.socket_new_ip(false, true);

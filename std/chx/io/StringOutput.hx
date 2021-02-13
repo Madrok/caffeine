@@ -25,6 +25,7 @@
 
 package chx.io;
 
+import chx.ds.Bytes;
 import chx.lang.OverflowException;
 import haxe.io.Encoding;
 
@@ -38,7 +39,7 @@ class StringOutput extends chx.io.Output {
 		b = new StringBuf();
 	}
 
-	override public function writeByte(c : Int) {
+	public function writeByte(c : Int) {
 		b.addChar(c);
 	}
 

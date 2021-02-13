@@ -24,18 +24,18 @@ package haxe;
 
 @:coreApi
 class Resource {
-	public static function listNames():Array<String> {
+	public static function listNames() : Array<String> {
 		return untyped __global__.__hxcpp_resource_names();
 	}
 
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		return untyped __global__.__hxcpp_resource_string(name);
 	}
 
-	public static function getBytes(name:String):haxe.io.Bytes {
-		var array:haxe.io.BytesData = untyped __global__.__hxcpp_resource_bytes(name);
-		if (array == null)
+	public static function getBytes(name : String) : chx.ds.Bytes {
+		var array : chx.ds.BytesData = untyped __global__.__hxcpp_resource_bytes(name);
+		if(array == null)
 			return null;
-		return haxe.io.Bytes.ofData(array);
+		return chx.ds.Bytes.ofData(array);
 	}
 }

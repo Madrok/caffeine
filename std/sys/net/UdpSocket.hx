@@ -34,21 +34,21 @@ class UdpSocket extends Socket {
 	/**
 		Allows the socket to send to broadcast addresses.
 	**/
-	public function setBroadcast(b:Bool):Void {
+	public function setBroadcast(b : Bool) : Void {
 		throw "Not available on this platform";
 	}
 
 	/**
 		Sends data to the specified target host/port address.
 	**/
-	public function sendTo(buf:haxe.io.Bytes, pos:Int, len:Int, addr:Address):Int {
+	public function sendTo(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		return 0;
 	}
 
 	/**
 		Reads data from any incoming address and store the receiver address into the address parameter.
 	**/
-	public function readFrom(buf:haxe.io.Bytes, pos:Int, len:Int, addr:Address):Int {
+	public function readFrom(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		return 0;
 	}
 }

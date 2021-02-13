@@ -24,11 +24,11 @@ package sys.io;
 
 private class Stdin extends chx.io.Output {
 	var p : Dynamic;
-	var buf : haxe.io.Bytes;
+	var buf : chx.ds.Bytes;
 
 	public function new(p : Dynamic) {
 		this.p = p;
-		buf = haxe.io.Bytes.alloc(1);
+		buf = chx.ds.Bytes.alloc(1);
 	}
 
 	public override function close() {
@@ -41,7 +41,7 @@ private class Stdin extends chx.io.Output {
 		writeBytes(buf, 0, 1);
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		try {
 			return _stdin_write(p, buf.getData(), pos, len);
 		}
@@ -57,12 +57,12 @@ private class Stdin extends chx.io.Output {
 private class Stdout extends chx.io.Input {
 	var p : Dynamic;
 	var out : Bool;
-	var buf : haxe.io.Bytes;
+	var buf : chx.ds.Bytes;
 
 	public function new(p : Dynamic, out) {
 		this.p = p;
 		this.out = out;
-		buf = haxe.io.Bytes.alloc(1);
+		buf = chx.ds.Bytes.alloc(1);
 	}
 
 	public override function readByte() {
@@ -71,7 +71,7 @@ private class Stdout extends chx.io.Input {
 		return buf.get(0);
 	}
 
-	public override function readBytes(str : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(str : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		try {
 			return (out ? _stdout_read : _stderr_read)(p, str.getData(), pos, len);
 		}

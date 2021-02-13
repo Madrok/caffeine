@@ -26,15 +26,16 @@ package haxe.crypto;
 	Creates a MD5 of a String.
 **/
 class Md5 {
-	public static function encode(s:String):String {
+	public static function encode(s : String) : String {
 		var m = new Md5();
 		var h = m.doEncode(str2blks(s));
 		return m.hex(h);
 	}
 
-	public static function make(b:haxe.io.Bytes):haxe.io.Bytes {
-		var h = new Md5().doEncode(bytes2blks(b));
-		var out = haxe.io.Bytes.alloc(16);
+	public static function make(b : chx.ds.Bytes) : chx.ds.Bytes {
+		var h = new Md5()
+			.doEncode(bytes2blks(b));
+		var out = chx.ds.Bytes.alloc(16);
 		var p = 0;
 		for (i in 0...4) {
 			out.set(p++, h[i] & 0xFF);
@@ -78,22 +79,23 @@ class Md5 {
 		return (msw << 16) | (lsw & 0xFFFF);
 	}
 
-	function hex(a:Array<Int>) {
+	function hex(a : Array<Int>) {
 		var str = "";
 		var hex_chr = "0123456789abcdef";
 		for (num in a)
 			for (j in 0...4)
-				str += hex_chr.charAt((num >> (j * 8 + 4)) & 0x0F) + hex_chr.charAt((num >> (j * 8)) & 0x0F);
+				str += hex_chr.charAt((num >> (j * 8 + 4)) & 0x0F)
+					+ hex_chr.charAt((num >> (j * 8)) & 0x0F);
 		return str;
 	}
 
-	static function bytes2blks(b:haxe.io.Bytes) {
+	static function bytes2blks(b : chx.ds.Bytes) {
 		var nblk = ((b.length + 8) >> 6) + 1;
 		var blks = new Array();
 
 		// preallocate size
 		var blksSize = nblk * 16;
-		#if (neko || cs || cpp || java || hl)
+		#if( neko || cs || cpp || java || hl )
 		blks[blksSize - 1] = 0;
 		#end
 
@@ -103,7 +105,7 @@ class Md5 {
 		#end
 
 		var i = 0;
-		while (i < b.length) {
+		while(i < b.length) {
 			blks[i >> 2] |= b.get(i) << ((((b.length << 3) + i) & 3) << 3);
 			i++;
 		}
@@ -117,16 +119,16 @@ class Md5 {
 		return blks;
 	}
 
-	static function str2blks(str:String) {
+	static function str2blks(str : String) {
 		#if target.unicode
-		var str = haxe.io.Bytes.ofString(str);
+		var str = chx.ds.Bytes.ofString(str);
 		#end
 		var nblk = ((str.length + 8) >> 6) + 1;
 		var blks = new Array();
 
 		// preallocate size
 		var blksSize = nblk * 16;
-		#if (neko || eval || cs || cpp || java || hl)
+		#if( neko || eval || cs || cpp || java || hl )
 		blks[blksSize - 1] = 0;
 		#end
 
@@ -138,8 +140,9 @@ class Md5 {
 		var i = 0;
 		var max = str.length;
 		var l = max * 8;
-		while (i < max) {
-			blks[i >> 2] |= #if target.unicode str.get(i) #else StringTools.fastCodeAt(str, i) #end << (((l + i) % 4) * 8);
+		while(i < max) {
+			blks[i >> 2] |= #if target.unicode str.get(i) #else StringTools.fastCodeAt(str,
+				i) #end << (((l + i) % 4) * 8);
 			i++;
 		}
 		blks[i >> 2] |= 0x80 << (((l + i) % 4) * 8);
@@ -175,7 +178,7 @@ class Md5 {
 		return cmn(bitXOR(c, bitOR(b, (~d))), a, b, x, s, t);
 	}
 
-	function doEncode(x:Array<Int>):Array<Int> {
+	function doEncode(x : Array<Int>) : Array<Int> {
 		var a = 1732584193;
 		var b = -271733879;
 		var c = -1732584194;
@@ -184,7 +187,7 @@ class Md5 {
 		var step;
 
 		var i = 0;
-		while (i < x.length) {
+		while(i < x.length) {
 			var olda = a;
 			var oldb = b;
 			var oldc = c;

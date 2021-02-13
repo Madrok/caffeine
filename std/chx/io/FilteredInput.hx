@@ -27,6 +27,7 @@
 
 package chx.io;
 
+import chx.ds.Bytes;
 import chx.io.BytesBuffer;
 import chx.io.Input;
 import haxe.io.Encoding;
@@ -42,7 +43,7 @@ class FilteredInput extends Input {
 		this.input = input;
 	}
 
-	public override function readByte() : Int {
+	public function readByte() : Int {
 		return input.readByte();
 	}
 

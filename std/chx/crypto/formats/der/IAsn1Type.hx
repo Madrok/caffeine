@@ -30,7 +30,7 @@
  */
 package chx.crypto.formats.der;
 
-import chx.io.Bytes;
+import chx.ds.Bytes;
 
 /**
  * IAsn1Type

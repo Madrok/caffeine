@@ -22,8 +22,8 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
 import chx.io.Input;
-import haxe.io.Bytes;
 import haxe.io.Encoding;
 import python.io.IFileInput;
 

@@ -110,7 +110,7 @@ class DoubleMemory extends MemoryAccess {
 		@param max index pointing to the last double.
 	**/
 	public static function toBytesData(input : DoubleMemory, min : Int = -1,
-			max : Int = -1) : haxe.io.BytesData {
+			max : Int = -1) : chx.ds.BytesData {
 		assert(input != null, "invalid input");
 
 		if(min == -1)
@@ -122,7 +122,7 @@ class DoubleMemory extends MemoryAccess {
 		assert(max <= input.size, 'max out of range ($max)');
 		assert(max - min > 0, 'min equals max ($min)');
 
-		var out = new haxe.io.BytesOutput();
+		var out = new chx.ds.BytesOutput();
 		for (i in 0...max - min)
 			out.writeDouble(input.get(min + i));
 		return out
@@ -136,7 +136,7 @@ class DoubleMemory extends MemoryAccess {
 		@param min index pointing to the byte storing the first float.
 		@param min index pointing to the byte storing the last float.
 	**/
-	public static function ofBytesData(input : haxe.io.BytesData, min : Int = -1,
+	public static function ofBytesData(input : chx.ds.BytesData, min : Int = -1,
 			max : Int = -1) : DoubleMemory {
 		assert(input != null, "invalid input");
 
@@ -153,7 +153,7 @@ class DoubleMemory extends MemoryAccess {
 		assert(max <= Std.int(input.length), "max <= input.length");
 		#end
 
-		var bytesInput = new haxe.io.BytesInput(haxe.io.Bytes.ofData(input), min);
+		var bytesInput = new chx.ds.BytesInput(chx.ds.Bytes.ofData(input), min);
 		min >>= 3;
 		max >>= 3;
 		var out = new DoubleMemory(max - min, "ofBytesData");

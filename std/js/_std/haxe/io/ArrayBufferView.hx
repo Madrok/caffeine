@@ -25,11 +25,11 @@ package haxe.io;
 typedef ArrayBufferViewData = js.lib.ArrayBufferView;
 
 abstract ArrayBufferView(ArrayBufferViewData) {
-	public var buffer(get, never):haxe.io.Bytes;
-	public var byteOffset(get, never):Int;
-	public var byteLength(get, never):Int;
+	public var buffer(get, never) : chx.ds.Bytes;
+	public var byteOffset(get, never) : Int;
+	public var byteLength(get, never) : Int;
 
-	public inline function new(size:Int) {
+	public inline function new(size : Int) {
 		this = new js.lib.Uint8Array(size);
 	}
 
@@ -39,19 +39,21 @@ abstract ArrayBufferView(ArrayBufferViewData) {
 	inline function get_byteLength()
 		return this.byteLength;
 
-	inline function get_buffer():haxe.io.Bytes {
-		return haxe.io.Bytes.ofData(this.buffer);
+	inline function get_buffer() : chx.ds.Bytes {
+		return chx.ds.Bytes.ofData(this.buffer);
 	}
 
-	public inline function sub(begin:Int, ?length:Int) {
-		return fromData(new js.lib.Uint8Array(this.buffer, begin, length == null ? this.buffer.byteLength - begin : length));
+	public inline function sub(begin : Int, ?length : Int) {
+		return fromData(new js.lib.Uint8Array(this.buffer, begin,
+			length == null ? this.buffer.byteLength
+			- begin : length));
 	}
 
-	public inline function getData():ArrayBufferViewData {
+	public inline function getData() : ArrayBufferViewData {
 		return this;
 	}
 
-	public static inline function fromData(a:ArrayBufferViewData):ArrayBufferView {
+	public static inline function fromData(a : ArrayBufferViewData) : ArrayBufferView {
 		return cast a;
 	}
 }

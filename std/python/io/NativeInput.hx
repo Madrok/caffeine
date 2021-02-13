@@ -69,7 +69,7 @@ abstract class NativeInput<T:IOBase> extends Input {
 		throw "abstract method, should be overridden";
 	}
 
-	override public function readBytes(s : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	override public function readBytes(s : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || pos + len > s.length)
 			throw new chx.lang.OutsideBoundsException();
 
@@ -77,7 +77,7 @@ abstract class NativeInput<T:IOBase> extends Input {
 		var ret = readinto(ba);
 		if(ret == 0)
 			throwEof();
-		s.blit(pos, haxe.io.Bytes.ofData(ba), 0, len);
+		s.blit(pos, chx.ds.Bytes.ofData(ba), 0, len);
 		return ret;
 	}
 }

@@ -70,7 +70,7 @@ class BytesBuffer {
 
 	public inline function addBytes(src : Bytes, pos : Int, len : Int) {
 		if(pos < 0 || len < 0 || pos + len > src.length) {
-			throw Error.OutsideBounds;
+			throw new chx.lang.OutsideBoundsException();
 		}
 		else {
 			b = Syntax.concat(b, src

@@ -1,7 +1,7 @@
 package sys.ssl;
 
+import chx.ds.Bytes;
 import eval.vm.NativeSocket;
-import haxe.io.Bytes;
 import mbedtls.Config;
 import mbedtls.Ssl;
 
@@ -24,7 +24,7 @@ private class SocketInput extends chx.io.Input {
 		return readBuf.get(0);
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || ((pos + len):UInt) > (buf.length:UInt))
 			throw new chx.lang.OutsideBoundsException();
 		socket.handshake();
@@ -62,7 +62,7 @@ private class SocketOutput extends chx.io.Output {
 			throw new chx.lang.EofException();
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || ((pos + len):UInt) > (buf.length:UInt))
 			throw new chx.lang.OutsideBoundsException();
 		socket.handshake();

@@ -25,29 +25,30 @@ package haxe.zip;
 import java.util.zip.Deflater;
 
 class Compress {
-	var deflater:Deflater;
-	var mode:Int;
-	var finish:Bool = false;
+	var deflater : Deflater;
+	var mode : Int;
+	var finish : Bool = false;
 
-	public function new(level:Int) {
+	public function new(level : Int) {
 		throw new haxe.exceptions.NotImplementedException("Not implemented for this platform"); // FIXME: Add unit tests for Compress/Uncompress and check current implementation
 		this.deflater = new Deflater(level);
 		this.mode = Deflater.NO_FLUSH;
 	}
 
-	public function execute(src:haxe.io.Bytes, srcPos:Int, dst:haxe.io.Bytes, dstPos:Int):{done:Bool, read:Int, write:Int} {
+	public function execute(src : chx.ds.Bytes, srcPos : Int, dst : chx.ds.Bytes,
+			dstPos : Int) : {done : Bool, read : Int, write : Int} {
 		deflater.setInput(src.getData(), srcPos, src.length - srcPos);
-		if (finish)
+		if(finish)
 			deflater.finish();
 		finish = false;
 
 		var written = deflater.deflate(dst.getData(), dstPos, dst.length - dstPos);
 		var read = deflater.getTotalIn();
-		return {done: deflater.finished(), read: read, write: written};
+		return {done : deflater.finished(), read : read, write : written};
 	}
 
-	public function setFlushMode(f:FlushMode) {
-		this.mode = switch (f) {
+	public function setFlushMode(f : FlushMode) {
+		this.mode = switch(f) {
 			case NO:
 				Deflater.NO_FLUSH;
 			case SYNC:
@@ -66,17 +67,19 @@ class Compress {
 		deflater.end();
 	}
 
-	public static function run(s:haxe.io.Bytes, level:Int):haxe.io.Bytes {
+	public static function run(s : chx.ds.Bytes, level : Int) : chx.ds.Bytes {
 		var deflater = new java.util.zip.Deflater(level);
 		deflater.setInput(s.getData());
 		var outputStream = new java.io.ByteArrayOutputStream(s.length);
 		deflater.finish();
-		var buffer = haxe.io.Bytes.alloc(1024).getData();
-		while (!deflater.finished()) {
+		var buffer = chx.ds.Bytes
+			.alloc(1024)
+			.getData();
+		while(!deflater.finished()) {
 			var count = deflater.deflate(buffer);
 			outputStream.write(buffer, 0, count);
 		}
 		outputStream.close();
-		return haxe.io.Bytes.ofData(outputStream.toByteArray());
+		return chx.ds.Bytes.ofData(outputStream.toByteArray());
 	}
 }

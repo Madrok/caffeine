@@ -22,11 +22,11 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
+import chx.io.BytesInput;
 import chx.lang.EofException;
 import chx.lang.EofException;
 import haxe.SysTools;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
 import java.NativeArray;
 import java.io.EOFException;
 import java.io.IOException;

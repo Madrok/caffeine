@@ -22,6 +22,8 @@
 
 package chx.io;
 
+import chx.ds.Bytes;
+
 class BytesOutput extends Output {
 	var b : BytesBuffer;
 
@@ -39,7 +41,7 @@ class BytesOutput extends Output {
 		return b.length;
 	}
 
-	override function writeByte(c) {
+	function writeByte(c) {
 		b.addByte(c);
 	}
 

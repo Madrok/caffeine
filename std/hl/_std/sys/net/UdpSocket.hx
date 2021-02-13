@@ -34,7 +34,7 @@ class UdpSocket extends Socket {
 		super.init();
 	}
 
-	public function sendTo(buf : haxe.io.Bytes, pos : Int, len : Int, addr : Address) : Int {
+	public function sendTo(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		if(pos < 0 || len < 0 || pos + len > buf.length)
 			throw new OutsideBoundsException();
 		var ret = socket_send_to(__s, (buf:hl.Bytes)
@@ -47,7 +47,7 @@ class UdpSocket extends Socket {
 		return ret;
 	}
 
-	public function readFrom(buf : haxe.io.Bytes, pos : Int, len : Int, addr : Address) : Int {
+	public function readFrom(buf : chx.ds.Bytes, pos : Int, len : Int, addr : Address) : Int {
 		var host = 0, port = 0;
 		if(pos < 0 || len < 0 || pos + len > buf.length)
 			throw new OutsideBoundsException();

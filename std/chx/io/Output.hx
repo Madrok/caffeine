@@ -46,6 +46,7 @@
  */
 package chx.io;
 
+import chx.ds.Bytes;
 import chx.lang.BlockedException;
 import chx.lang.EofException;
 import chx.lang.OutsideBoundsException;

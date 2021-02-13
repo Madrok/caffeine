@@ -22,11 +22,11 @@
 
 package haxe.http;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 
 private typedef StringKeyValue = {
-	var name:String;
-	var value:String;
+	var name : String;
+	var value : String;
 }
 
 /**
@@ -44,18 +44,18 @@ class HttpBase {
 		can be changed in order to send the same request to different target
 		Urls.
 	**/
-	public var url:String;
+	public var url : String;
 
-	public var responseData(get,never):Null<String>;
-	public var responseBytes(default,null):Null<Bytes>;
+	public var responseData(get, never) : Null<String>;
+	public var responseBytes(default, null) : Null<Bytes>;
 
-	var responseAsString:Null<String>;
-	var postData:Null<String>;
-	var postBytes:Null<Bytes>;
-	var headers:Array<StringKeyValue>;
-	var params:Array<StringKeyValue>;
+	var responseAsString : Null<String>;
+	var postData : Null<String>;
+	var postBytes : Null<Bytes>;
+	var headers : Array<StringKeyValue>;
+	var params : Array<StringKeyValue>;
 
-	final emptyOnData:(String)->Void;
+	final emptyOnData : (String)->Void;
 
 	/**
 		Creates a new Http instance with `url` as parameter.
@@ -68,7 +68,7 @@ class HttpBase {
 		(Php) Https (SSL) connections are allowed only if the OpenSSL extension
 		is enabled.
 	**/
-	public function new(url:String) {
+	public function new(url : String) {
 		this.url = url;
 		headers = [];
 		params = [];
@@ -82,21 +82,21 @@ class HttpBase {
 
 		This method provides a fluent interface.
 	**/
-	public function setHeader(name:String, value:String) {
+	public function setHeader(name : String, value : String) {
 		for (i in 0...headers.length) {
-			if (headers[i].name == name) {
-				headers[i] = {name: name, value: value};
+			if(headers[i].name == name) {
+				headers[i] = {name : name, value : value};
 				return #if hx3compat this #end;
 			}
 		}
-		headers.push({name: name, value: value});
+		headers.push({name : name, value : value});
 		#if hx3compat
 		return this;
 		#end
 	}
 
-	public function addHeader(header:String, value:String) {
-		headers.push({name: header, value: value});
+	public function addHeader(header : String, value : String) {
+		headers.push({name : header, value : value});
 		#if hx3compat
 		return this;
 		#end
@@ -109,21 +109,21 @@ class HttpBase {
 
 		This method provides a fluent interface.
 	**/
-	public function setParameter(name:String, value:String) {
+	public function setParameter(name : String, value : String) {
 		for (i in 0...params.length) {
-			if (params[i].name == name) {
-				params[i] = {name: name, value: value};
+			if(params[i].name == name) {
+				params[i] = {name : name, value : value};
 				return #if hx3compat this #end;
 			}
 		}
-		params.push({name: name, value: value});
+		params.push({name : name, value : value});
 		#if hx3compat
 		return this;
 		#end
 	}
 
-	public function addParameter(name:String, value:String) {
-		params.push({name: name, value: value});
+	public function addParameter(name : String, value : String) {
+		params.push({name : name, value : value});
 		#if hx3compat
 		return this;
 		#end
@@ -139,7 +139,7 @@ class HttpBase {
 
 		This method provides a fluent interface.
 	**/
-	public function setPostData(data:Null<String>) {
+	public function setPostData(data : Null<String>) {
 		postData = data;
 		postBytes = null;
 		#if hx3compat
@@ -157,7 +157,7 @@ class HttpBase {
 
 		This method provides a fluent interface.
 	**/
-	public function setPostBytes(data:Null<Bytes>) {
+	public function setPostBytes(data : Null<Bytes>) {
 		postBytes = data;
 		postData = null;
 		#if hx3compat
@@ -182,7 +182,7 @@ class HttpBase {
 		[js] If `this.async` is false, the callback functions are called before
 		this method returns.
 	**/
-	public function request(?post:Bool):Void {
+	public function request(?post : Bool) : Void {
 		throw new haxe.exceptions.NotImplementedException();
 	}
 
@@ -193,7 +193,7 @@ class HttpBase {
 		The intended usage is to bind it to a custom function:
 		`httpInstance.onData = function(data) { // handle result }`
 	**/
-	public dynamic function onData(data:String) {}
+	public dynamic function onData(data : String) {}
 
 	/**
 		This method is called upon a successful request, with `data` containing
@@ -202,7 +202,7 @@ class HttpBase {
 		The intended usage is to bind it to a custom function:
 		`httpInstance.onBytes = function(data) { // handle result }`
 	**/
-	public dynamic function onBytes(data:Bytes) {}
+	public dynamic function onBytes(data : Bytes) {}
 
 	/**
 		This method is called upon a request error, with `msg` containing the
@@ -211,7 +211,7 @@ class HttpBase {
 		The intended usage is to bind it to a custom function:
 		`httpInstance.onError = function(msg) { // handle error }`
 	**/
-	public dynamic function onError(msg:String) {}
+	public dynamic function onError(msg : String) {}
 
 	/**
 		This method is called upon a Http status change, with `status` being the
@@ -220,26 +220,26 @@ class HttpBase {
 		The intended usage is to bind it to a custom function:
 		`httpInstance.onStatus = function(status) { // handle status }`
 	**/
-	public dynamic function onStatus(status:Int) {}
+	public dynamic function onStatus(status : Int) {}
 
 	/**
 		Override this if extending `haxe.Http` with overriding `onData`
 	**/
-	function hasOnData():Bool {
+	function hasOnData() : Bool {
 		return !Reflect.compareMethods(onData, emptyOnData);
 	}
 
-	function success(data:Bytes) {
+	function success(data : Bytes) {
 		responseBytes = data;
 		responseAsString = null;
-		if (hasOnData()) {
+		if(hasOnData()) {
 			onData(responseData);
 		}
 		onBytes(responseBytes);
 	}
 
 	function get_responseData() {
-		if (responseAsString == null && responseBytes != null) {
+		if(responseAsString == null && responseBytes != null) {
 			#if neko
 			responseAsString = neko.Lib.stringReference(responseBytes);
 			#else

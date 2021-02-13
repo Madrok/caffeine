@@ -23,27 +23,31 @@
 package haxe;
 
 @:coreApi class Resource {
-	@:keep static var content:Array<String>;
+	@:keep static var content : Array<String>;
 
-	public static inline function listNames():Array<String> {
+	public static inline function listNames() : Array<String> {
 		return content.copy();
 	}
 
 	@:access(haxe.io.Path.escape)
-	public static function getString(name:String):String {
+	public static function getString(name : String) : String {
 		name = haxe.io.Path.escape(name, true);
-		var stream = cast(Resource, java.lang.Class<Dynamic>).getResourceAsStream("/" + name);
-		if (stream == null)
+		var stream = cast(Resource, java.lang.Class<Dynamic>)
+			.getResourceAsStream("/" + name);
+		if(stream == null)
 			return null;
 		var stream = new java.io.NativeInput(stream);
-		return stream.readAll().toString();
+		return stream
+			.readAll()
+			.toString();
 	}
 
 	@:access(haxe.io.Path.escape)
-	public static function getBytes(name:String):haxe.io.Bytes {
+	public static function getBytes(name : String) : chx.ds.Bytes {
 		name = haxe.io.Path.escape(name, true);
-		var stream = cast(Resource, java.lang.Class<Dynamic>).getResourceAsStream("/" + name);
-		if (stream == null)
+		var stream = cast(Resource, java.lang.Class<Dynamic>)
+			.getResourceAsStream("/" + name);
+		if(stream == null)
 			return null;
 		var stream = new java.io.NativeInput(stream);
 		return stream.readAll();

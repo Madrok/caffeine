@@ -48,7 +48,7 @@ private class SocketInput extends chx.io.Input {
 		}
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		var r : Int;
 		if(__s == null)
 			throw "Invalid handle";
@@ -99,7 +99,7 @@ private class SocketOutput extends chx.io.Output {
 		}
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		return try {
 			__s.handshake();
 			ssl_send(@:privateAccess __s.ssl, buf.getData(), pos, len);

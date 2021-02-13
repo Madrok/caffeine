@@ -26,36 +26,36 @@ package haxe.crypto;
 	Allows one to encode/decode String and bytes using a power of two base dictionary.
 **/
 class BaseCode {
-	var base:haxe.io.Bytes;
-	var nbits:Int;
-	var tbl:Array<Int>;
+	var base : chx.ds.Bytes;
+	var nbits : Int;
+	var tbl : Array<Int>;
 
-	public function new(base:haxe.io.Bytes) {
+	public function new(base : chx.ds.Bytes) {
 		var len = base.length;
 		var nbits = 1;
-		while (len > 1 << nbits)
+		while(len > 1 << nbits)
 			nbits++;
-		if (nbits > 8 || len != 1 << nbits)
+		if(nbits > 8 || len != 1 << nbits)
 			throw "BaseCode : base length must be a power of two.";
 		this.base = base;
 		this.nbits = nbits;
 	}
 
-	public function encodeBytes(b:haxe.io.Bytes):haxe.io.Bytes {
-		#if (neko && !interp)
-		return haxe.io.Bytes.ofData(base_encode(b.getData(), base.getData()));
+	public function encodeBytes(b : chx.ds.Bytes) : chx.ds.Bytes {
+		#if( neko && !interp )
+		return chx.ds.Bytes.ofData(base_encode(b.getData(), base.getData()));
 		#else
 		var nbits = this.nbits;
 		var base = this.base;
 		var size = Std.int(b.length * 8 / nbits);
-		var out = haxe.io.Bytes.alloc(size + (((b.length * 8) % nbits == 0) ? 0 : 1));
+		var out = chx.ds.Bytes.alloc(size + (((b.length * 8) % nbits == 0) ? 0 : 1));
 		var buf = 0;
 		var curbits = 0;
 		var mask = (1 << nbits) - 1;
 		var pin = 0;
 		var pout = 0;
-		while (pout < size) {
-			while (curbits < nbits) {
+		while(pout < size) {
+			while(curbits < nbits) {
 				curbits += 8;
 				buf <<= 8;
 				buf |= b.get(pin++);
@@ -63,7 +63,7 @@ class BaseCode {
 			curbits -= nbits;
 			out.set(pout++, base.get((buf >> curbits) & mask));
 		}
-		if (curbits > 0)
+		if(curbits > 0)
 			out.set(pout++, base.get((buf << (nbits - curbits)) & mask));
 		return out;
 		#end
@@ -78,27 +78,27 @@ class BaseCode {
 		this.tbl = tbl;
 	}
 
-	public function decodeBytes(b:haxe.io.Bytes):haxe.io.Bytes {
-		#if (neko && !interp)
-		return haxe.io.Bytes.ofData(base_decode(b.getData(), base.getData()));
+	public function decodeBytes(b : chx.ds.Bytes) : chx.ds.Bytes {
+		#if( neko && !interp )
+		return chx.ds.Bytes.ofData(base_decode(b.getData(), base.getData()));
 		#else
 		var nbits = this.nbits;
 		var base = this.base;
-		if (this.tbl == null)
+		if(this.tbl == null)
 			initTable();
 		var tbl = this.tbl;
 		var size = (b.length * nbits) >> 3;
-		var out = haxe.io.Bytes.alloc(size);
+		var out = chx.ds.Bytes.alloc(size);
 		var buf = 0;
 		var curbits = 0;
 		var pin = 0;
 		var pout = 0;
-		while (pout < size) {
-			while (curbits < 8) {
+		while(pout < size) {
+			while(curbits < 8) {
 				curbits += nbits;
 				buf <<= nbits;
 				var i = tbl[b.get(pin++)];
-				if (i == -1)
+				if(i == -1)
 					throw "BaseCode : invalid encoded char";
 				buf |= i;
 			}
@@ -109,29 +109,33 @@ class BaseCode {
 		#end
 	}
 
-	public function encodeString(s:String) {
-		#if (neko && !interp)
-		return neko.NativeString.toString(base_encode(neko.NativeString.ofString(s), base.getData()));
+	public function encodeString(s : String) {
+		#if( neko && !interp )
+		return neko.NativeString.toString(base_encode(neko.NativeString.ofString(s),
+			base.getData()));
 		#else
-		return encodeBytes(haxe.io.Bytes.ofString(s)).toString();
+		return encodeBytes(chx.ds.Bytes.ofString(s))
+			.toString();
 		#end
 	}
 
-	public function decodeString(s:String) {
-		#if (neko && !interp)
-		return neko.NativeString.toString(base_decode(neko.NativeString.ofString(s), base.getData()));
+	public function decodeString(s : String) {
+		#if( neko && !interp )
+		return neko.NativeString.toString(base_decode(neko.NativeString.ofString(s),
+			base.getData()));
 		#else
-		return decodeBytes(haxe.io.Bytes.ofString(s)).toString();
+		return decodeBytes(chx.ds.Bytes.ofString(s))
+			.toString();
 		#end
 	}
 
-	public static function encode(s:String, base:String) {
-		var b = new BaseCode(haxe.io.Bytes.ofString(base));
+	public static function encode(s : String, base : String) {
+		var b = new BaseCode(chx.ds.Bytes.ofString(base));
 		return b.encodeString(s);
 	}
 
-	public static function decode(s:String, base:String) {
-		var b = new BaseCode(haxe.io.Bytes.ofString(base));
+	public static function decode(s : String, base : String) {
+		var b = new BaseCode(chx.ds.Bytes.ofString(base));
 		return b.decodeString(s);
 	}
 

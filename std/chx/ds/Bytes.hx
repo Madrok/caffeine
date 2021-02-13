@@ -306,7 +306,7 @@ class Bytes {
 			throw new OutsideBoundsException();
 		untyped __global__.__hxcpp_memory_set_double(b, pos, v);
 		#else
-		var i = FPHelper.doubleToI64(v);
+		var i = haxe.io.FPHelper.doubleToI64(v);
 		setInt32(pos, i.low);
 		setInt32(pos + 4, i.high);
 		#end
@@ -333,7 +333,7 @@ class Bytes {
 			throw new OutsideBoundsException();
 		untyped __global__.__hxcpp_memory_set_float(b, pos, v);
 		#else
-		setInt32(pos, FPHelper.floatToI32(v));
+		setInt32(pos, haxe.io.FPHelper.floatToI32(v));
 		#end
 	}
 

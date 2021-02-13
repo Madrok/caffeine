@@ -25,7 +25,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
 import chx.io.BytesOutput;
 import chx.io.Output;
@@ -33,10 +33,11 @@ import chx.io.Output;
 /**
  * Counter mode - a 1 byte block streaming mode. This version updates the
  * counter on every byte (8 bits)
- **/
-class CTR8 extends IVBase, implements chx.crypt.IMode {
+**/
+class CTR8 extends IVBase implements chx.crypto.crypt.IMode {
 	/** Bytes encrypted counter **/
 	var num : Int;
+
 	/** Point at which to increment counter, in number of bytes **/
 	var ctr_inc : Int;
 
@@ -54,69 +55,69 @@ class CTR8 extends IVBase, implements chx.crypt.IMode {
 		return 1;
 	}
 
-	override public function updateEncrypt( b : Bytes, out : Output) : Int {
+	override public function updateEncrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateEncrypt: ");
-			var orig_b = b.sub(0);
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateEncrypt: ");
+		var orig_b = b.sub(0);
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		common(b, out);
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Plaintext: " + orig_b.toHex());
-			trace("Ciphertext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Plaintext: " + orig_b.toHex());
+		trace("Ciphertext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return b.length;
 	}
 
-	override public function updateDecrypt( b : Bytes, out : Output ) : Int {
+	override public function updateDecrypt(b : Bytes, out : Output) : Int {
 		#if CAFFEINE_DEBUG
-			trace("updateDecrypt: ");
-			var orig_b = b.sub(0);
-			var orig = out;
-			out = new BytesOutput();
+		trace("updateDecrypt: ");
+		var orig_b = b.sub(0);
+		var orig = out;
+		out = new BytesOutput();
 		#end
 
 		common(b, out);
 
 		#if CAFFEINE_DEBUG
-			var db : Bytes = untyped out.getBytes();
-			out = orig;
-			trace("Plaintext: " + orig_b.toHex());
-			trace("Ciphertext: " + db.toHex());
-			trace("");
-			out.writeBytes(db,0,db.length);
+		var db : Bytes = untyped out.getBytes();
+		out = orig;
+		trace("Plaintext: " + orig_b.toHex());
+		trace("Ciphertext: " + db.toHex());
+		trace("");
+		out.writeBytes(db, 0, db.length);
 		#end
 
 		return b.length;
 	}
 
-	private function common(b:Bytes, out:Output) : Int {
+	private function common(b : Bytes, out : Output) : Int {
 		var n = b.length;
 		if(n == 0)
 			return 0;
 
 		var e : Bytes = cipher.encryptBlock(currentIV);
 		#if CAFFEINE_DEBUG
-			trace("Input Block: " + currentIV.toHex());
-			trace("Output Block: " + e.toHex());
+		trace("Input Block: " + currentIV.toHex());
+		trace("Output Block: " + e.toHex());
 		#end
-		for(i in 0...n) {
+		for (i in 0...n) {
 			b.set(i, b.get(i) ^ e.get(i));
 			num++;
 			if(num == ctr_inc) {
 				trace(ctr_inc);
 				num = 0;
 				// increment 'counter'
-				var x = currentIV.length-1;
-				while(x>=0) {
+				var x = currentIV.length - 1;
+				while(x >= 0) {
 					currentIV.set(x, currentIV.get(x) + 1);
 					if(currentIV.get(x) != 0)
 						break;
@@ -129,5 +130,4 @@ class CTR8 extends IVBase, implements chx.crypt.IMode {
 		out.writeBytes(b, 0, n);
 		return n;
 	}
-
 }

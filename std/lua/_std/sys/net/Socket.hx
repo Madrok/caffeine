@@ -22,7 +22,7 @@
 
 package sys.net;
 
-import haxe.io.Bytes;
+import chx.ds.Bytes;
 import lua.*;
 import lua.lib.luasocket.Socket as LuaSocket;
 import lua.lib.luasocket.socket.*;
@@ -228,7 +228,7 @@ private class SocketOutput extends chx.io.Output {
 
 	override public function writeBytes(s : Bytes, pos : Int, len : Int) : Int {
 		if(pos < 0 || len < 0 || pos + len > s.length)
-			throw Error.OutsideBounds;
+			throw new chx.lang.OutsideBoundsException();
 		var b = s
 			.getData()
 			.slice(pos, pos + len)

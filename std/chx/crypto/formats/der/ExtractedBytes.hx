@@ -35,7 +35,7 @@
  */
 package chx.formats.der;
 
-import chx.io.Bytes;
+import chx.ds.Bytes;
 
 class ExtractedBytes implements IAsn1Type {
 	private var buf : Bytes;

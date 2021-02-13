@@ -22,12 +22,13 @@
 
 package python.lib;
 
-import haxe.io.BytesData;
+import chx.ds.BytesData;
 import python.Tuple;
 
-private typedef Selectable = haxe.extern.EitherType<Int, {function fileno():Int;}>;
+private typedef Selectable = haxe.extern.EitherType<Int, {function fileno() : Int;}>;
 
 @:pythonImport("select")
 extern class Select {
-	static function select<T>(rlist:Array<T>, wlist:Array<T>, xlist:Array<T>, ?timeout:Float):Tuple3<Array<T>, Array<T>, Array<T>>;
+	static function select<T>(rlist : Array<T>, wlist : Array<T>, xlist : Array<T>,
+		?timeout : Float) : Tuple3<Array<T>, Array<T>, Array<T>>;
 }

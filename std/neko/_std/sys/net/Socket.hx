@@ -49,7 +49,7 @@ private class SocketOutput extends chx.io.Output {
 		}
 	}
 
-	public override function writeBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function writeBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		return try {
 			socket_send(__s, buf.getData(), pos, len);
 		}
@@ -93,7 +93,7 @@ private class SocketInput extends chx.io.Input {
 		}
 	}
 
-	public override function readBytes(buf : haxe.io.Bytes, pos : Int, len : Int) : Int {
+	public override function readBytes(buf : chx.ds.Bytes, pos : Int, len : Int) : Int {
 		var r;
 		try {
 			r = socket_recv(__s, buf.getData(), pos, len);

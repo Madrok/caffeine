@@ -22,15 +22,15 @@
 
 package haxe.crypto;
 
+import chx.ds.Bytes;
 import php.Global;
-import haxe.io.Bytes;
 
 class Md5 {
-	public static inline function encode(s:String):String {
+	public static inline function encode(s : String) : String {
 		return Global.md5(s);
 	}
 
-	public static inline function make(b:haxe.io.Bytes):haxe.io.Bytes {
+	public static inline function make(b : chx.ds.Bytes) : chx.ds.Bytes {
 		return Bytes.ofData(Global.md5(b.getData(), true));
 	}
 }

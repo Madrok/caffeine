@@ -37,7 +37,7 @@ import sys.io.File;
 			throw new EofException();
 	}
 
-	public override function writeBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function writeBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		if(p < 0 || l < 0 || p + l > s.length)
 			throw new OutsideBoundsException();
 		var v = file_write(__f, s.getData(), p, l);

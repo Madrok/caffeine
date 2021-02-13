@@ -36,7 +36,7 @@ package sys.io;
 			throw new chx.lang.IOException(Std.string(e));
 	}
 
-	public override function writeBytes(s : haxe.io.Bytes, p : Int, l : Int) : Int {
+	public override function writeBytes(s : chx.ds.Bytes, p : Int, l : Int) : Int {
 		return try file_write(__f, s.getData(), p, l)
 		catch(e:Dynamic) throw new chx.lang.IOException(Std.string(e));
 	}

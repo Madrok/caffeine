@@ -25,18 +25,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt;
+package chx.crypto.crypt;
+
+import chx.ds.Bytes;
 
 interface IPad {
-
 	/** finished padded block size **/
-	var blockSize(default,setBlockSize) : Int;
+	var blockSize(default, set) : Int;
 
-	function pad( s : Bytes ) : Bytes;
+	function pad(s : Bytes) : Bytes;
 
-	function unpad( s : Bytes ) : Bytes;
+	function unpad(s : Bytes) : Bytes;
 
 	/** returns the number of blocks for message length len **/
 	function calcNumBlocks(len : Int) : Int;
-
 }

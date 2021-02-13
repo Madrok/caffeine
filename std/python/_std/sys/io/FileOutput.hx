@@ -22,9 +22,9 @@
 
 package sys.io;
 
+import chx.ds.Bytes;
 import chx.io.Input;
 import chx.io.Output;
-import haxe.io.Bytes;
 import haxe.io.Encoding;
 import python.io.IFileOutput;
 

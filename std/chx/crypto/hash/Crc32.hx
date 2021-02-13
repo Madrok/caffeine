@@ -26,23 +26,23 @@ package haxe.crypto;
 	Calculates the Crc32 of the given Bytes.
  */
 class Crc32 {
-	var crc:Int;
+	var crc : Int;
 
 	public inline function new() {
 		crc = 0xFFFFFFFF;
 	}
 
-	public inline function byte(b:Int) {
+	public inline function byte(b : Int) {
 		var tmp = (crc ^ b) & 0xFF;
 		for (j in 0...8)
 			tmp = (tmp >>> 1) ^ (-(tmp & 1) & 0xEDB88320);
 		crc = (crc >>> 8) ^ tmp;
 	}
 
-	public inline function update(b:haxe.io.Bytes, pos, len) {
+	public inline function update(b : chx.ds.Bytes, pos, len) {
 		var b = b.getData();
 		for (i in pos...pos + len) {
-			var tmp = (crc ^ haxe.io.Bytes.fastGet(b, i)) & 0xFF;
+			var tmp = (crc ^ chx.ds.Bytes.fastGet(b, i)) & 0xFF;
 			for (j in 0...8)
 				tmp = (tmp >>> 1) ^ (-(tmp & 1) & 0xEDB88320);
 			crc = (crc >>> 8) ^ tmp;
@@ -56,7 +56,7 @@ class Crc32 {
 	/**
 		Calculates the CRC32 of the given data bytes
 	**/
-	public static function make(data:haxe.io.Bytes):Int {
+	public static function make(data : chx.ds.Bytes) : Int {
 		var c = new Crc32();
 		c.update(data, 0, data.length);
 		return c.get();

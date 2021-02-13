@@ -25,28 +25,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.mode;
+package chx.crypto.crypt.mode;
 
-import chx.crypt.CipherDirection;
-import math.prng.IPrng;
+import chx.crypto.crypt.CipherDirection;
+import chx.math.prng.IPrng;
 
 /**
-* IV is an abstract base class for modes requiring initialization vectors.
-* According to NIST: 
-* There are two recommended methods for generating unpredictable IVs. The first
-* method is to apply the forward cipher function, under the same key that is used
-* for the encryption of the plaintext, to a nonce. The nonce must be a data block
-* that is unique to each execution of the encryption operation. For example,
-* the nonce may be a counter, as described in Appendix B, or a message number.
-* The second method is to generate a random data block using a FIPSapproved
-* random number generator.
+ * IV is an abstract base class for modes requiring initialization vectors.
+ * According to NIST: 
+ * There are two recommended methods for generating unpredictable IVs. The first
+ * method is to apply the forward cipher function, under the same key that is used
+ * for the encryption of the plaintext, to a nonce. The nonce must be a data block
+ * that is unique to each execution of the encryption operation. For example,
+ * the nonce may be a counter, as described in Appendix B, or a message number.
+ * The second method is to generate a random data block using a FIPSapproved
+ * random number generator.
 **/
 class IVBase extends ModeBase {
 	/**
 	 * Beware that this value changes with each crypt operation.
 	 * For the original value, consult params.iv
-	 **/
+	**/
 	public var iv(getIV, setIV) : Bytes;
+
 	var currentIV : Bytes;
 
 	override public function init(params : CipherParams) : Void {
@@ -58,7 +59,7 @@ class IVBase extends ModeBase {
 			if(params.direction == DECRYPT)
 				throw "IV must be set before decryption";
 			var sb = new BytesBuffer();
-			for(x in 0...cipher.blockSize)
+			for (x in 0...cipher.blockSize)
 				sb.addByte(params.prng.next());
 			params.iv = sb.getBytes();
 		}
@@ -71,7 +72,7 @@ class IVBase extends ModeBase {
 		return currentIV;
 	}
 
-	override function setCipher(v:IBlockCipher) {
+	override function setCipher(v : IBlockCipher) {
 		super.setCipher(v);
 		if(v != null && currentIV != null && currentIV.length > v.blockSize)
 			currentIV = currentIV.sub(0, v.blockSize);
@@ -80,17 +81,16 @@ class IVBase extends ModeBase {
 
 	/**
 	 * Set the initialization vector.
-	 **/
-	public function setIV( s : Bytes ) : Bytes {
+	**/
+	public function setIV(s : Bytes) : Bytes {
 		// here we use cipher.blockSize, as it may be different
 		// than out mode blockSize
 		if(s.length == 0 || (cipher != null && s.length != cipher.blockSize))
-			throw("crypt.iv: invalid length. Expected "+cipher.blockSize+" bytes.");
+			throw("crypt.iv: invalid length. Expected " + cipher.blockSize + " bytes.");
 		var len = s.length;
 		if(cipher != null && cipher.blockSize < len)
 			len = cipher.blockSize;
-		currentIV = s.sub(0,len);
+		currentIV = s.sub(0, len);
 		return s;
 	}
-
 }

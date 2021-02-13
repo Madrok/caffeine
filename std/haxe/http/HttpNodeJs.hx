@@ -23,13 +23,13 @@
 package haxe.http;
 
 #if nodejs
+import chx.ds.Bytes;
 import js.node.Buffer;
-import haxe.io.Bytes;
 
 class HttpNodeJs extends haxe.http.HttpBase {
-	var req:js.node.http.ClientRequest;
+	var req : js.node.http.ClientRequest;
 
-	public function new(url:String) {
+	public function new(url : String) {
 		super(url);
 	}
 
@@ -38,77 +38,84 @@ class HttpNodeJs extends haxe.http.HttpBase {
 		has not yet been received.
 	**/
 	public function cancel() {
-		if (req == null)
+		if(req == null)
 			return;
 		req.abort();
 		req = null;
 	}
 
-	public override function request(?post:Bool) {
+	public override function request(?post : Bool) {
 		responseAsString = null;
 		responseBytes = null;
 		var parsedUrl = new js.node.url.URL(url);
 		var secure = (parsedUrl.protocol == "https:");
 		var host = parsedUrl.hostname;
 		var path = parsedUrl.pathname;
-		var port = if (parsedUrl.port != null) Std.parseInt(parsedUrl.port) else (secure ? 443 : 80);
-		var h:Dynamic = {};
+		var port = if(parsedUrl.port != null)Std.parseInt(parsedUrl.port) else (secure ? 443 : 80);
+		var h : Dynamic = {};
 		for (i in headers) {
 			var arr = Reflect.field(h, i.name);
-			if (arr == null) {
+			if(arr == null) {
 				arr = new Array<String>();
 				Reflect.setField(h, i.name, arr);
 			}
 
 			arr.push(i.value);
 		}
-		if (postData != null || postBytes != null)
+		if(postData != null || postBytes != null)
 			post = true;
 		var uri = null;
 		for (p in params) {
-			if (uri == null)
+			if(uri == null)
 				uri = "";
 			else
 				uri += "&";
 			uri += StringTools.urlEncode(p.name) + "=" + StringTools.urlEncode(p.value);
 		}
-		var question = path.split("?").length <= 1;
-		if (uri != null)
-			path += (if (question) "?" else "&") + uri;
+		var question = path
+			.split("?")
+			.length <= 1;
+		if(uri != null)
+			path += (if(question)"?" else "&") + uri;
 
 		var opts = {
-			protocol: parsedUrl.protocol,
-			hostname: host,
-			port: port,
-			method: post ? 'POST' : 'GET',
-			path: path,
-			headers: h
+			protocol : parsedUrl.protocol,
+			hostname : host,
+			port : port,
+			method : post ? 'POST' : 'GET',
+			path : path,
+			headers : h
 		};
 		function httpResponse(res) {
 			res.setEncoding('binary');
 			var s = res.statusCode;
-			if (s != null)
+			if(s != null)
 				onStatus(s);
 			var data = [];
-			res.on('data', function(chunk:String) {
+			res.on('data', function(chunk : String) {
 				data.push(Buffer.from(chunk, 'binary'));
 			});
 			res.on('end', function(_) {
 				var buf = (data.length == 1 ? data[0] : Buffer.concat(data));
-				responseBytes = Bytes.ofData(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+				responseBytes = Bytes.ofData(buf.buffer.slice(buf.byteOffset,
+					buf.byteOffset
+					+ buf.byteLength));
 				req = null;
-				if (s != null && s >= 200 && s < 400) {
+				if(s != null && s >= 200 && s < 400) {
 					success(responseBytes);
-				} else {
+				}
+				else {
 					onError("Http Error #" + s);
 				}
 			});
 		}
-		req = secure ? js.node.Https.request(untyped opts, httpResponse) : js.node.Http.request(untyped opts, httpResponse);
-		if (post)
-			if (postData != null) {
+		req = secure ? js.node.Https.request(untyped opts,
+			httpResponse) : js.node.Http.request(untyped opts, httpResponse);
+		if(post)
+			if(postData != null) {
 				req.write(postData);
-			} else if(postBytes != null) {
+			}
+			else if(postBytes != null) {
 				req.setHeader("Content-Length", '${postBytes.length}');
 				req.write(Buffer.from(postBytes.getData()));
 			}

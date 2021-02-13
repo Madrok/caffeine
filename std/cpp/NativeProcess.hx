@@ -25,32 +25,36 @@ package cpp;
 @:buildXml('<include name="${HXCPP}/src/hx/libs/std/Build.xml"/>')
 extern class NativeProcess {
 	@:native("_hx_std_process_run")
-	static function process_run(cmd:String, vargs:Array<String>):Dynamic;
+	static function process_run(cmd : String, vargs : Array<String>) : Dynamic;
 
 	@:native("_hx_std_process_run")
-	static function process_run_with_show(cmd:String, vargs:Array<String>, inShow:Int):Dynamic;
+	static function process_run_with_show(cmd : String, vargs : Array<String>,
+		inShow : Int) : Dynamic;
 
 	@:native("_hx_std_process_stdout_read")
-	static function process_stdout_read(handle:Dynamic, buf:haxe.io.BytesData, pos:Int, len:Int):Int;
+	static function process_stdout_read(handle : Dynamic, buf : chx.ds.BytesData, pos : Int,
+		len : Int) : Int;
 
 	@:native("_hx_std_process_stderr_read")
-	static function process_stderr_read(handle:Dynamic, buf:haxe.io.BytesData, pos:Int, len:Int):Int;
+	static function process_stderr_read(handle : Dynamic, buf : chx.ds.BytesData, pos : Int,
+		len : Int) : Int;
 
 	@:native("_hx_std_process_stdin_write")
-	static function process_stdin_write(handle:Dynamic, buf:haxe.io.BytesData, pos:Int, len:Int):Int;
+	static function process_stdin_write(handle : Dynamic, buf : chx.ds.BytesData, pos : Int,
+		len : Int) : Int;
 
 	@:native("_hx_std_process_stdin_close")
-	static function process_stdin_close(handle:Dynamic):Void;
+	static function process_stdin_close(handle : Dynamic) : Void;
 
 	@:native("_hx_std_process_exit")
-	static function process_exit(handle:Dynamic):Int;
+	static function process_exit(handle : Dynamic) : Int;
 
 	@:native("_hx_std_process_pid")
-	static function process_pid(handle:Dynamic):Int;
+	static function process_pid(handle : Dynamic) : Int;
 
 	@:native("_hx_std_process_kill")
-	static function process_kill(handle:Dynamic):Void;
+	static function process_kill(handle : Dynamic) : Void;
 
 	@:native("_hx_std_process_close")
-	static function process_close(handle:Dynamic):Void;
+	static function process_close(handle : Dynamic) : Void;
 }
