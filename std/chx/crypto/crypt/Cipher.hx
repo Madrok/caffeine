@@ -134,7 +134,7 @@ class Cipher {
 		else {
 			// here we always have to reserve at least one block un-crypted when
 			// blocksize != 1, since padding may be in the last block and must
-			// be handled in final()
+			// be handled in finalize()
 			while(inputLen > 0) {
 				// flush out buf if it is full and we have more incoming
 				if(ptr == blockSize) {
