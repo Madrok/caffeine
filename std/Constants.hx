@@ -24,46 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+class Constants {
+	public static var DIGITS_BASE10(default, null) : String = "0123456789";
+	public static var DIGITS_HEXU(default, null) : String = "0123456789ABCDEF";
+	public static var DIGITS_HEXL(default, null) : String = "0123456789abcdef";
+	public static var DIGITS_OCTAL(default, null) : String = "01234567";
+	public static var DIGITS_BN(default, null) : String = "0123456789abcdefghijklmnopqrstuvwxyz";
+	public static var DIGITS_BASE64(default,
+		null) : String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	public static var DIGITS_URL_ENCODE(default,
+		null) : String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
-package chx.formats;
-
-import haxe.BaseCode;
-
-class Base64 {
-	private static var enc : BaseCode;
-
-	/**
-	* Encodes any bytes buffer to base64
-	*
-	* @param bytes Buffer to encode
-	* @return Base64 encoded string
-	**/
-	public static function encode(bytes : Bytes) : String {
-		var ext : String = switch (bytes.length % 3) {
-		case 1: "==";
-		case 2: "=";
-		case 0: "";
-		}
-		if(enc == null)
-			enc = new BaseCode(Bytes.ofString(Constants.DIGITS_BASE64));
-		return enc.encodeBytes(bytes).toString() + ext;
-	}
-
-	/**
-	* Attempt to decode a base64 encoded String. If the String can not
-	* be decoded, null will be returned.
-	*
-	* @param s Base64 encoded string
-	* @return New bytes buffer with decoded data, or null on error.
-	**/
-	public static function decode(s : String) : Bytes {
-		s = StringTools.stripWhite(s);
-		s = StringTools.replace(s,"=","");
-		if(enc == null)
-			enc = new BaseCode(Bytes.ofString(Constants.DIGITS_BASE64));
-		return
-			try enc.decodeBytes( Bytes.ofString(s) )
-			catch( e:Dynamic) null;
-	}
+	public static var PROTO_HTTP(default, null) : String = "http://";
+	public static var PROTO_HTTPS(default, null) : String = "http://";
+	public static var PROTO_FILE(default, null) : String = "file://";
+	public static var PROTO_FTP(default, null) : String = "ftp://";
+	public static var PROTO_RTMP(default, null) : String = "rtmp://";
 }
-

@@ -30,12 +30,10 @@
  */
 package chx.math.reduction;
 
-import chx.math.BigInteger;
-
-#if !neko
 /**
 	A "null" reducer
 **/
+#if !(neko || useOpenSSL)
 class Null implements ModularReduction {
 	public function new() {}
 

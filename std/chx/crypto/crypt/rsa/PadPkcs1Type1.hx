@@ -25,40 +25,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.rsa;
+package chx.crypto.crypt.rsa;
 
+import chx.ds.Bytes;
+import chx.ds.BytesBuffer;
+import chx.lang.ArgumentException;
 import chx.lang.Exception;
-import chx.lang.IllegalArgumentException;
 
-//http://tools.ietf.org/html/rfc2313 section 8.1
+// http://tools.ietf.org/html/rfc2313 section 8.1
 
 /**
  * Pads with 0xFF bytes
- **/
-class PadPkcs1Type1 extends PadBlockBase, implements IBlockPad {
+**/
+class PadPkcs1Type1 extends PadBlockBase implements IBlockPad {
 	/** only for Type1, the byte to pad with, default 0xFF **/
-	public var padByte(getPadByte,setPadByte) : Int;
+	@:isVar public var padByte(default, set) : Int;
+
 	var padCount : Int;
 	var typeByte : Int;
 
-	public function new(size:Int) {
-		Reflect.setField(this,"blockSize",size);
+	public function new(size : Int) {
+		// Reflect.setField(this, "blockSize", size);
 		setPadCount(8);
 		typeByte = 1;
 		padByte = 0xFF;
+		super(size);
 	}
 
-	public function getBytesReadPerBlock() : Int {
+	override public function getBytesReadPerBlock() : Int {
 		return textSize;
 	}
 
-	public function pad( s : Bytes ) : Bytes {
+	public function pad(s : Bytes) : Bytes {
 		if(s.length > textSize)
-			throw new Exception("Unable to pad block: provided buffer is " + s.length + " max is " + textSize);
+			throw new Exception("Unable to pad block: provided buffer is " + s.length
+				+ " max is " + textSize);
 		var sb = new BytesBuffer();
 		sb.addByte(0);
 		sb.addByte(typeByte);
-		var n = blockSize - s.length - 3; //padCount + (textSize - s.length);
+		var n = blockSize - s.length - 3; // padCount + (textSize - s.length);
 		while(n-- > 0) {
 			sb.addByte(getPadByte());
 		}
@@ -72,7 +77,7 @@ class PadPkcs1Type1 extends PadBlockBase, implements IBlockPad {
 		return rv;
 	}
 
-	public function unpad( s : Bytes ) : Bytes {
+	public function unpad(s : Bytes) : Bytes {
 		// src string may be shorter than block size. This happens when
 		// converting to BigIntegers then to padded string before calling
 		// unpad.
@@ -82,29 +87,34 @@ class PadPkcs1Type1 extends PadBlockBase, implements IBlockPad {
 		#end
 		var sb = new BytesBuffer();
 		while(i < s.length) {
-			while( i < s.length && s.get(i) == 0) ++i;
-			if(s.length-i-3-padCount < 0) {
+			while(i < s.length && s.get(i) == 0)
+				++i;
+			if(s.length - i - 3 - padCount < 0) {
 				throw new Exception("Unexpected short message");
 			}
 			if(s.get(i) != typeByte)
-				throw new Exception("Expected marker "+ typeByte + " at position "+i + " [" + BytesUtil.hexDump(s) + "]");
+				throw new Exception("Expected marker " + typeByte + " at position " + i + " ["
+					+ BytesUtil.hexDump(s) + "]");
 			if(++i >= s.length)
 				return sb.getBytes();
-			while(i < s.length && s.get(i) != 0) ++i;
+			while(i < s.length && s.get(i) != 0)
+				++i;
 			i++;
 			var n : Int = 0;
-			while(i < s.length && n++ < textSize )
+			while(i < s.length && n++ < textSize)
 				sb.addByte(s.get(i++));
 		}
 		return sb.getBytes();
 	}
 
-	public function calcNumBlocks(len : Int) : Int {
-		return Math.ceil(len/textSize);
+	override public function calcNumBlocks(len : Int) : Int {
+		return Math.ceil(len / textSize);
 	}
 
 	/** number of bytes padding needs per block **/
-	override public function blockOverhead() : Int { return 3 + padCount; }
+	public function blockOverhead() : Int {
+		return 3 + padCount;
+	}
 
 	/**
 		PKCS1 has a 3 + padCount byte overhead per block. For RSA
@@ -113,17 +123,18 @@ class PadPkcs1Type1 extends PadBlockBase, implements IBlockPad {
 	**/
 	public function setPadCount(x : Int) : Int {
 		if(x + 3 >= blockSize)
-			throw new IllegalArgumentException("Internal padding size exceeds crypt block size");
+			throw new ArgumentException("Internal padding size exceeds crypt block size");
 		padCount = x;
 		textSize = blockSize - 3 - padCount;
 		return x;
 	}
 
-	private function setBlockSize( x : Int ) : Int {
+	override private function set_blockSize(x : Int) : Int {
 		this.blockSize = x;
 		this.textSize = x - 3 - padCount;
 		if(textSize <= 0)
-			throw new IllegalArgumentException("Block size " + x + " to small for Pkcs1 with padCount "+padCount);
+			throw new ArgumentException("Block size " + x + " to small for Pkcs1 with padCount "
+				+ padCount);
 		return x;
 	}
 
@@ -132,7 +143,10 @@ class PadPkcs1Type1 extends PadBlockBase, implements IBlockPad {
 	}
 
 	public function setPadByte(x : Int) : Int {
-		this.padByte = x & 0xFF;
-		return x;
+		return this.set_padByte(x);
+	}
+
+	function set_padByte(x : Int) : Int {
+		return this.padByte = x & 0xFF;
 	}
 }

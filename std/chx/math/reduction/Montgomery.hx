@@ -31,12 +31,10 @@
  */
 package chx.math.reduction;
 
-import chx.math.BigInteger;
-
-#if !neko
 /**
 	Montgomery reduction
 **/
+#if !(neko || useOpenSSL)
 class Montgomery implements ModularReduction {
 	private var m : BigInteger;
 	private var mt2 : Int;

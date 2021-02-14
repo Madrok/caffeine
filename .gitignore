@@ -14,3 +14,4 @@ docs/**/doc.xml
 .server_cfg.json
 lime.hdll
 dump/*
+.runtest_cfg

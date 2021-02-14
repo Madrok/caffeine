@@ -194,6 +194,16 @@ abstract class Output implements IOutput {
 	}
 
 	/**
+	 * Writes 
+	 * @param x 
+	 */
+	public function writeUInt8(x : Int) {
+		if(x > 0xFF || x < 0)
+			throw new OverflowException();
+		writeByte(x & 0xFF);
+	}
+
+	/**
 		Write `x` as 16-bit signed integer.
 
 		Endianness is specified by the `bigEndian` property.

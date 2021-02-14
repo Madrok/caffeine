@@ -20,20 +20,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package haxe.crypto;
+package chx.math;
 
 /**
 	Allows one to encode/decode String and bytes using Base64 encoding.
 **/
 class Base64 {
-	public static var CHARS(default,
-		null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	public static var BYTES(default, null) = chx.ds.Bytes.ofString(CHARS);
+	public static var BYTES(default, null) = chx.ds.Bytes.ofString(Constants.DIGITS_BASE64);
+	public static var URL_BYTES(default, null) = chx.ds.Bytes.ofString(Constants.DIGITS_URL_ENCODE);
 
-	public static var URL_CHARS(default,
-		null) = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-	public static var URL_BYTES(default, null) = chx.ds.Bytes.ofString(URL_CHARS);
-
+	/**
+	 * Encode Bytes to base64 string
+	 * @param bytes 
+	 * @param complement = true Add the padding `=` signs to the encoded string
+	 * @return String
+	 */
 	public static function encode(bytes : chx.ds.Bytes, complement = true) : String {
 		var str = new BaseCode(BYTES)
 			.encodeBytes(bytes)
@@ -49,6 +50,13 @@ class Base64 {
 		return str;
 	}
 
+	/**
+	 * Decode a base64 encoded string. 
+	 * @param str 
+	 * @param complement = true The input string is padded with `=` signs et the end
+	 * @return chx.ds.Bytes
+	 * @throws chx.lang.FormatException if input string contains improper characters
+	 */
 	public static function decode(str : String, complement = true) : chx.ds.Bytes {
 		if(complement)
 			while(str.charCodeAt(str.length - 1) == "=".code)
@@ -57,6 +65,12 @@ class Base64 {
 			.decodeBytes(chx.ds.Bytes.ofString(str));
 	}
 
+	/**
+	 * Url encode bytes. Similar to base64 but uses slightly different characters
+	 * @param bytes 
+	 * @param complement = false Add the padding `=` signs to the encoded string
+	 * @return String
+	 */
 	public static function urlEncode(bytes : chx.ds.Bytes, complement = false) : String {
 		var str = new BaseCode(URL_BYTES)
 			.encodeBytes(bytes)
@@ -72,6 +86,13 @@ class Base64 {
 		return str;
 	}
 
+	/**
+	 * Decode a URL encoded string
+	 * @param str 
+	 * @param complement = false The input string is padded with `=` signs et the end
+	 * @return chx.ds.Bytes
+	 * @throws chx.lang.FormatException if input string contains improper characters
+	 */
 	public static function urlDecode(str : String, complement = false) : chx.ds.Bytes {
 		if(complement)
 			while(str.charCodeAt(str.length - 1) == "=".code)

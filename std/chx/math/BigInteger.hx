@@ -31,22 +31,24 @@
  */
 package chx.math;
 
-import chx.ds.BytesData;
+import chx.ds.Bytes;
+#if !(neko || useOpenSSL)
+import chx.ds.BytesBuffer;
+import chx.math.reduction.*;
+#end
+
 #if neko
 enum HndBI {}
 #elseif useOpenSSL
 typedef HndBI = Dynamic;
-#else
-import chx.math.reduction.Barrett;
-import chx.math.reduction.Classic;
-import chx.math.reduction.ModularReduction;
-import chx.math.reduction.Montgomery;
 #end
 
 class BigInteger {
-	#if( useOpenSSL )
+	#if( neko || useOpenSSL )
 	private var _hnd : HndBI;
+	#end
 
+	#if useOpenSSL
 	private static var op_and : Int = 1;
 	private static var op_andnot : Int = 2;
 	private static var op_or : Int = 3;
@@ -70,7 +72,7 @@ class BigInteger {
 			initBiRc();
 		if(BI_RM.length == 0)
 			throw("BI_RM not initialized");
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		Assert.isNotNull(bi_new);
 		_hnd = bi_new();
 		#else
@@ -123,7 +125,7 @@ class BigInteger {
 	//                 Conversion methods                       //
 	//////////////////////////////////////////////////////////////
 	private function fromInt(x : Int) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		_hnd = bi_from_int(_hnd, x);
 		#else
 		t = 1;
@@ -145,8 +147,8 @@ class BigInteger {
 		Set from an integer value. If x is less than -DV, the integer will
 		be parsed through fromString.
 	**/
-	public function fromInt32(x : Int32) : Void {
-		#if( useOpenSSL )
+	public function fromInt32(x : Int) : Void {
+		#if( neko || useOpenSSL )
 		_hnd = bi_from_int32(_hnd, x);
 		#else
 		fromInt(x);
@@ -154,7 +156,7 @@ class BigInteger {
 	}
 
 	private function toInt() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_to_int(_hnd);
 		#else
 		if(sign < 0) {
@@ -177,8 +179,8 @@ class BigInteger {
 		int does not support the bitlength of this BigInteger, unpredictable
 		values will occur.
 	**/
-	public function toInt32() : Int32 {
-		#if( useOpenSSL )
+	public function toInt32() : Int {
+		#if( neko || useOpenSSL )
 		return bi_to_int32(_hnd);
 		#else
 		return toInt();
@@ -301,7 +303,7 @@ class BigInteger {
 	 * Returns a bigendian bytes with no sign
 	**/
 	public function toBytesUnsigned() : Bytes {
-		#if neko
+		#if( neko )
 		return Bytes.ofData(cast bi_to_bin(_hnd));
 		#elseif useOpenSSL
 		return Bytes.ofStringData(bi_to_bin(_hnd));
@@ -317,7 +319,7 @@ class BigInteger {
 		if(i-- > 0) {
 			if(p < DB && (d = chunks[i] >> p) > 0) {
 				m = true;
-				bb.writeByte(d);
+				bb.addByte(d);
 				c++;
 			}
 			while(i >= 0) {
@@ -356,7 +358,7 @@ class BigInteger {
 		}
 		if(sigNum() == 0)
 			return "0";
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		switch(b) {
 			case 10:
 				return new String(bi_to_decimal(_hnd));
@@ -457,7 +459,7 @@ class BigInteger {
 
 	/** Absolute value **/
 	public function abs() : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_abs(_hnd);
 		return hndToBigInt(h);
 		#else
@@ -476,7 +478,7 @@ class BigInteger {
 		<pre>return + if this > a, - if this < a, 0 if equal</pre>
 	**/
 	public function compare(a : BigInteger) : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_cmp(this._hnd, a._hnd);
 		#else
 		var r = sign - a.sign;
@@ -517,7 +519,7 @@ class BigInteger {
 
 	/** true if this is even **/
 	public function isEven() : Bool {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var i : Int = bi_is_odd(this._hnd);
 		return (i == 0) ? true : false;
 		#else
@@ -537,7 +539,7 @@ class BigInteger {
 
 	/** Modulus division bn % bn **/
 	public function mod(a : BigInteger) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return hndToBigInt(bi_mod(this._hnd, a._hnd));
 		#else
 		var r : BigInteger = nbi();
@@ -551,7 +553,7 @@ class BigInteger {
 
 	/** <pre>this % n, n < 2^26</pre> **/
 	public function modInt(n : Int) : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var b = BigInteger.ofInt(n);
 		return hndToBigInt(bi_mod(this._hnd, b._hnd))
 			.toInt();
@@ -578,7 +580,7 @@ class BigInteger {
 		1/this % m (HAC 14.61)
 	**/
 	public function modInverse(m : BigInteger) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return hndToBigInt(bi_mod_inverse(this._hnd, m._hnd));
 		#else
 		var ac = m.isEven();
@@ -645,7 +647,7 @@ class BigInteger {
 
 	/** <pre>this^e % m (HAC 14.85)</pre> **/
 	public function modPow(e : BigInteger, m : BigInteger) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h : HndBI = bi_mod_exp(_hnd, e._hnd, m._hnd);
 		return hndToBigInt(h);
 		#else
@@ -756,7 +758,7 @@ class BigInteger {
 	public function modPowInt(e : Int, m : BigInteger) : BigInteger {
 		if(m == null)
 			throw "m is null";
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var ebi = BigInteger.ofInt(e);
 		return modPow(ebi, m);
 		#else
@@ -787,14 +789,14 @@ class BigInteger {
 
 	/** this^e **/
 	public function pow(e : Int) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_pow(_hnd, BigInteger
 			.ofInt(e)
 			._hnd
 		);
 		return hndToBigInt(h);
 		#else
-		return exp(e, new math.reduction.Null());
+		return exp(e, new chx.math.reduction.Null());
 		#end
 	}
 
@@ -832,7 +834,7 @@ class BigInteger {
 
 	/** return number of set bits **/
 	public function bitCount() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_bits_set(_hnd);
 		#else
 		var r = 0, x = sign & DM;
@@ -846,7 +848,7 @@ class BigInteger {
 		return the number of bits in "this"
 	**/
 	public function bitLength() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_bitlength(_hnd);
 		#else
 		if(t <= 0)
@@ -857,7 +859,7 @@ class BigInteger {
 
 	/** ~this **/
 	public function complement() : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_not(_hnd);
 		return hndToBigInt(h);
 		#else
@@ -872,7 +874,7 @@ class BigInteger {
 
 	/** <pre>this & ~(1<<n)</pre> **/
 	public function clearBit(n) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var bi : BigInteger = clone();
 		bi_clear_bit(bi._hnd, n);
 		return bi;
@@ -883,7 +885,7 @@ class BigInteger {
 
 	/** <pre>this ^ (1<<n)</pre> **/
 	public function flipBit(n) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var bi : BigInteger = nbi();
 		bi_copy(bi._hnd, cast _hnd);
 		bi_flip_bit(bi._hnd, n);
@@ -895,7 +897,7 @@ class BigInteger {
 
 	/** returns index of lowest 1-bit (or -1 if none) **/
 	public function getLowestSetBit() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_lowest_bit_set(_hnd);
 		#else
 		for (i in 0...t)
@@ -925,7 +927,7 @@ class BigInteger {
 
 	/** <pre>this | (1<<n)</pre> **/
 	public function setBit(n : Int) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var r : BigInteger = clone();
 		bi_set_bit(r._hnd, n);
 		return r;
@@ -960,7 +962,7 @@ class BigInteger {
 
 	/** <pre>true iff nth bit is set</pre> **/
 	public function testBit(n : Int) : Bool {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_test_bit(_hnd, n);
 		#else
 		var j = Math.floor(n / DB);
@@ -985,7 +987,7 @@ class BigInteger {
 
 	/** r = this + a **/
 	public function addTo(a : BigInteger, r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		bi_add_to(_hnd, a._hnd, r._hnd);
 		return;
 		#else
@@ -1034,7 +1036,7 @@ class BigInteger {
 
 	/** copy this to r **/
 	public function copyTo(r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		bi_copy(r._hnd, cast _hnd);
 		#else
 		for (i in 0...chunks.length)
@@ -1049,7 +1051,7 @@ class BigInteger {
 		<pre>r != q, this != m.  q or r may be null.</pre>
 	**/
 	public function divRemTo(m : BigInteger, q : Null<BigInteger>, ?r : Null<BigInteger>) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		if(r == null)
 			r = nbi();
 		if(q == null)
@@ -1070,12 +1072,8 @@ class BigInteger {
 		}
 		if(r == null)
 			r = nbi();
-		#if flash9
-		var y : Dynamic = nbi(); // Weird VerifyError workaround
-		// var y : BigInteger = nbi();
-		#else
+
 		var y : BigInteger = nbi();
-		#end
 		var ts : Int = sign;
 		var ms : Int = m.sign;
 
@@ -1150,7 +1148,7 @@ class BigInteger {
 		#end
 	}
 
-	#if !(useOpenSSL) /**
+	#if !(neko || useOpenSSL) /**
 		(protected) r = lower n words of "this * a", <pre>a.t <= n</pre>
 		"this" should be the larger one if appropriate.
 	**/
@@ -1181,7 +1179,7 @@ class BigInteger {
 		"this" should be the larger one if appropriate.
 	**/
 	public function multiplyTo(a : BigInteger, r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_mul_to(_hnd, a._hnd, r._hnd);
 		return;
 		#else
@@ -1199,7 +1197,7 @@ class BigInteger {
 		#end
 	}
 
-	#if !(useOpenSSL) /**
+	#if !(neko || useOpenSSL) /**
 		(protected) r = "this * a" without lower n words, <pre>n > 0</pre>
 		"this" should be the larger one if appropriate.
 	**/
@@ -1219,7 +1217,7 @@ class BigInteger {
 
 	/** <pre>r = this^2, r != this (HAC 14.16)</pre> **/
 	public function squareTo(r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		bi_sqr_to(_hnd, r._hnd);
 		return;
 		#else
@@ -1250,7 +1248,7 @@ class BigInteger {
 
 	/** <pre>r = this - a</pre> **/
 	public function subTo(a : BigInteger, r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_sub_to(_hnd, a._hnd, r._hnd);
 		return;
 		#else
@@ -1302,7 +1300,7 @@ class BigInteger {
 	//////////////////////////////////////////////////////////////
 
 	/** clamp off excess high words **/
-	#if !(useOpenSSL)
+	#if !(neko || useOpenSSL)
 	public function clamp() : Void {
 		var c = sign & DM;
 		while(t > 0 && chunks[t - 1] == c)
@@ -1319,7 +1317,7 @@ class BigInteger {
 
 	// (public) gcd(this,a) (HAC 14.54)
 	public function gcd(a : BigInteger) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_gcd(_hnd, a._hnd);
 		return hndToBigInt(h);
 		#else
@@ -1362,7 +1360,7 @@ class BigInteger {
 	/**
 		Pads the chunk buffer to n chunks, left fill with 0.
 	**/
-	#if !(useOpenSSL)
+	#if !(neko || useOpenSSL)
 	public function padTo(n : Int) : Void {
 		while(t < n) {
 			chunks[t] = 0;
@@ -1373,7 +1371,7 @@ class BigInteger {
 
 	/** return value as short (assumes DB &gt;= 16) **/
 	public function shortValue() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return toInt() & 0xffff;
 		#else
 		return (t == 0) ? sign : (chunks[0] << 16) >> 16;
@@ -1382,7 +1380,7 @@ class BigInteger {
 
 	/** return value as byte **/
 	function byteValue() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return toInt() & 0xff;
 		#else
 		return (t == 0) ? sign : (chunks[0] << 24) >> 24;
@@ -1391,7 +1389,7 @@ class BigInteger {
 
 	/** <pre>0 if this == 0, 1 if this > 0</pre>**/
 	public function sigNum() : Int {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_signum(_hnd);
 		#else
 		if(sign < 0)
@@ -1411,7 +1409,7 @@ class BigInteger {
 		<pre>this += n << w words, this >= 0</pre>
 	**/
 	public function dAddOffset(n : Int, w : Int) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var bi : BigInteger = BigInteger.ofInt(w);
 		if(w != 0)
 			bi = bi.shl(w * 32);
@@ -1433,7 +1431,7 @@ class BigInteger {
 		#end
 	}
 
-	#if !(useOpenSSL) /** <pre> r = this << n*DB </pre> **/
+	#if !(neko || useOpenSSL) /** <pre> r = this << n*DB </pre> **/
 	public function dlShiftTo(n : Int, r : BigInteger) : Void {
 		if(r == null)
 			return;
@@ -1496,7 +1494,7 @@ class BigInteger {
 
 	/** <pre>test primality with certainty >= 1-.5^t</pre> **/
 	public function isProbablePrime(v : Int) : Bool {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		return bi_is_prime(_hnd, v, true);
 		#else
 		var i : Int;
@@ -1542,7 +1540,7 @@ class BigInteger {
 	//					Private methods							//
 	//////////////////////////////////////////////////////////////
 	// (protected) r = this op a (bitwise)
-	#if( useOpenSSL )
+	#if( neko || useOpenSSL )
 	function bitwiseTo(a : BigInteger, op : Int, r : BigInteger) : Void {
 		bi_bitwise_to(_hnd, a._hnd, op, r._hnd);
 	}
@@ -1569,7 +1567,7 @@ class BigInteger {
 	}
 	#end
 
-	#if !(useOpenSSL) /** this op (1<<n) 	**/
+	#if !(neko || useOpenSSL) /** this op (1<<n) 	**/
 	function changeBit(n, op) : BigInteger {
 		var r = ONE.shl(n);
 		bitwiseTo(r, op, r);
@@ -1592,13 +1590,9 @@ class BigInteger {
 
 	/** <pre>this^e, e < 2^32, doing sqr and mul with "r" (HAC 14.79)</pre> **/
 	function exp(e : Int, z : ModularReduction) : BigInteger {
-		#if !neko
 		if(e > 0x7fffffff || e < 1)
 			return ONE;
-		#else
-		if(e < 1)
-			return ONE;
-		#end
+
 		var r : BigInteger = nbi();
 		var r2 : BigInteger = nbi();
 		var g : BigInteger = z.convert(this);
@@ -1660,7 +1654,7 @@ class BigInteger {
 
 	/** <pre>r = this << n </pre> **/
 	function lShiftTo(n : Int, r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_shl_to(_hnd, n, r._hnd);
 		return;
 		#else
@@ -1692,7 +1686,7 @@ class BigInteger {
 
 	/** <pre>r = this >> n</pre> **/
 	function rShiftTo(n : Int, r : BigInteger) : Void {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var h = bi_shr_to(_hnd, n, r._hnd);
 		return;
 		#else
@@ -1718,7 +1712,7 @@ class BigInteger {
 		#end
 	}
 
-	#if !(useOpenSSL)
+	#if !(neko || useOpenSSL)
 	#if js
 	// am1: use a single mult and divide to get the high bits,
 	// max digit bits should be 26 because
@@ -1735,7 +1729,7 @@ class BigInteger {
 	}
 	#end
 
-	#if !(useOpenSSL) // am: Compute w_j += (x*this_i), propagate carries,
+	#if !(neko || useOpenSSL) // am: Compute w_j += (x*this_i), propagate carries,
 	// c is initial carry, returns final carry.
 	// c < 3*dvalue, x < 2*dvalue, this_i < dvalue
 	//
@@ -1920,7 +1914,7 @@ class BigInteger {
 	 * with a 0 byte.
 	**/
 	public static function ofString(s : String, base : Int) : BigInteger {
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		var sn = #if neko Bytes
 			.ofString(s)
 			.getData()
@@ -2039,7 +2033,7 @@ class BigInteger {
 	/**
 		Construct a BigInteger from an integer value
 	**/
-	public static function ofInt32(x : Int32) : BigInteger {
+	public static function ofInt32(x : Int) : BigInteger {
 		var i = nbi();
 		i.fromInt32(x);
 		return i;
@@ -2151,10 +2145,10 @@ class BigInteger {
 	**/
 	public static function random(bits : Int, ?rng : chx.math.prng.Random) : BigInteger {
 		if(rng == null)
-			rng = new math.prng.Random();
+			rng = new chx.math.prng.Random();
 		if(bits < 2)
 			return ofInt(1);
-		#if( useOpenSSL )
+		#if( neko || useOpenSSL )
 		seedRandom(bits, rng);
 		var hrnd : Dynamic = bi_rand(bits, -1, 0);
 		return hndToBigInt(hrnd);
@@ -2177,14 +2171,14 @@ class BigInteger {
 	public static function randomPrime(bits : Int, gcdExp : BigInteger, iterations : Int,
 			forceLength : Bool, ?rng : chx.math.prng.Random) : BigInteger {
 		if(rng == null)
-			rng = new math.prng.Random();
-		#if( useOpenSSL )
+			rng = new chx.math.prng.Random();
+		#if( neko || useOpenSSL )
 		seedRandom(bits, rng);
 		#end
 		if(iterations < 1)
 			iterations = 1;
 		while(true) {
-			#if( useOpenSSL )
+			#if( neko || useOpenSSL )
 			var i : BigInteger = hndToBigInt(bi_generate_prime(bits, false));
 			#else
 			var i : BigInteger = BigInteger.random(bits, rng);
@@ -2211,7 +2205,7 @@ class BigInteger {
 	//////////////////////////////////////////////////////////////
 	//                  Operator functions                      //
 	//////////////////////////////////////////////////////////////
-	#if !(useOpenSSL)
+	#if !(neko || useOpenSSL)
 	public static function op_and(x : Int, y : Int) : Int {
 		return x & y;
 	}
@@ -2311,7 +2305,7 @@ class BigInteger {
 		return r;
 	}
 
-	#if !(useOpenSSL)
+	#if !(neko || useOpenSSL)
 	static function dumpBi(r : BigInteger) : String {
 		var s = "sign: " + Std.string(r.sign);
 		s += " t: " + r.t;
@@ -2320,14 +2314,14 @@ class BigInteger {
 	}
 	#end
 
-	#if( useOpenSSL )
+	#if( neko || useOpenSSL )
 	static function hndToBigInt(h : HndBI) : BigInteger {
 		var rv = BigInteger.nbi();
 		rv._hnd = h;
 		return rv;
 	}
 
-	static function seedRandom(bits : Int, b : math.prng.Random) : Void {
+	static function seedRandom(bits : Int, b : chx.math.prng.Random) : Void {
 		var len = (bits >> 3) + 1;
 		var x = Bytes.alloc(len);
 		b.nextBytes(x, 0, len);

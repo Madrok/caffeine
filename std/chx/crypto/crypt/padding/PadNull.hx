@@ -27,25 +27,28 @@
 
 package chx.crypt.padding;
 
+import chx.ds.Bytes;
+import chx.ds.BytesBuffer;
+
 /**
  * Pads with NULL (0) bytes
- **/
+**/
 class PadNull implements IPad {
-	public var blockSize(default,setBlockSize) : Int;
-	public var textSize(default,null) : Int;
+	public var blockSize(default, set) : Int;
+	public var textSize(default, null) : Int;
 
-	public function new( blockSize : Null<Int> = null ) {
+	public function new(blockSize : Null<Int> = null) {
 		if(blockSize != null)
-			setBlockSize(blockSize);
+			set_blockSize(blockSize);
 	}
 
-	public function pad( s : Bytes ) : Bytes {
+	public function pad(s : Bytes) : Bytes {
 		var r = blockSize - (s.length % blockSize);
 		if(r == blockSize)
 			return s;
 		var sb = new BytesBuffer();
 		sb.add(s);
-		for(x in 0...r) {
+		for (x in 0...r) {
 			sb.addByte(0);
 		}
 		return sb.getBytes();
@@ -55,16 +58,16 @@ class PadNull implements IPad {
 	 * Null padded strings can't be reliably unpadded, since the
 	 * source may contain nulls. It is up to the implementation to
 	 * keep track of how many bytes in the packet are used.
-	 **/
-	public function unpad( s : Bytes ) : Bytes {
+	**/
+	public function unpad(s : Bytes) : Bytes {
 		return s;
 	}
 
 	public function calcNumBlocks(len : Int) : Int {
-		return Math.ceil(len/blockSize);
+		return Math.ceil(len / blockSize);
 	}
 
-	private function setBlockSize( x : Int ) : Int {
+	private function set_blockSize(x : Int) : Int {
 		this.blockSize = x;
 		this.textSize = x;
 		return x;

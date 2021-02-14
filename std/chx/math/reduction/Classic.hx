@@ -30,12 +30,12 @@
  */
 package chx.math.reduction;
 
+/**
+ * Modular reduction using "classic" algorithm
+ */
+#if !(neko || useOpenSSL)
 import chx.math.BigInteger;
 
-#if !neko
-/**
-	Modular reduction using "classic" algorithm
-**/
 class Classic implements ModularReduction {
 	private var m : BigInteger;
 

@@ -28,7 +28,7 @@
 /*
  * Derived from javascript implementation Copyright (c) 2005 Tom Wu
  */
-package math.prng;
+package chx.math.prng;
 
 class ArcFour implements IPrng {
 	var i : Int;

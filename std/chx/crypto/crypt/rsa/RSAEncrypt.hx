@@ -28,6 +28,8 @@
 package chx.crypto.crypt.rsa;
 
 import chx.crypto.crypt.IBlockCipher;
+import chx.ds.Bytes;
+import chx.ds.BytesBuffer;
 import chx.math.BigInteger;
 import chx.math.prng.Random;
 
@@ -39,13 +41,13 @@ class RSAEncrypt implements IBlockCipher {
 	// public key
 
 	/** modulus **/
-	public var n(get_n, set_n) : BigInteger;
+	@:isVar public var n(get, set) : BigInteger;
 
 	/** exponent. <2^31 **/
-	public var e(get_e, set_e) : Int;
+	@:isVar public var e(get, set) : Int;
 
-	public var blockSize(__getBlockSize, null) : Int;
-	public var blockPad(getBlockPad, setBlockPad) : IBlockPad;
+	public var blockSize(get, null) : Int;
+	public var blockPad : IBlockPad;
 
 	#if useOpenSSL
 	var handle : Dynamic;
@@ -208,10 +210,10 @@ class RSAEncrypt implements IBlockCipher {
 		var s : String = BytesUtil.cleanHexFormat(nHex);
 		n = BigInteger.ofString(s, 16);
 		if(n == null)
-			throw new chx.lang.IllegalArgumentException("nHex not a valid big integer: " + nHex);
+			throw new chx.lang.ArgumentException("nHex not a valid big integer: " + nHex);
 		var ie : Null<Int> = Std.parseInt("0x" + BytesUtil.cleanHexFormat(eHex));
 		if(ie == null || ie == 0)
-			throw new chx.lang.IllegalArgumentException("eHex not a vlaid big integer: " + eHex);
+			throw new chx.lang.ArgumentException("eHex not a vlaid big integer: " + eHex);
 		e = ie;
 	}
 
@@ -286,7 +288,7 @@ class RSAEncrypt implements IBlockCipher {
 	//////////////////////////////////////////////////
 	//             getters/setters                  //
 	//////////////////////////////////////////////////
-	function __getBlockSize() : Int {
+	function get_blockSize() : Int {
 		#if useOpenSSL
 		return rsa_size(handle);
 		#else

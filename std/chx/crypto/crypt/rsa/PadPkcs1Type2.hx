@@ -25,25 +25,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.rsa;
+package chx.crypto.crypt.rsa;
 
-import math.prng.Random;
+import chx.math.prng.Random;
 
 /**
  * Pads buffer with random bytes
- **/
-class PadPkcs1Type2 extends PadPkcs1Type1, implements IBlockPad {
+**/
+class PadPkcs1Type2 extends PadPkcs1Type1 implements IBlockPad {
 	var rng : Random;
 
-	public function new( size : Int ) {
+	public function new(size : Int) {
 		super(size);
 		typeByte = 2;
 		rng = new Random();
 	}
 
 	override public function getPadByte() : Int {
-		var x: Int = 0;
-		while(x == 0) x = rng.next();
+		var x : Int = 0;
+		while(x == 0)
+			x = rng.next();
 		return x;
 	}
 }

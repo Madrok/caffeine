@@ -1,30 +1,35 @@
 -cp tests
--cp src
 --debug
 
 --each
 
 --next
+--cmd echo "*** CPP BUILD STARTED ***"
 --cpp bin/cpp
 --cmd echo "*** CPP BUILD COMPLETE ***"
 
 --next
+--cmd echo "*** HASHLINK BUILD STARTED ***"
 --hl bin/main.hl
 --cmd echo "*** HASHLINK BUILD COMPLETE ***"
 
 --next
+--cmd echo "*** NEKO BUILD STARTED ***"
 --neko bin/main.n
 --cmd echo "*** NEKO BUILD COMPLETE ***"
 
 # --next
+# --cmd echo "*** LUA BUILD STARTED ***"
 # --lua bin/main.lua
 # --cmd echo "*** LUA BUILD COMPLETE ***"
 
 --next
+--cmd echo "*** JAVA BUILD STARTED ***"
 --java bin/java
 --cmd echo "*** JAVA BUILD COMPLETE ***"
 
 --next
+--cmd echo "*** PYTHON BUILD STARTED ***"
 --python bin/main.py
 --cmd echo "*** PYTHON BUILD COMPLETE ***"
 

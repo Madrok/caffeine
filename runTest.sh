@@ -17,6 +17,6 @@ echo -e "${RED}hashlink${NC}..."
 hl bin/main.hl
 
 echo -e "${RED}java${NC}..."
-java -jar bin/java/TestSocket-Debug.jar 
+java -jar bin/java/$1-Debug.jar 
 
 

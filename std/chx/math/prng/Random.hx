@@ -34,6 +34,7 @@
 **/
 package chx.math.prng;
 
+import chx.ds.Bytes;
 import chx.io.Output;
 
 class Random {

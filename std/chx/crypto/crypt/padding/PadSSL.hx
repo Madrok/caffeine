@@ -27,15 +27,18 @@
 
 package chx.crypt.padding;
 
+import chx.ds.Bytes;
+
 /**
  * SSL padding. Just like TLS padding, but bytes other than last one
  * are arbitrary.
  * @todo pad could insert random data, other than last byte
- **/
-class PadSSL extends PadTLS, implements IPad {
-	override public function unpad( s : Bytes ) : Bytes {
-		if( s.length % blockSize != 0)
-			throw new chx.lang.Exception("PadTLS unpad: buffer length "+s.length+" not multiple of block size " + blockSize);
-		return s.sub(0, s.length - s.get(s.length-1) - 1);
+**/
+class PadSSL extends PadTLS implements IPad {
+	override public function unpad(s : Bytes) : Bytes {
+		if(s.length % blockSize != 0)
+			throw new chx.lang.Exception("PadTLS unpad: buffer length " + s.length
+				+ " not multiple of block size " + blockSize);
+		return s.sub(0, s.length - s.get(s.length - 1) - 1);
 	}
 }

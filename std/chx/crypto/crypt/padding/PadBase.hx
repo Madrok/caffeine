@@ -25,38 +25,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.padding;
+package chx.crypto.crypt.padding;
 
-class PadBase implements IPad {
+import chx.ds.Bytes;
 
-	public var blockSize(default,setBlockSize) : Int;
+abstract class PadBase implements chx.crypto.crypt.IPad {
+	public var blockSize(default, set) : Int;
 
-	public function new( blockSize : Null<Int> = null ) {
+	public function new(blockSize : Null<Int> = null) {
 		if(blockSize != null)
-			setBlockSize(blockSize);
+			set_blockSize(blockSize);
 	}
 
-	public function pad( s : Bytes ) : Bytes {
-		return throw new chx.lang.FatalException("not implemented");
-	}
-	
-	public function unpad( s : Bytes ) : Bytes {
-		return throw new chx.lang.FatalException("not implemented");
-	}
+	abstract public function pad(s : Bytes) : Bytes;
 
-	function setBlockSize(len : Int) : Int {
+	abstract public function unpad(s : Bytes) : Bytes;
+
+	function set_blockSize(len : Int) : Int {
 		blockSize = len;
 		return len;
 	}
 
 	public function calcNumBlocks(len : Int) : Int {
-		if(len == 0) return 0;
-		var n : Int = Math.ceil(len/blockSize);
+		if(len == 0)
+			return 0;
+		var n : Int = Math.ceil(len / blockSize);
 		// most pads will require an extra block if the input length
 		// is an exact multiple of the block size
- 		if(len % blockSize == 0)
- 			n++;
+		if(len % blockSize == 0)
+			n++;
 		return n;
 	}
-
 }

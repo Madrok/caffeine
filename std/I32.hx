@@ -28,6 +28,17 @@ import chx.ds.BytesBuffer;
 
 typedef Int32 = Int;
 
+/* TODO convert to an abstract?
+	abstract I32abstract(Int) to Int from Int {
+	inline public function new(i : Int) {
+		this = i;
+	}
+
+	inline public function add(v : Int) {
+		return this + v;
+	}
+	}
+ */
 /**
  * Static methods for cross platform use of 32 bit Int. All methods are inline,
  * so there is no performance penalty.
@@ -38,6 +49,7 @@ typedef Int32 = Int;
  * call the I32 functions.
  *
  * @author		Russell Weir
+ * @todo Convert to an abstract or delete. Keep the pack* functions though if deleted
 **/
 @:deprecated("Code using this was from haxe 2.x. Oh the hoops we had to jump through")
 class I32 {

@@ -25,15 +25,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.rsa;
+package chx.crypto.crypt.rsa;
+
+import chx.ds.Bytes;
 
 interface IBlockPad {
 	/** finished padded block size **/
-	var blockSize(default,setBlockSize) : Int;
+	var blockSize(default, set) : Int;
 
-	function pad( s : Bytes ) : Bytes;
+	function pad(s : Bytes) : Bytes;
 
-	function unpad( s : Bytes ) : Bytes;
+	function unpad(s : Bytes) : Bytes;
 
 	/** returns the number of blocks for message length len **/
 	function calcNumBlocks(len : Int) : Int;
@@ -44,7 +46,6 @@ interface IBlockPad {
 	/**
 	 * Number of bytes of source material that will actually be written into each block.
 	 * On block pads, this will be less than the block size. (blockSize-blockOverhead)
-	 **/
+	**/
 	function getBytesReadPerBlock() : Int;
-
 }

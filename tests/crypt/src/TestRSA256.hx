@@ -1,15 +1,15 @@
-import chx.crypt.RSA;
+import chx.crypt.crypto.rsa;
 
 /*
 	Test of a 256 bit RSA key
-*/
+ */
 class TestRSA256 {
 	public static function main() {
-#if !neko
+		#if !neko
 		if(haxe.Firebug.detect()) {
 			haxe.Firebug.redirectTraces();
 		}
-#end
+		#end
 		var msg = "Hello";
 		// a 256 bit key
 		var dmp1 : String = "3";
@@ -21,15 +21,16 @@ class TestRSA256 {
 		var p : String = "f155e239a68fb5a0208e2abe6787d1d7";
 		var q : String = "c0a38824bbf8c011613aa19652eb7a8f";
 		var rsa = new RSA();
-		rsa.setPrivateEx(n, e,d, p, q, null, null, coeff);
+		rsa.setPrivateEx(n, e, d, p, q, null, null, coeff);
 		trace(rsa);
 
 		var e = rsa.encrypt(Bytes.ofString(msg));
-		var u = rsa.decrypt(e).toString();
+		var u = rsa
+			.decrypt(e)
+			.toString();
 		if(msg != u)
 			trace("failed");
 		else
 			trace("ok");
-
 	}
 }

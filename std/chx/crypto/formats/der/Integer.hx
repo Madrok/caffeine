@@ -34,36 +34,34 @@
  * An ASN1 type for an Integer, represented with a BigInteger
  */
 package chx.formats.der;
-import math.BigInteger;
 
-class Integer extends BigInteger, implements IAsn1Type
-{
+import chx.math.BigInteger;
+
+class Integer extends BigInteger, implements IAsn1Type {
 	public static inline var TYPE : Int = 0x02;
 
-	public function new(b:Bytes) {
+	public function new(b : Bytes) {
 		super();
 		#if CAFFEINE_DEBUG
-		//if(b.length <50) {
+		// if(b.length <50) {
 		//	trace(DER.indent + b.toHex());
-		//}
+		// }
 		#end
 		var bi = BigInteger.ofBytes(b, false);
 		bi.copyTo(this);
 		#if CAFFEINE_DEBUG
-		//trace(DER.indent + this.toHex());
+		// trace(DER.indent + this.toHex());
 		#end
 	}
 
-	public function getType():Int
-	{
+	public function getType() : Int {
 		return TYPE;
 	}
 
 	/**
 	 * @todo check implementation toBytes returns same as ofBytes()
-	 **/
-	public function toDER():Bytes {
+	**/
+	public function toDER() : Bytes {
 		return DER.wrapDER(TYPE, this.toBytes());
 	}
-
 }

@@ -27,21 +27,21 @@
 
 package chx.crypt.padding;
 
+import chx.ds.Bytes;
+
 /**
  * Perform no padding. 
- **/
-class PadNone extends PadBase, implements IPad {
-
-	override public function pad( s : Bytes ) : Bytes {
+**/
+class PadNone extends PadBase implements IPad {
+	override public function pad(s : Bytes) : Bytes {
 		return s;
 	}
 
-	override public function unpad( s : Bytes ) : Bytes {
+	override public function unpad(s : Bytes) : Bytes {
 		return s;
 	}
 
 	override public function calcNumBlocks(len : Int) : Int {
-		return Math.ceil(len/blockSize);
+		return Math.ceil(len / blockSize);
 	}
-
 }

@@ -25,31 +25,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package chx.crypt.rsa;
+package chx.crypto.crypt.rsa;
 
 /**
  * Pads that work on blocks, and not on the full buffer.
- **/
-class PadBlockBase extends chx.crypt.PadBase, implements IBlockPad {
+**/
+abstract class PadBlockBase extends chx.crypto.crypt.padding.PadBase implements IBlockPad {
 	/** the number of bytes that can fit in each block **/
-	public var textSize(default,null) : Int;
+	public var textSize(default, null) : Int;
 
 	override public function calcNumBlocks(len : Int) : Int {
 		var ch : Int = getBytesReadPerBlock();
-		var n : Int = Math.ceil(len/ch);
-		//if(len % blockSize == 0)
+		var n : Int = Math.ceil(len / ch);
+		// if(len % blockSize == 0)
 		//	n++;
 		return n;
 	}
 
-	override public function getBytesReadPerBlock() : Int {
+	public function getBytesReadPerBlock() : Int {
 		return blockSize - blockOverhead();
 	}
 
 	/**
 	 * Returns the number of bytes padding needs per block
-	 **/
-	public function blockOverhead() : Int {
-		return throw new chx.lang.FatalException("not implemented");
-	}
+	**/
+	abstract public function blockOverhead() : Int;
 }

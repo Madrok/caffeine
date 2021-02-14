@@ -32,6 +32,7 @@ package chx.math.reduction;
 
 import chx.math.BigInteger;
 
+#if !(neko || useOpenSSL)
 class Barrett implements ModularReduction {
 	var m : BigInteger;
 	var mu : BigInteger;
@@ -93,3 +94,4 @@ class Barrett implements ModularReduction {
 		reduce(r);
 	}
 }
+#end
