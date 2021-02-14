@@ -31,7 +31,7 @@ package chx.ds;
 
 	@see https://haxe.org/manual/std-Map.html
 **/
-class WeakMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+class WeakMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	/**
 		Creates a new WeakMap.
 	**/

@@ -25,7 +25,7 @@ package chx.ds;
 import php.*;
 
 @:coreApi
-class ObjectMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+class ObjectMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	var _keys : NativeAssocArray<K>;
 	var _values : NativeAssocArray<V>;
 

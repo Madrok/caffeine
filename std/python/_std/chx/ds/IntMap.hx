@@ -25,7 +25,7 @@ package chx.ds;
 import python.Dict;
 import python.Syntax;
 
-class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	private var h : Dict<Int, T>;
 
 	public function new() : Void {

@@ -44,7 +44,7 @@ private class StringMapKeysIterator {
 }
 
 @:coreApi
-class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	var h : hl.types.BytesMap;
 
 	public function new() : Void {

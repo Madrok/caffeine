@@ -44,7 +44,7 @@ package chx.ds;
   inline void set(Dynamic key, const ::cpp::Function<V> &value) {__object_hash_set(HX_MAP_THIS,key,(Dynamic)value,true ); }
 ")
 @:coreApi
-class WeakMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+class WeakMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	@:ifFeature("chx.ds.WeakMap.*")
 	private var h : Dynamic;
 

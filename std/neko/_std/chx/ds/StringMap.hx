@@ -22,7 +22,7 @@
 
 package chx.ds;
 
-@:coreApi class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+@:coreApi class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	private var h : Dynamic;
 
 	public function new() : Void {

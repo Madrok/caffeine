@@ -22,7 +22,7 @@
 
 package chx.ds;
 
-import haxe.Constraints.IMap;
+import chx.ds.Map.IMap;
 import haxe.DynamicAccess;
 import js.lib.Object;
 
@@ -187,7 +187,7 @@ private class StringMapIterator<T> {
 	}
 }
 
-@:coreApi class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+@:coreApi class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	private var h : Dynamic;
 	private var rh : Dynamic;
 

@@ -32,7 +32,7 @@ package chx.ds;
 
 	@see https://haxe.org/manual/std-Map.html
 **/
-extern class ObjectMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+extern class ObjectMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	/**
 		Creates a new ObjectMap.
 	**/

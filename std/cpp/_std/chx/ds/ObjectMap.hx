@@ -51,7 +51,7 @@ package chx.ds;
 
 ")
 @:coreApi
-class ObjectMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+class ObjectMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	@:ifFeature("chx.ds.ObjectMap.*")
 	private var h : Dynamic;
 

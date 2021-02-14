@@ -82,7 +82,7 @@ class HostClasses {
 	static function onGenerateCppia(types : Array<Type>) : Void {
 		var externs = new Map<String, Bool>();
 		externs.set("Sys", true);
-		externs.set("haxe.IMap", true);
+		externs.set("chx.ds.Map.IMap", true);
 		externs.set("haxe.crypto.HashMethod", true);
 		externs.set("haxe._Int64.Int64_Impl_", true);
 		externs.set("haxe._Int64.___Int64", true);
@@ -145,7 +145,7 @@ class HostClasses {
 
 	// Ensure that the standard classes are included in the host
 	public static function include() {
-		Compiler.keep("haxe.IMap");
+		Compiler.keep("chx.ds.Map.IMap");
 		Compiler.keep("haxe.crypto.HashMethod");
 		Compiler.keep("haxe._Int64.Int64_Impl_");
 		Compiler.keep("haxe._Int32.Int32_Impl_");

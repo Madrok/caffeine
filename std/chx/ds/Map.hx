@@ -24,9 +24,9 @@ package chx.ds;
 
 import chx.ds.EnumValueMap;
 import chx.ds.IntMap;
+import chx.ds.Map.IMap;
 import chx.ds.ObjectMap;
 import chx.ds.StringMap;
-import haxe.Constraints.IMap;
 
 interface IMap<K, V> {
 	function get(k : K) : Null<V>;

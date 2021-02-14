@@ -29,10 +29,10 @@ import chx.ds.IntMap;
 **/
 @:ifFeature("anon_read.keyValueIterator", "dynamic_read.keyValueIterator")
 class MapKeyValueIterator<K, V> {
-	var map : haxe.Constraints.IMap<K, V>;
+	var map : chx.ds.Map.IMap<K, V>;
 	var keys : Iterator<K>;
 
-	public inline function new(map : haxe.Constraints.IMap<K, V>) {
+	public inline function new(map : chx.ds.Map.IMap<K, V>) {
 		this.map = map;
 		this.keys = map.keys();
 	}

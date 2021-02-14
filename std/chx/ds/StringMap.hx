@@ -29,7 +29,7 @@ package chx.ds;
 
 	@see https://haxe.org/manual/std-Map.html
 **/
-extern class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+extern class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	/**
 		Creates a new StringMap.
 	**/

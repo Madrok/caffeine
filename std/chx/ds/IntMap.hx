@@ -29,7 +29,7 @@ package chx.ds;
 
 	@see https://haxe.org/manual/std-Map.html
 **/
-extern class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+extern class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	/**
 		Creates a new IntMap.
 	**/

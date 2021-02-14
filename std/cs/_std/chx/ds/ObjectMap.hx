@@ -24,7 +24,7 @@ package chx.ds;
 
 import cs.NativeArray;
 
-@:coreApi class ObjectMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+@:coreApi class ObjectMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	extern private static inline var HASH_UPPER = 0.77;
 	extern private static inline var FLAG_EMPTY = 0;
 	extern private static inline var FLAG_DEL = 1;

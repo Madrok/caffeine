@@ -23,7 +23,7 @@
 package chx.ds;
 
 @:coreApi
-class ObjectMap<K:{}, T> implements haxe.Constraints.IMap<K, T> {
+class ObjectMap<K:{}, T> implements chx.ds.Map.IMap<K, T> {
 	var h : hl.types.ObjectMap;
 
 	public function new() : Void {

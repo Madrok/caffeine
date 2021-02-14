@@ -22,7 +22,7 @@
 
 package chx.ds;
 
-class ObjectMap<A, B> implements haxe.Constraints.IMap<A, B> {
+class ObjectMap<A, B> implements chx.ds.Map.IMap<A, B> {
 	static var count = 0;
 
 	static inline function assignId(obj : {}) : Int {

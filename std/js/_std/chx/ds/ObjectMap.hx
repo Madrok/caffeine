@@ -26,7 +26,7 @@ import js.Lib;
 import js.Syntax;
 
 @:coreApi
-class ObjectMap<K:{}, V> implements haxe.Constraints.IMap<K, V> {
+class ObjectMap<K:{}, V> implements chx.ds.Map.IMap<K, V> {
 	static var count : Int;
 
 	// initialize count through __init__ magic, because these are generated

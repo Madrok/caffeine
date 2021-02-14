@@ -22,7 +22,7 @@
 
 package chx.ds;
 
-@:coreApi class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+@:coreApi class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	private var h : Dynamic;
 
 	public function new() : Void {

@@ -23,7 +23,7 @@
 package chx.ds;
 
 @:coreApi
-class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	var hashMap : java.util.HashMap<String, T>;
 
 	@:overload

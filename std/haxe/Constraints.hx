@@ -46,7 +46,7 @@ abstract FlatEnum(Dynamic) {}
 	It is intended to be used as a type parameter constraint. If used as a real
 	type, the underlying type will be `Dynamic`.
 **/
-abstract NotVoid(Dynamic) { }
+abstract NotVoid(Dynamic) {}
 
 /**
 	This type unifies with any instance of classes that have a constructor
@@ -63,16 +63,3 @@ abstract NotVoid(Dynamic) { }
 	type, the underlying type will be `Dynamic`.
 **/
 abstract Constructible<T>(Dynamic) {}
-
-interface IMap<K, V> {
-	function get(k:K):Null<V>;
-	function set(k:K, v:V):Void;
-	function exists(k:K):Bool;
-	function remove(k:K):Bool;
-	function keys():Iterator<K>;
-	function iterator():Iterator<V>;
-	function keyValueIterator():KeyValueIterator<K, V>;
-	function copy():IMap<K, V>;
-	function toString():String;
-	function clear():Void;
-}

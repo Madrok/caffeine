@@ -24,7 +24,7 @@ package chx.ds;
 
 import lua.Lua;
 
-class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	private var h : lua.Table<String, T>;
 
 	static var tnull : Dynamic = lua.Table.create();

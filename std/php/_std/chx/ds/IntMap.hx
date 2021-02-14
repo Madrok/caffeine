@@ -27,7 +27,7 @@ import php.NativeArray;
 import php.NativeIndexedArray;
 import php.Syntax;
 
-@:coreApi class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+@:coreApi class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	var data : NativeIndexedArray<T>;
 
 	public function new() : Void {

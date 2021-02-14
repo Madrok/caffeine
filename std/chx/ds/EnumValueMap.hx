@@ -29,7 +29,7 @@ package chx.ds;
 	parameter is not an enum value, `Reflect.compare` is used to compare them.
 **/
 class EnumValueMap<K:EnumValue, V> extends haxe.ds.BalancedTree<K, V>
-		implements haxe.Constraints.IMap<K, V> {
+		implements chx.ds.Map.IMap<K, V> {
 	override function compare(k1 : EnumValue, k2 : EnumValue) : Int {
 		var d = k1.getIndex() - k2.getIndex();
 		if(d != 0)

@@ -32,7 +32,7 @@ package chx.ds;
 	Iteration over keys and values, using `keys` and `iterator` respectively,
 	are in-order.
 **/
-class BalancedTree<K, V> implements haxe.Constraints.IMap<K, V> {
+class BalancedTree<K, V> implements chx.ds.Map.IMap<K, V> {
 	var root : TreeNode<K, V>;
 
 	/**

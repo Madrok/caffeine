@@ -31,7 +31,7 @@ import java.NativeArray;
  * Thanks also to Jonas Malaco Filho for his Haxe-written IntMap code inspired by Python tables.
  * (https://jonasmalaco.com/fossil/test/jonas-haxe/artifact/887b53126e237d6c68951111d594033403889304)
  */
-@:coreApi class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+@:coreApi class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	private static inline var HASH_UPPER = 0.7;
 
 	private var flags : NativeArray<Int>;

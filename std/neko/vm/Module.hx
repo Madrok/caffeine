@@ -22,6 +22,8 @@
 
 package neko.vm;
 
+import chx.ds.Map;
+
 /**
 	The abstract Neko module handle.
 **/

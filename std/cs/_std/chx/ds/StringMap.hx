@@ -24,7 +24,7 @@ package chx.ds;
 
 import cs.NativeArray;
 
-@:coreApi class StringMap<T> implements haxe.Constraints.IMap<String, T> {
+@:coreApi class StringMap<T> implements chx.ds.Map.IMap<String, T> {
 	extern private static inline var HASH_UPPER = 0.77;
 	extern private static inline var FLAG_EMPTY = 0;
 	extern private static inline var FLAG_DEL = 1;

@@ -51,7 +51,7 @@ package chx.ds;
   inline Float get_float(int key) { return __int_hash_get_float(h,key); }
   inline String get_string(int key) { return __int_hash_get_string(h,key); }
 ")
-@:coreApi class IntMap<T> implements haxe.Constraints.IMap<Int, T> {
+@:coreApi class IntMap<T> implements chx.ds.Map.IMap<Int, T> {
 	@:ifFeature("chx.ds.IntMap.*")
 	private var h : Dynamic;
 
