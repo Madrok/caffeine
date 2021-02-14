@@ -23,12 +23,23 @@
 package chx.ds;
 
 import chx.ds.EnumValueMap;
-import chx.ds.HashMap;
 import chx.ds.IntMap;
 import chx.ds.ObjectMap;
 import chx.ds.StringMap;
-import chx.ds.WeakMap;
 import haxe.Constraints.IMap;
+
+interface IMap<K, V> {
+	function get(k : K) : Null<V>;
+	function set(k : K, v : V) : Void;
+	function exists(k : K) : Bool;
+	function remove(k : K) : Bool;
+	function keys() : Iterator<K>;
+	function iterator() : Iterator<V>;
+	function keyValueIterator() : KeyValueIterator<K, V>;
+	function copy() : IMap<K, V>;
+	function toString() : String;
+	function clear() : Void;
+}
 
 /**
 	Map allows key to value mapping for arbitrary value types, and many key

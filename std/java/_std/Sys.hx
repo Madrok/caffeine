@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import chx.ds.Map;
 import chx.lang.NotImplementedException;
 import java.lang.System;
 import sys.io.Process;

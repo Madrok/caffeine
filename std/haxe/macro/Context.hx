@@ -22,6 +22,7 @@
 
 package haxe.macro;
 
+import chx.ds.Map;
 import haxe.macro.Expr;
 import haxe.macro.Type.TypedExpr;
 

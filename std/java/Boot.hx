@@ -22,8 +22,8 @@
 
 package java;
 
-import Map;
 import Reflect;
+import chx.ds.Map;
 import chx.ds.StringMap;
 import java.Init;
 import java.Lib;

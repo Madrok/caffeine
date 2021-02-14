@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import chx.ds.Map;
 import haxe.SysTools;
 
 @:coreApi

@@ -14,6 +14,11 @@
 --cmd echo "*** HASHLINK BUILD COMPLETE ***"
 
 --next
+--cmd echo "*** JAVA BUILD STARTED ***"
+--java bin/java
+--cmd echo "*** JAVA BUILD COMPLETE ***"
+
+--next
 --cmd echo "*** NEKO BUILD STARTED ***"
 --neko bin/main.n
 --cmd echo "*** NEKO BUILD COMPLETE ***"
@@ -24,12 +29,13 @@
 # --cmd echo "*** LUA BUILD COMPLETE ***"
 
 --next
---cmd echo "*** JAVA BUILD STARTED ***"
---java bin/java
---cmd echo "*** JAVA BUILD COMPLETE ***"
-
---next
 --cmd echo "*** PYTHON BUILD STARTED ***"
 --python bin/main.py
 --cmd echo "*** PYTHON BUILD COMPLETE ***"
+
+
+
+
+
+
 

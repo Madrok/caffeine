@@ -26,11 +26,10 @@
 package chx.vm;
 
 /**
-	A lock class that works on all platforms. Serialization of locks will
-	leave them in an undefined state, so they should be replaced.
-	@author Russell Weir
-**/
-#if( sys )
+ * A lock class that works on all platforms. Serialization of locks will
+ * leave them in an undefined state, so they should be replaced.
+ */
+#if( target.threaded )
 typedef Lock = sys.thread.Lock;
 #elseif js
 import chx.Sys;
@@ -67,8 +66,7 @@ class Lock {
 
 		createMonitor(waitS);
 		var p = new Promise((resolve, reject) -> {
-			stack.push({
-				resolve : resolve,
+			stack.push({resolve : resolve,
 				reject : reject,
 				timeout : (waitS > 0) ? Sys.time() + waitS : 0
 			});

@@ -20,6 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import chx.ds.Map;
+
 /**
 	This class provides access to various base functions of system platforms.
 	Look in the `sys` package for more system APIs.
@@ -29,14 +31,14 @@ extern class Sys {
 	/**
 		Prints any value to the standard output.
 	**/
-	static function print(v:Dynamic):Void;
+	static function print(v : Dynamic) : Void;
 
 	/**
 		Prints any value to the standard output, followed by a newline.
 		On Windows, this function outputs a CRLF newline.
 		LF newlines are printed on all other platforms.
 	**/
-	static function println(v:Dynamic):Void;
+	static function println(v : Dynamic) : Void;
 
 	/**
 		Returns all the arguments that were passed in the command line.
@@ -46,48 +48,48 @@ extern class Sys {
 
 		(cs) Non-ASCII Unicode arguments will not work correctly.
 	**/
-	static function args():Array<String>;
+	static function args() : Array<String>;
 
 	/**
 		Returns the value of the given environment variable, or `null` if it
 		doesn't exist.
 	**/
-	static function getEnv(s:String):String;
+	static function getEnv(s : String) : String;
 
 	/**
 		Sets the value of the given environment variable.
 
 		(java) This functionality is not available on Java; calling this function will throw.
 	**/
-	static function putEnv(s:String, v:String):Void;
+	static function putEnv(s : String, v : String) : Void;
 
 	/**
 		Returns all environment variables.
 	**/
-	static function environment():Map<String, String>;
+	static function environment() : Map<String, String>;
 
 	/**
 		Suspends execution for the given length of time (in seconds).
 	**/
-	static function sleep(seconds:Float):Void;
+	static function sleep(seconds : Float) : Void;
 
 	/**
 		Changes the current time locale, which will affect `DateTools.format` date formating.
 		Returns `true` if the locale was successfully changed.
 	**/
-	static function setTimeLocale(loc:String):Bool;
+	static function setTimeLocale(loc : String) : Bool;
 
 	/**
 		Gets the current working directory (usually the one in which the program was started).
 	**/
-	static function getCwd():String;
+	static function getCwd() : String;
 
 	/**
 		Changes the current working directory.
 
 		(java) This functionality is not available on Java; calling this function will throw.
 	**/
-	static function setCwd(s:String):Void;
+	static function setCwd(s : String) : Void;
 
 	/**
 		Returns the type of the current system. Possible values are:
@@ -96,7 +98,7 @@ extern class Sys {
 		 - `"BSD"`
 		 - `"Mac"`
 	**/
-	static function systemName():String;
+	static function systemName() : String;
 
 	/**
 		Runs the given command. The command output will be printed to the same output as the current process.
@@ -113,7 +115,7 @@ extern class Sys {
 
 		Use the `sys.io.Process` API for more complex tasks, such as background processes, or providing input to the command.
 	**/
-	static function command(cmd:String, ?args:Array<String>):Int;
+	static function command(cmd : String, ?args : Array<String>) : Int;
 
 	/**
 		Exits the current process with the given exit code.
@@ -121,46 +123,46 @@ extern class Sys {
 		(macro)(eval) Being invoked in a macro or eval context (e.g. with `-x` or `--run`) immediately terminates
 		the compilation process, which also prevents the execution of any `--next` sections of compilation arguments.
 	**/
-	static function exit(code:Int):Void;
+	static function exit(code : Int) : Void;
 
 	/**
 		Gives the most precise timestamp value available (in seconds).
 	**/
-	static function time():Float;
+	static function time() : Float;
 
 	/**
 		Gives the most precise timestamp value available (in seconds),
 		but only accounts for the actual time spent running on the CPU for the current thread/process.
 	**/
-	static function cpuTime():Float;
+	static function cpuTime() : Float;
 
 	/**
 		Returns the absolute path to the current program file that we are running.
 		Concretely, for an executable binary, it returns the path to the binary.
 		For a script (e.g. a PHP file), it returns the path to the script.
 	**/
-	static function programPath():String;
+	static function programPath() : String;
 
 	/**
 		Reads a single input character from the standard input and returns it.
 		Setting `echo` to `true` will also display the character on the output.
 	**/
-	static function getChar(echo:Bool):Int;
+	static function getChar(echo : Bool) : Int;
 
 	/**
 		Returns the standard input of the process, from which user input can be read.
 		Usually it will block until the user sends a full input line.
 		See `getChar` for an alternative.
 	**/
-	static function stdin():chx.io.Input;
+	static function stdin() : chx.io.Input;
 
 	/**
 		Returns the standard output of the process, to which program output can be written.
 	**/
-	static function stdout():chx.io.Output;
+	static function stdout() : chx.io.Output;
 
 	/**
 		Returns the standard error of the process, to which program errors can be written.
 	**/
-	static function stderr():chx.io.Output;
+	static function stderr() : chx.io.Output;
 }

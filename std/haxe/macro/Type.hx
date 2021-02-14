@@ -22,6 +22,8 @@
 
 package haxe.macro;
 
+import chx.ds.Map;
+
 /*
 	Warning: Some of these types correspond to compiler-internal data structures
 	and might change in minor Haxe releases in order to adapt to internal changes.
@@ -34,8 +36,8 @@ package haxe.macro;
 	A structure is only encoded when user requests it through `ref.get()`.
  */
 typedef Ref<T> = {
-	public function get():T;
-	public function toString():String;
+	public function get() : T;
+	public function toString() : String;
 }
 
 /**
@@ -47,61 +49,61 @@ enum Type {
 
 		@see https://haxe.org/manual/types-monomorph.html
 	**/
-	TMono(t:Ref<Null<Type>>);
+	TMono(t : Ref<Null<Type>>);
 
 	/**
 		Represents an enum instance.
 
 		@see https://haxe.org/manual/types-enum-instance.html
 	**/
-	TEnum(t:Ref<EnumType>, params:Array<Type>);
+	TEnum(t : Ref<EnumType>, params : Array<Type>);
 
 	/**
 		Represents a class instance.
 
 		@see https://haxe.org/manual/types-class-instance.html
 	**/
-	TInst(t:Ref<ClassType>, params:Array<Type>);
+	TInst(t : Ref<ClassType>, params : Array<Type>);
 
 	/**
 		Represents a typedef.
 
 		@see https://haxe.org/manual/type-system-typedef.html
 	**/
-	TType(t:Ref<DefType>, params:Array<Type>);
+	TType(t : Ref<DefType>, params : Array<Type>);
 
 	/**
 		Represents a function type.
 
 		@see https://haxe.org/manual/types-function.html
 	**/
-	TFun(args:Array<{name:String, opt:Bool, t:Type}>, ret:Type);
+	TFun(args : Array<{name : String, opt : Bool, t : Type}>, ret : Type);
 
 	/**
 		Represents an anonymous structure type.
 
 		@see https://haxe.org/manual/types-anonymous-structure.html
 	**/
-	TAnonymous(a:Ref<AnonType>);
+	TAnonymous(a : Ref<AnonType>);
 
 	/**
 		Represents Dynamic.
 
 		@see https://haxe.org/manual/types-dynamic.html
 	**/
-	TDynamic(t:Null<Type>);
+	TDynamic(t : Null<Type>);
 
 	/**
 		Used internally by the compiler to delay some typing.
 	**/
-	TLazy(f:Void->Type);
+	TLazy(f : Void->Type);
 
 	/**
 		Represents an abstract type.
 
 		@see https://haxe.org/manual/types-abstract.html
 	**/
-	TAbstract(t:Ref<AbstractType>, params:Array<Type>);
+	TAbstract(t : Ref<AbstractType>, params : Array<Type>);
 }
 
 /**
@@ -111,12 +113,12 @@ typedef AnonType = {
 	/**
 		The class fields of the structure.
 	**/
-	var fields:Array<ClassField>;
+	var fields : Array<ClassField>;
 
 	/**
 		The status/kind of the structure.
 	**/
-	var status:AnonStatus;
+	var status : AnonStatus;
 }
 
 /**
@@ -148,22 +150,22 @@ enum AnonStatus {
 
 		@see https://haxe.org/manual/type-system-extensions.html
 	**/
-	AExtend(tl:Ref<Array<Type>>);
+	AExtend(tl : Ref<Array<Type>>);
 
 	/**
 		A structure that represents the static fields of a class.
 	**/
-	AClassStatics(t:Ref<ClassType>);
+	AClassStatics(t : Ref<ClassType>);
 
 	/**
 		A structure that represents the constructors of an enum.
 	**/
-	AEnumStatics(t:Ref<EnumType>);
+	AEnumStatics(t : Ref<EnumType>);
 
 	/**
 		A structure that represents the static fields of an abstract.
 	**/
-	AAbstractStatics(t:Ref<AbstractType>);
+	AAbstractStatics(t : Ref<AbstractType>);
 }
 
 /**
@@ -173,13 +175,13 @@ typedef TypeParameter = {
 	/**
 		The name of the type parameter.
 	**/
-	var name:String;
+	var name : String;
 
 	/**
 		The type of the type parameter. It is guaranteed to be a `TInst` with a
 		`KTypeParameter` kind.
 	**/
-	var t:Type;
+	var t : Type;
 }
 
 /**
@@ -189,67 +191,67 @@ typedef ClassField = {
 	/**
 		The name of the class field.
 	**/
-	var name:String;
+	var name : String;
 
 	/**
 		The type of the class field.
 	**/
-	var type:Type;
+	var type : Type;
 
 	/**
 		Whether or not the class field is public.
 	**/
-	var isPublic:Bool;
+	var isPublic : Bool;
 
 	/**
 		Whether or not the class field is extern.
 	**/
-	var isExtern:Bool;
+	var isExtern : Bool;
 
 	/**
 		Whether or not the class field is final.
 	**/
-	var isFinal:Bool;
+	var isFinal : Bool;
 
 	/**
 		Whether or not the class field is abstract.
 	**/
-	var isAbstract:Bool;
+	var isAbstract : Bool;
 
 	/**
 		The type parameters of the class field.
 	**/
-	var params:Array<TypeParameter>;
+	var params : Array<TypeParameter>;
 
 	/**
 		The metadata of the class field.
 	**/
-	var meta:MetaAccess;
+	var meta : MetaAccess;
 
 	/**
 		The class field kind.
 	**/
-	var kind:FieldKind;
+	var kind : FieldKind;
 
 	/**
 		Returns the typed expression of the class field.
 	**/
-	function expr():Null<TypedExpr>;
+	function expr() : Null<TypedExpr>;
 
 	/**
 		The position of the class field.
 	**/
-	var pos:Expr.Position;
+	var pos : Expr.Position;
 
 	/**
 		The associated documentation of the class field.
 	**/
-	var doc:Null<String>;
+	var doc : Null<String>;
 
 	/**
 		The overload fields of the class field.
 	**/
-	var overloads:Ref<Array<ClassField>>;
+	var overloads : Ref<Array<ClassField>>;
 }
 
 /**
@@ -259,38 +261,38 @@ typedef EnumField = {
 	/**
 		The name of the enum constructor.
 	**/
-	var name:String;
+	var name : String;
 
 	/**
 		The type of the enum constructor.
 	**/
-	var type:Type;
+	var type : Type;
 
 	/**
 		The position of the enum constructor.
 	**/
-	var pos:Expr.Position;
+	var pos : Expr.Position;
 
 	/**
 		The metadata of the enum constructor.
 	**/
-	var meta:MetaAccess;
+	var meta : MetaAccess;
 
 	/**
 		The index of the enum constructor, i.e. in which position it appears
 		in the syntax.
 	**/
-	var index:Int;
+	var index : Int;
 
 	/**
 		The associated documentation of the enum constructor.
 	**/
-	var doc:Null<String>;
+	var doc : Null<String>;
 
 	/**
 		The type parameters of the enum constructor.
 	**/
-	var params:Array<TypeParameter>;
+	var params : Array<TypeParameter>;
 }
 
 /**
@@ -305,17 +307,17 @@ enum ClassKind {
 	/**
 		A type parameter class with a set of constraints.
 	**/
-	KTypeParameter(constraints:Array<Type>);
+	KTypeParameter(constraints : Array<Type>);
 
 	/**
 		A class containing module fields.
 	**/
-	KModuleFields(module:String);
+	KModuleFields(module : String);
 
 	/**
 		A special kind of class to encode expressions into type parameters.
 	**/
-	KExpr(expr:Expr);
+	KExpr(expr : Expr);
 
 	/**
 		A `@:generic` base class.
@@ -326,7 +328,7 @@ enum ClassKind {
 		A concrete `@:generic` instance, referencing the original class and the
 		applied type parameters.
 	**/
-	KGenericInstance(cl:Ref<ClassType>, params:Array<Type>);
+	KGenericInstance(cl : Ref<ClassType>, params : Array<Type>);
 
 	/**
 		A special class for `haxe.macro.MacroType`.
@@ -339,7 +341,7 @@ enum ClassKind {
 		An implementation class of an abstract, i.e. where all its run-time code
 		is.
 	**/
-	KAbstractImpl(a:Ref<AbstractType>);
+	KAbstractImpl(a : Ref<AbstractType>);
 
 	/**
 		A `@:genericBuild` class
@@ -355,52 +357,52 @@ typedef BaseType = {
 	/**
 		The package of the type.
 	**/
-	var pack:Array<String>;
+	var pack : Array<String>;
 
 	/**
 		The name of the type.
 	**/
-	var name:String;
+	var name : String;
 
 	/**
 		The module name of the type, which might be different.
 	**/
-	var module:String;
+	var module : String;
 
 	/**
 		The position of the type.
 	**/
-	var pos:Expr.Position;
+	var pos : Expr.Position;
 
 	/**
 		Whether or not the type is private.
 	**/
-	var isPrivate:Bool;
+	var isPrivate : Bool;
 
 	/**
 		Whether or not the type is extern.
 	**/
-	var isExtern:Bool;
+	var isExtern : Bool;
 
 	/**
 		The type parameters of the type.
 	**/
-	var params:Array<TypeParameter>;
+	var params : Array<TypeParameter>;
 
 	/**
 		The metadata of the type.
 	**/
-	var meta:MetaAccess;
+	var meta : MetaAccess;
 
 	/**
 		The associated documentation of the class field.
 	**/
-	var doc:Null<String>;
+	var doc : Null<String>;
 
 	/**
 		Allows excluding the type from compilation.
 	**/
-	function exclude():Void;
+	function exclude() : Void;
 }
 
 /**
@@ -410,42 +412,42 @@ typedef ClassType = BaseType & {
 	/**
 		The kind of the class.
 	**/
-	var kind:ClassKind;
+	var kind : ClassKind;
 
 	/**
 		If true the type is an interface, otherwise it is a class.
 	**/
-	var isInterface:Bool;
+	var isInterface : Bool;
 
 	/**
 		If true the class is final and cannot be extended.
 	**/
-	var isFinal:Bool;
+	var isFinal : Bool;
 
 	/**
 		If true the class is abstract and cannot be instantiated directly.
 	**/
-	var isAbstract:Bool;
+	var isAbstract : Bool;
 
 	/**
 		The parent class and its type parameters, if available.
 	**/
-	var superClass:Null<{t:Ref<ClassType>, params:Array<Type>}>;
+	var superClass : Null<{t : Ref<ClassType>, params : Array<Type>}>;
 
 	/**
 		The implemented interfaces and their type parameters.
 	**/
-	var interfaces:Array<{t:Ref<ClassType>, params:Array<Type>}>;
+	var interfaces : Array<{t : Ref<ClassType>, params : Array<Type>}>;
 
 	/**
 		The member fields of the class.
 	**/
-	var fields:Ref<Array<ClassField>>;
+	var fields : Ref<Array<ClassField>>;
 
 	/**
 		The static fields of the class.
 	**/
-	var statics:Ref<Array<ClassField>>;
+	var statics : Ref<Array<ClassField>>;
 
 	// var dynamic : Null<Type>;
 	// var arrayAccess : Null<Type>;
@@ -453,17 +455,17 @@ typedef ClassType = BaseType & {
 	/**
 		The constructor of the class, if available.
 	**/
-	var constructor:Null<Ref<ClassField>>;
+	var constructor : Null<Ref<ClassField>>;
 
 	/**
 		The `__init__` expression of the class, if available.
 	**/
-	var init:Null<TypedExpr>;
+	var init : Null<TypedExpr>;
 
 	/**
 		The list of fields that have override status.
 	**/
-	var overrides:Array<Ref<ClassField>>;
+	var overrides : Array<Ref<ClassField>>;
 }
 
 /**
@@ -473,12 +475,12 @@ typedef EnumType = BaseType & {
 	/**
 		The available enum constructors.
 	**/
-	var constructs:Map<String, EnumField>;
+	var constructs : Map<String, EnumField>;
 
 	/**
 		An ordered list of enum constructor names.
 	**/
-	var names:Array<String>;
+	var names : Array<String>;
 }
 
 /**
@@ -488,7 +490,7 @@ typedef DefType = BaseType & {
 	/**
 		The target type of the typedef.
 	**/
-	var type:Type;
+	var type : Type;
 }
 
 /**
@@ -498,51 +500,51 @@ typedef AbstractType = BaseType & {
 	/**
 		The underlying type of the abstract.
 	**/
-	var type:Type;
+	var type : Type;
 
 	/**
 		The implementation class of the abstract, if available.
 	**/
-	var impl:Null<Ref<ClassType>>;
+	var impl : Null<Ref<ClassType>>;
 
 	/**
 		The defined binary operators of the abstract.
 	**/
-	var binops:Array<{op:Expr.Binop, field:ClassField}>;
+	var binops : Array<{op : Expr.Binop, field : ClassField}>;
 
 	/**
 		The defined unary operators of the abstract.
 	**/
-	var unops:Array<{op:Expr.Unop, postFix:Bool, field:ClassField}>;
+	var unops : Array<{op : Expr.Unop, postFix : Bool, field : ClassField}>;
 
 	/**
 		The available implicit from-casts of the abstract.
 
 		@see https://haxe.org/manual/types-abstract-implicit-casts.html
 	**/
-	var from:Array<{t:Type, field:Null<ClassField>}>;
+	var from : Array<{t : Type, field : Null<ClassField>}>;
 
 	/**
 		The available implicit to-casts of the abstract.
 
 		@see https://haxe.org/manual/types-abstract-implicit-casts.html
 	**/
-	var to:Array<{t:Type, field:Null<ClassField>}>;
+	var to : Array<{t : Type, field : Null<ClassField>}>;
 
 	/**
 		The defined array-access fields of the abstract.
 	**/
-	var array:Array<ClassField>;
+	var array : Array<ClassField>;
 
 	/**
 		The method used for resolving unknown field access, if available.
 	**/
-	var resolve:Null<ClassField>;
+	var resolve : Null<ClassField>;
 
 	/**
 		The method used for resolving unknown field access, if available.
 	**/
-	var resolveWrite:Null<ClassField>;
+	var resolveWrite : Null<ClassField>;
 }
 
 /**
@@ -556,7 +558,7 @@ typedef MetaAccess = {
 		Modifying this array has no effect on the origin of `this` MetaAccess.
 		The `add` and `remove` methods can be used for that.
 	**/
-	function get():Expr.Metadata;
+	function get() : Expr.Metadata;
 
 	/**
 		Extract metadata entries by given `name`.
@@ -565,7 +567,7 @@ typedef MetaAccess = {
 
 		If `name` is null, compilation fails with an error.
 	**/
-	function extract(name:String):Array<Expr.MetadataEntry>;
+	function extract(name : String) : Array<Expr.MetadataEntry>;
 
 	/**
 		Adds the metadata specified by `name`, `params` and `pos` to the origin
@@ -579,7 +581,7 @@ typedef MetaAccess = {
 
 		If any argument is null, compilation fails with an error.
 	**/
-	function add(name:String, params:Array<Expr>, pos:Expr.Position):Void;
+	function add(name : String, params : Array<Expr>, pos : Expr.Position) : Void;
 
 	/**
 		Removes all `name` metadata entries from the origin of `this`
@@ -592,14 +594,14 @@ typedef MetaAccess = {
 
 		If `name` is null, compilation fails with an error.
 	**/
-	function remove(name:String):Void;
+	function remove(name : String) : Void;
 
 	/**
 		Tells if the origin of `this` MetaAccess has a `name` metadata entry.
 
 		If `name` is null, compilation fails with an error.
 	**/
-	function has(name:String):Bool;
+	function has(name : String) : Bool;
 }
 
 /**
@@ -609,12 +611,12 @@ enum FieldKind {
 	/**
 		A variable of property, depending on the `read` and `write` values.
 	**/
-	FVar(read:VarAccess, write:VarAccess);
+	FVar(read : VarAccess, write : VarAccess);
 
 	/**
 		A method
 	**/
-	FMethod(k:MethodKind);
+	FMethod(k : MethodKind);
 }
 
 /**
@@ -654,7 +656,7 @@ enum VarAccess {
 	/**
 		Failed access due to a `@:require` metadata.
 	**/
-	AccRequire(r:String, ?msg:String);
+	AccRequire(r : String, ?msg : String);
 
 	/**
 		Access is only allowed from the constructor.
@@ -698,22 +700,22 @@ enum TConstant {
 	/**
 		An `Int` literal.
 	**/
-	TInt(i:Int);
+	TInt(i : Int);
 
 	/**
 		A `Float` literal, represented as String to avoid precision loss.
 	**/
-	TFloat(s:String);
+	TFloat(s : String);
 
 	/**
 		A `String` literal.
 	**/
-	TString(s:String);
+	TString(s : String);
 
 	/**
 		A `Bool` literal.
 	**/
-	TBool(b:Bool);
+	TBool(b : Bool);
 
 	/**
 		The constant `null`.
@@ -738,33 +740,34 @@ typedef TVar = {
 	/**
 		The unique ID of the variable.
 	**/
-	public var id(default, never):Int;
+	public var id(default, never) : Int;
 
 	/**
 		The name of the variable.
 	**/
-	public var name(default, never):String;
+	public var name(default, never) : String;
 
 	/**
 		The type of the variable.
 	**/
-	public var t(default, never):Type;
+	public var t(default, never) : Type;
 
 	/**
 		Whether or not the variable has been captured by a closure.
 	**/
-	public var capture(default, never):Bool;
+	public var capture(default, never) : Bool;
 
 	/**
 		Special information which is internally used to keep track of closure.
 		information
 	**/
-	public var extra(default, never):Null<{params:Array<TypeParameter>, expr:Null<TypedExpr>}>;
+	public var extra(default,
+		never) : Null<{params : Array<TypeParameter>, expr : Null<TypedExpr>}>;
 
 	/**
 		The metadata of the variable.
 	**/
-	public var meta(default, never):Null<MetaAccess>;
+	public var meta(default, never) : Null<MetaAccess>;
 }
 
 /**
@@ -775,22 +778,22 @@ enum ModuleType {
 	/**
 		A class.
 	**/
-	TClassDecl(c:Ref<ClassType>);
+	TClassDecl(c : Ref<ClassType>);
 
 	/**
 		An enum.
 	**/
-	TEnumDecl(e:Ref<EnumType>);
+	TEnumDecl(e : Ref<EnumType>);
 
 	/**
 		A typedef.
 	**/
-	TTypeDecl(t:Ref<DefType>);
+	TTypeDecl(t : Ref<DefType>);
 
 	/**
 		An abstract.
 	**/
-	TAbstract(a:Ref<AbstractType>);
+	TAbstract(a : Ref<AbstractType>);
 }
 
 /**
@@ -801,17 +804,17 @@ typedef TFunc = {
 		A list of function arguments identified by an argument variable `v` and
 		an optional initialization `value`.
 	**/
-	var args:Array<{v:TVar, value:Null<TypedExpr>}>;
+	var args : Array<{v : TVar, value : Null<TypedExpr>}>;
 
 	/**
 		The return type of the function.
 	**/
-	var t:Type;
+	var t : Type;
 
 	/**
 		The expression of the function body.
 	**/
-	var expr:TypedExpr;
+	var expr : TypedExpr;
 }
 
 /**
@@ -822,33 +825,33 @@ enum FieldAccess {
 		Access of field `cf` on a class instance `c` with type parameters
 		`params`.
 	**/
-	FInstance(c:Ref<ClassType>, params:Array<Type>, cf:Ref<ClassField>);
+	FInstance(c : Ref<ClassType>, params : Array<Type>, cf : Ref<ClassField>);
 
 	/**
 		Static access of a field `cf` on a class `c`.
 	**/
-	FStatic(c:Ref<ClassType>, cf:Ref<ClassField>);
+	FStatic(c : Ref<ClassType>, cf : Ref<ClassField>);
 
 	/**
 		Access of field `cf` on an anonymous structure.
 	**/
-	FAnon(cf:Ref<ClassField>);
+	FAnon(cf : Ref<ClassField>);
 
 	/**
 		Dynamic field access of a field named `s`.
 	**/
-	FDynamic(s:String);
+	FDynamic(s : String);
 
 	/**
 		Closure field access of field `cf` on a class instance `c` with type
 		parameters `params`.
 	**/
-	FClosure(c:Null<{c:Ref<ClassType>, params:Array<Type>}>, cf:Ref<ClassField>);
+	FClosure(c : Null<{c : Ref<ClassType>, params : Array<Type>}>, cf : Ref<ClassField>);
 
 	/**
 		Field access to an enum constructor `ef` of enum `e`.
 	**/
-	FEnum(e:Ref<EnumType>, ef:EnumField);
+	FEnum(e : Ref<EnumType>, ef : EnumField);
 }
 
 /**
@@ -858,57 +861,57 @@ enum TypedExprDef {
 	/**
 		A constant.
 	**/
-	TConst(c:TConstant);
+	TConst(c : TConstant);
 
 	/**
 		Reference to a local variable `v`.
 	**/
-	TLocal(v:TVar);
+	TLocal(v : TVar);
 
 	/**
 		Array access `e1[e2]`.
 	**/
-	TArray(e1:TypedExpr, e2:TypedExpr);
+	TArray(e1 : TypedExpr, e2 : TypedExpr);
 
 	/**
 		Binary operator `e1 op e2`.
 	**/
-	TBinop(op:Expr.Binop, e1:TypedExpr, e2:TypedExpr);
+	TBinop(op : Expr.Binop, e1 : TypedExpr, e2 : TypedExpr);
 
 	/**
 		Field access on `e` according to `fa`.
 	**/
-	TField(e:TypedExpr, fa:FieldAccess);
+	TField(e : TypedExpr, fa : FieldAccess);
 
 	/**
 		Reference to a module type `m`.
 	**/
-	TTypeExpr(m:ModuleType);
+	TTypeExpr(m : ModuleType);
 
 	/**
 		Parentheses `(e)`.
 	**/
-	TParenthesis(e:TypedExpr);
+	TParenthesis(e : TypedExpr);
 
 	/**
 		An object declaration.
 	**/
-	TObjectDecl(fields:Array<{name:String, expr:TypedExpr}>);
+	TObjectDecl(fields : Array<{name : String, expr : TypedExpr}>);
 
 	/**
 		An array declaration `[el]`.
 	**/
-	TArrayDecl(el:Array<TypedExpr>);
+	TArrayDecl(el : Array<TypedExpr>);
 
 	/**
 		A call `e(el)`.
 	**/
-	TCall(e:TypedExpr, el:Array<TypedExpr>);
+	TCall(e : TypedExpr, el : Array<TypedExpr>);
 
 	/**
 		A constructor call `new c<params>(el)`.
 	**/
-	TNew(c:Ref<ClassType>, params:Array<Type>, el:Array<TypedExpr>);
+	TNew(c : Ref<ClassType>, params : Array<Type>, el : Array<TypedExpr>);
 
 	/**
 		An unary operator `op` on `e`:
@@ -921,55 +924,56 @@ enum TypedExprDef {
 		* !e (op = OpNot, postFix = false)
 		* ~e (op = OpNegBits, postFix = false)
 	**/
-	TUnop(op:Expr.Unop, postFix:Bool, e:TypedExpr);
+	TUnop(op : Expr.Unop, postFix : Bool, e : TypedExpr);
 
 	/**
 		A function declaration.
 	**/
-	TFunction(tfunc:TFunc);
+	TFunction(tfunc : TFunc);
 
 	/**
 		A variable declaration `var v` or `var v = expr`.
 	**/
-	TVar(v:TVar, expr:Null<TypedExpr>);
+	TVar(v : TVar, expr : Null<TypedExpr>);
 
 	/**
 		A block declaration `{el}`.
 	**/
-	TBlock(el:Array<TypedExpr>);
+	TBlock(el : Array<TypedExpr>);
 
 	/**
 		A `for` expression.
 	**/
-	TFor(v:TVar, e1:TypedExpr, e2:TypedExpr);
+	TFor(v : TVar, e1 : TypedExpr, e2 : TypedExpr);
 
 	/**
 		An `if(econd) eif` or `if(econd) eif else eelse` expression.
 	**/
-	TIf(econd:TypedExpr, eif:TypedExpr, eelse:Null<TypedExpr>);
+	TIf(econd : TypedExpr, eif : TypedExpr, eelse : Null<TypedExpr>);
 
 	/**
 		Represents a `while` expression.
 		When `normalWhile` is `true` it is `while (...)`.
 		When `normalWhile` is `false` it is `do {...} while (...)`.
 	**/
-	TWhile(econd:TypedExpr, e:TypedExpr, normalWhile:Bool);
+	TWhile(econd : TypedExpr, e : TypedExpr, normalWhile : Bool);
 
 	/**
 		Represents a `switch` expression with related cases and an optional
 		`default` case if edef != null.
 	**/
-	TSwitch(e:TypedExpr, cases:Array<{values:Array<TypedExpr>, expr:TypedExpr}>, edef:Null<TypedExpr>);
+	TSwitch(e : TypedExpr, cases : Array<{values : Array<TypedExpr>, expr : TypedExpr}>,
+		edef : Null<TypedExpr>);
 
 	/**
 		Represents a `try`-expression with related catches.
 	**/
-	TTry(e:TypedExpr, catches:Array<{v:TVar, expr:TypedExpr}>);
+	TTry(e : TypedExpr, catches : Array<{v : TVar, expr : TypedExpr}>);
 
 	/**
 		A `return` or `return e` expression.
 	**/
-	TReturn(e:Null<TypedExpr>);
+	TReturn(e : Null<TypedExpr>);
 
 	/**
 		A `break` expression.
@@ -984,32 +988,32 @@ enum TypedExprDef {
 	/**
 		A `throw e` expression.
 	**/
-	TThrow(e:TypedExpr);
+	TThrow(e : TypedExpr);
 
 	/**
 		A `cast e` or `cast (e, m)` expression.
 	**/
-	TCast(e:TypedExpr, m:Null<ModuleType>);
+	TCast(e : TypedExpr, m : Null<ModuleType>);
 
 	/**
 		A `@m e1` expression.
 	**/
-	TMeta(m:Expr.MetadataEntry, e1:TypedExpr);
+	TMeta(m : Expr.MetadataEntry, e1 : TypedExpr);
 
 	/**
 		Access to an enum parameter (generated by the pattern matcher).
 	**/
-	TEnumParameter(e1:TypedExpr, ef:EnumField, index:Int);
+	TEnumParameter(e1 : TypedExpr, ef : EnumField, index : Int);
 
 	/**
 		Access to an enum index (generated by the pattern matcher).
 	**/
-	TEnumIndex(e1:TypedExpr);
+	TEnumIndex(e1 : TypedExpr);
 
 	/**
 		An unknown identifier.
 	**/
-	TIdent(s:String);
+	TIdent(s : String);
 }
 
 /**
@@ -1019,15 +1023,15 @@ typedef TypedExpr = {
 	/**
 		The expression kind.
 	**/
-	var expr:TypedExprDef;
+	var expr : TypedExprDef;
 
 	/**
 		The position of the expression.
 	**/
-	var pos:Expr.Position;
+	var pos : Expr.Position;
 
 	/**
 		The type of the expression.
 	**/
-	var t:Type;
+	var t : Type;
 }
